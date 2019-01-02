@@ -36,7 +36,7 @@ class OAuthController @Inject()(
         case Some(accessToken) =>
           cache.set(request.sessionId, accessToken, 30.minutes)
           // User情報をデータベースに登録
-          // userUpsert(User(accessToken))
+          userUpsert(User(accessToken))
           Redirect(documentRootUrl + routes.HomeController.index().url)
         case None => BadRequest(s"Could not get OAuth verifier. SessionId: ${request.sessionId}")
       }
