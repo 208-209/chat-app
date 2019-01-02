@@ -4,7 +4,7 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String)(content: Html)
+@(title: String)(accessToken: Option[twitter4j.auth.AccessToken])(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +16,12 @@
 
     </head>
     <body>
+        @if(accessToken.isEmpty) {
+            <a href="@routes.OAuthController.login">Twitterでログイン</a>
+        } else {
+            <p>@{accessToken.map(_.getScreenName).getOrElse("null")} でログイン中</p>
+            <a href="@routes.OAuthController.logout">ログアウト</a>
+        }
         @* And here's where we render the `Html` object containing
          * the page content. *@
         @content

@@ -1,5 +1,5 @@
-@()
+@(accessToken: Option[twitter4j.auth.AccessToken])
 
-@main("Welcome to Play") {
-  <h1>Welcome to Play!</h1>
+@main("chat-app")(accessToken) {
+  <h1>Welcome to chat-app!</h1>
 }
