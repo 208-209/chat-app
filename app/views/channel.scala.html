@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
-    <body>
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm])(channels: Seq[Channel], channel: (Channel, User))(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-    </body>
-</html>
+@import helper._
+
+@main("chat-app")(accessToken) {
+
+    <div>
+        <h3>チャンネルを作成する</h3>
+        @form(routes.ChannelController.create(channel._1.channelId)) {
+            @CSRF.formField
+            <div>
+                <label for="channelName">名前</label>
+                <input type="text" id="channelName" name="channelName">
+            </div>
+
+            <div>
+                <label for="description">チャンネルの説明</label>
+                <textarea name="description" id="description" cols="30" rows="10"></textarea>
+            </div>
+
+            <div>
+                <input type="submit" value="チャンネルをつくる">
+            </div>
+
+        }
+
+    </div>
+
+    <div>
+        <h3>チャンネル一覧</h3>
+        @for(channel <- channels) {
+            <p><a href="@routes.ChannelController.read(channel.channelId)">@{channel.channelName}</a></p>
+        }
+
+    </div>
+
+    <div>
+        <h3>チャンネル詳細</h3>
+        <div>
+            <p>製作者</p>
+            <p>@channel._2.userName</p>
+        </div>
+        <div>
+            <p>説明</p>
+            <p>@channel._1.description</p>
+        </div>
+        <div>
+            <p>作成日</p>
+            <p>@channel._1.updatedAt</p>
+        </div>
+
+
+    </div>
+}

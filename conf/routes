@@ -1,10 +1,9 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
-
-# An example controller showing a sample home page
+# home page
 GET     /                           controllers.HomeController.index
+
+GET     /channels/:channelId        controllers.ChannelController.read(channelId: String)
+POST    /channels                   controllers.ChannelController.create(channelId: String)
+
 
 # Twitter Login
 GET     /login                      controllers.OAuthController.login
