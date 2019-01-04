@@ -3,6 +3,17 @@
 @import helper._
 
 @main("chat-app")(accessToken) {
+    <h1>@channel._1.channelName</h1>
+
+    <div>
+        <div id="messages">
+            <p>hoge</p>
+        </div>
+        <div>
+            <input type="text" id="meg" type="text">
+            <button id="send" class="btn btn-primary" data-channel-id="@channel._1.channelId" data-user-id="@channel._2.userId">送信</button>
+        </div>
+    </div>
 
     <div>
         <h3>チャンネルを作成する</h3>
@@ -36,6 +47,7 @@
 
     <div>
         <h3>チャンネル詳細</h3>
+        <h4>@channel._1.channelName</h4>
         <div>
             <p>製作者</p>
             <p>@channel._2.userName</p>
@@ -49,6 +61,6 @@
             <p>@channel._1.updatedAt</p>
         </div>
 
-
     </div>
+
 }
