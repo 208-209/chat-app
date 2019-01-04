@@ -7,6 +7,7 @@ import akka.actor._
 import akka.stream.Materializer
 import javax.inject._
 import play.api.cache.SyncCacheApi
+import play.api.libs.json._
 import twitter4j.auth.AccessToken
 
 import scala.concurrent.Future
@@ -21,7 +22,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
-  def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[String, String] { request =>
+  def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
 
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
@@ -52,8 +53,11 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     def receive = {
       case msg: String =>
+
+        val message = s"""{"message": "$msg"}"""
+
         myRoom.actorSet.foreach { out =>
-          out ! ("I received your message: " + msg)
+          out ! Json.parse(message)
         }
     }
 
@@ -63,7 +67,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       println(myRoom.userNameSet)
 
       myRoom.actorSet.foreach { out =>
-        out ! myRoom.userNameSet.mkString("\n")
+        val members = s"""{"members": "${myRoom.userNameSet.mkString(",")}"}"""
+        out ! Json.parse(members)
       }
 
 
@@ -74,8 +79,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       myRoom.userNameSet = myRoom.userNameSet - userName
 
       myRoom.actorSet.foreach { out =>
-        out ! myRoom.userNameSet.mkString("\n")
+        val members = s"""{"members": "${myRoom.userNameSet.mkString(",")}"}"""
+        out ! Json.parse(members)
       }
+
     }
 
   }

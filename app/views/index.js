@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 // node_modules/.bin/webpack --config conf/webpack.config.js
 
+const $members = $("#members");
 const $messages = $("#messages");
 const $meg = $("#meg");
 const $btn = $("#btn");
@@ -21,13 +22,16 @@ $messages.before("<p>foo</p>");
 
 $btn.prop("disabled", true);
 
+
+
 connection.onopen = () => {
     $btn.prop("disabled", false);
     $btn.click(() => {
         const text = $meg.val();
+        const msg = {"msg": text};
         console.log(text);
         $meg.val('');
-        connection.send(text)
+        connection.send(msg)
 
     });
 };
@@ -42,6 +46,22 @@ connection.onerror = function(error) {
 };
 
 connection.onmessage = event => {
-    $messages.append($("<p>" + event.data + "</p>"))
+    const data = event.data;
+    const jsonData = JSON.parse(event.data);
+    console.log(typeof data);
+    console.log(typeof jsonData);
+    console.log(jsonData);
+    console.log(jsonData.message);
+    console.log(jsonData.members);
+
+    if (jsonData.members) {
+        const membersHtml = jsonData.members.split(',').map(m => "<p>" + m + "</p>").join('\n');
+        $members.html("<div>" + membersHtml + "</div>");
+
+    } else if (jsonData.message) {
+        $messages.append($("<p>" + jsonData.message + "</p>"))
+    }
+
+
 };
 

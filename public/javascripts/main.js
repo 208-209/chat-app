@@ -94,8 +94,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
  // node_modules/.bin/webpack --config conf/webpack.config.js
 
+var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
 var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
 var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
@@ -110,9 +113,12 @@ connection.onopen = function () {
   $btn.prop("disabled", false);
   $btn.click(function () {
     var text = $meg.val();
+    var msg = {
+      "msg": text
+    };
     console.log(text);
     $meg.val('');
-    connection.send(text);
+    connection.send(msg);
   });
 };
 
@@ -125,7 +131,22 @@ connection.onerror = function (error) {
 };
 
 connection.onmessage = function (event) {
-  $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + event.data + "</p>"));
+  var data = event.data;
+  var jsonData = JSON.parse(event.data);
+  console.log(_typeof(data));
+  console.log(_typeof(jsonData));
+  console.log(jsonData);
+  console.log(jsonData.message);
+  console.log(jsonData.members);
+
+  if (jsonData.members) {
+    var membersHtml = jsonData.members.split(',').map(function (m) {
+      return "<p>" + m + "</p>";
+    }).join('\n');
+    $members.html("<div>" + membersHtml + "</div>");
+  } else if (jsonData.message) {
+    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
+  }
 };
 
 /***/ }),
