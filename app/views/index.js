@@ -46,9 +46,9 @@ connection.onerror = function(error) {
 };
 
 connection.onmessage = event => {
+    console.log(event.data);
     const jsonData = JSON.parse(event.data);
     console.log(typeof jsonData);
-    console.log(jsonData);
     console.log(jsonData.msg);
     console.log(jsonData.members);
 

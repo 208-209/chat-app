@@ -13,7 +13,7 @@ create table channels (
 );
 
 create table messages (
-  messageId bigserial not null primary key ,
+  messageId varchar(36) not null primary key ,
   message varchar(225) not null ,
   channelId varchar(36) not null ,
   createdBy bigint not null ,

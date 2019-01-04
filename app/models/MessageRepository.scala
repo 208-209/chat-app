@@ -6,8 +6,8 @@ object MessageRepository {
 
   def insert(msg: Message): Unit = DB localTx { implicit session =>
     sql"""
-       insert into messages (message, channelId, createdBy, updatedAt)
-       values (${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
+       insert into messages (messageId, message, channelId, createdBy, updatedAt)
+       values (${msg.messageId}, ${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
     """.update().apply()
   }
 

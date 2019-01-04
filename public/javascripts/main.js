@@ -131,6 +131,7 @@ connection.onerror = function (error) {
 };
 
 connection.onmessage = function (event) {
+  console.log(event.data);
   var jsonData = JSON.parse(event.data);
   console.log(_typeof(jsonData));
   console.log(jsonData);

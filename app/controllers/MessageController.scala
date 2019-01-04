@@ -54,17 +54,20 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     def receive = {
       case msg: JsValue =>
 
-        val message = msg("message").toString()
+        val messageId = java.util.UUID.randomUUID().toString
+        val message = (msg \ "message").as[String]
         val updatedAt = java.time.OffsetDateTime.now()
 
-        MessageRepository.insert(Message(message, channelId, Some(userId), updatedAt))
+        MessageRepository.insert(Message(messageId, message, channelId, Some(userId), updatedAt))
 
-        println(msg.getClass)
-        println(msg("message"))
+        println(msg("message").getClass)
+        println((msg \ "message").as[String].getClass)
+
+        val msgJson = s"""{"messageId": "${messageId}", "message": "${message}", "updatedAt": "${updatedAt}"}"""
 
 
         myRoom.actorSet.foreach { out =>
-          out ! msg
+          out ! Json.parse(msgJson)
         }
     }
 
