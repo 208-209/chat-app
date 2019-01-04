@@ -52,12 +52,14 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     }
 
     def receive = {
-      case msg: String =>
+      case msg: JsValue =>
 
-        val message = s"""{"message": "$msg"}"""
+        println(msg)
+        println(msg("msg"))
+
 
         myRoom.actorSet.foreach { out =>
-          out ! Json.parse(message)
+          out ! msg
         }
     }
 

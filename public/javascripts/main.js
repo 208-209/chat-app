@@ -118,7 +118,7 @@ connection.onopen = function () {
     };
     console.log(text);
     $meg.val('');
-    connection.send(msg);
+    connection.send(JSON.stringify(msg));
   });
 };
 
@@ -131,12 +131,10 @@ connection.onerror = function (error) {
 };
 
 connection.onmessage = function (event) {
-  var data = event.data;
   var jsonData = JSON.parse(event.data);
-  console.log(_typeof(data));
   console.log(_typeof(jsonData));
   console.log(jsonData);
-  console.log(jsonData.message);
+  console.log(jsonData.msg);
   console.log(jsonData.members);
 
   if (jsonData.members) {
@@ -144,8 +142,10 @@ connection.onmessage = function (event) {
       return "<p>" + m + "</p>";
     }).join('\n');
     $members.html("<div>" + membersHtml + "</div>");
-  } else if (jsonData.message) {
-    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
+  }
+
+  if (jsonData.msg) {
+    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.msg + "</p>"));
   }
 };
 
