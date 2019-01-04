@@ -20,4 +20,7 @@ object Message extends SQLSyntaxSupport[Message] {
     )
   }
 
+  def apply(message: String, channelId: String, createdBy: Option[Long], updatedAt: OffsetDateTime): Message =
+    new Message(0, message, channelId, createdBy, updatedAt)
+
 }

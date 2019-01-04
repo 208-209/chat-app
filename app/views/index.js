@@ -28,7 +28,7 @@ connection.onopen = () => {
     $btn.prop("disabled", false);
     $btn.click(() => {
         const text = $meg.val();
-        const msg = {"msg": text};
+        const msg = {"message": text};
         console.log(text);
         $meg.val('');
         connection.send(JSON.stringify(msg))
@@ -55,11 +55,10 @@ connection.onmessage = event => {
     if (jsonData.members) {
         const membersHtml = jsonData.members.split(',').map(m => "<p>" + m + "</p>").join('\n');
         $members.html("<div>" + membersHtml + "</div>");
-
     }
 
-    if (jsonData.msg) {
-        $messages.append($("<p>" + jsonData.msg + "</p>"))
+    if (jsonData.message) {
+        $messages.append($("<p>" + jsonData.message + "</p>"))
     }
 };
 

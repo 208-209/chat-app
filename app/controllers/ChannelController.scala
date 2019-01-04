@@ -28,7 +28,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         ChannelRepository.findOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
-            Ok(views.html.channel(request.accessToken)(channelForm)(channels, channel))
+            val messages = MessageRepository.findAll(channelId)
+            Ok(views.html.channel(request.accessToken)(channelForm)(channel, channels, messages))
 
           case None => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -46,8 +47,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         ChannelRepository.findOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
+            val messages = MessageRepository.findAll(channelId)
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error)(channels, channel)),
+              error => BadRequest(views.html.channel(request.accessToken)(error)(channel, channels, messages)),
               form => {
                 val channelId = java.util.UUID.randomUUID().toString
                 val channelName = form.channelName

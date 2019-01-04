@@ -2,13 +2,13 @@ package controllers
 
 import play.api.mvc._
 import play.api.libs.streams.ActorFlow
-import javax.inject.Inject
-import akka.actor._
-import akka.stream.Materializer
-import javax.inject._
 import play.api.cache.SyncCacheApi
 import play.api.libs.json._
+import javax.inject._
+import akka.actor._
+import akka.stream.Materializer
 import twitter4j.auth.AccessToken
+import models._
 
 import scala.concurrent.Future
 
@@ -29,16 +29,16 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     Future.successful(accessToken match {
       case Some(token) if token.getUserId == userId =>
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, token.getScreenName)})
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
     })
   }
 
   object MyWebSocketActor {
-    def props(out: ActorRef, channelId: String, userName: String) = Props(new MyWebSocketActor(out, channelId, userName))
+    def props(out: ActorRef, channelId: String, userId: Long, userName: String) = Props(new MyWebSocketActor(out, channelId, userId, userName))
   }
 
-  class MyWebSocketActor(out: ActorRef, channelId: String, userName: String) extends Actor {
+  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String) extends Actor {
 
 
     val myRoom = roomMap.get(channelId) match {
@@ -54,8 +54,13 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     def receive = {
       case msg: JsValue =>
 
-        println(msg)
-        println(msg("msg"))
+        val message = msg("message").toString()
+        val updatedAt = java.time.OffsetDateTime.now()
+
+        MessageRepository.insert(Message(message, channelId, Some(userId), updatedAt))
+
+        println(msg.getClass)
+        println(msg("message"))
 
 
         myRoom.actorSet.foreach { out =>

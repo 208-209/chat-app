@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm])(channels: Seq[Channel], channel: (Channel, User))(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -7,7 +7,15 @@
 
     <div>
         <div id="messages">
-            <p>hoge</p>
+            @for(message <- messages) {
+                <div>
+                    <p>
+                        <span>名前：@{message._2.userName}</span>
+                        <span>日付：@{message._1.updatedAt}</span>
+                    </p>
+                    <p>内容：@{message._1.message}</p>
+                </div>
+            }
         </div>
         <div>
             <input type="text" id="meg" type="text">

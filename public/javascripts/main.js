@@ -114,7 +114,7 @@ connection.onopen = function () {
   $btn.click(function () {
     var text = $meg.val();
     var msg = {
-      "msg": text
+      "message": text
     };
     console.log(text);
     $meg.val('');
@@ -144,8 +144,8 @@ connection.onmessage = function (event) {
     $members.html("<div>" + membersHtml + "</div>");
   }
 
-  if (jsonData.msg) {
-    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.msg + "</p>"));
+  if (jsonData.message) {
+    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
   }
 };
 

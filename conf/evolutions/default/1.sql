@@ -1,6 +1,6 @@
 # --- !Ups
 create table users (
-  userId bigserial not null primary key ,
+  userId bigint not null primary key ,
   userName varchar(15) not null
 );
 
