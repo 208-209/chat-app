@@ -11,7 +11,7 @@
         </div>
         <div>
             <input type="text" id="meg" type="text">
-            <button id="btn" class="btn btn-primary" data-channel-id="@channel._1.channelId" data-user-id="@channel._2.userId">送信</button>
+            <button id="btn" class="btn btn-primary" data-channel-id="@channel._1.channelId" data-user-id="@{accessToken.map(_.getUserId).getOrElse("null")}">送信</button>
         </div>
     </div>
 
