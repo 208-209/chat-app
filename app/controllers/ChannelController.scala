@@ -22,9 +22,6 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   def read(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
-    println(ChannelRepository.findOne(channelId))
-    println(request.accessToken.map(_.getUserId))
-
     request.accessToken match {
       case Some(_) =>
 

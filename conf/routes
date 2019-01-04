@@ -4,6 +4,8 @@ GET     /                           controllers.HomeController.index
 GET     /channels/:channelId        controllers.ChannelController.read(channelId: String)
 POST    /channels                   controllers.ChannelController.create(channelId: String)
 
+GET     /channels/:channelId/users/:userId/message     controllers.MessageController.socket(channelId: String, userId: Long)
+
 
 # Twitter Login
 GET     /login                      controllers.OAuthController.login
