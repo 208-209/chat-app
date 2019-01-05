@@ -152,21 +152,19 @@ connection.onmessage = function (event) {
 var editBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-button');
 editBtn.click(function () {
   var channelId = editBtn.data('channel-id');
-  var userId = editBtn.data('user-id');
   var channelName = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channelName-form').val();
   var description = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#description-form').val();
   var CSRF_TOKEN = jquery__WEBPACK_IMPORTED_MODULE_0___default()('input[name="csrfToken"]').attr('value');
-  var jsonData = {
+  var editData = {
     "channelName": channelName,
-    "description": description,
-    "userId": userId
+    "description": description
   };
 
   if (channelName && description) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
       type: "POST",
-      url: "/channels/".concat(channelId, "/update  "),
-      data: jsonData,
+      url: "/channels/".concat(channelId, "/update"),
+      data: editData,
       beforeSend: function beforeSend(xhr) {
         xhr.setRequestHeader('Csrf-Token', CSRF_TOKEN);
       },
@@ -174,7 +172,7 @@ editBtn.click(function () {
         console.log(data);
         jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-channelName').text(data.channelName);
         jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-description').text(data.description);
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-updatedAt').text(data.updatedAt); // $('#self-comment').text(data.comment);
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-updatedAt').text(data.updatedAt);
       }
     });
   }

@@ -34,7 +34,7 @@
 
             <div>
                 <label for="description">チャンネルの説明</label>
-                <textarea name="description" id="description" cols="30" rows="10"></textarea>
+                <input id="description" type="text" name="description">
             </div>
 
             <div>
@@ -45,7 +45,7 @@
 
     </div>
 
-    @if(accessToken.map(_.getUserId) == channel._1.createdBy) {
+    @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
         <div>
             <h3>チャンネルを編集する</h3>
             <div>
@@ -61,9 +61,17 @@
                 </div>
 
                 <div>
-                    <button id="edit-button" data-channel-id="@channel._1.channelId" data-user-id="@{accessToken.map(_.getUserId).getOrElse("null")}">チャンネルを編集する</button>
+                    <button id="edit-button" data-channel-id="@channel._1.channelId">チャンネルを編集する</button>
                 </div>
             </div>
+        </div>
+
+        <div>
+            <h3>チャンネルを削除する</h3>
+            @form(routes.ChannelController.delete(channel._1.channelId)) {
+                @CSRF.formField
+                <input type="submit" value="チャンネルを削除する">
+            }
         </div>
     }
 

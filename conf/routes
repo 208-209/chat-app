@@ -8,6 +8,9 @@ GET     /channels/:channelId/users/:userId/message     controllers.MessageContro
 
 POST    /channels/:channelId/update                 controllers.ChannelController.update(channelId: String)
 
+# delete
+POST    /channels/:channelId/delete           controllers.ChannelController.delete(channelId: String)
+
 
 # Twitter Login
 GET     /login                      controllers.OAuthController.login

@@ -77,33 +77,48 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
-
-    val channelName = request.body.asFormUrlEncoded.get("channelName").head.toString.slice(0, 255)
-    val description = request.body.asFormUrlEncoded.get("description").head.toString.slice(0, 255)
-    val createdBy = request.body.asFormUrlEncoded.get("userId").head.toLong
-    val updatedAt = java.time.OffsetDateTime.now()
-
-    println(request.body)
-    println(description)
-
-
-
     request.accessToken match {
-      case Some(accessToken) if accessToken.getUserId == createdBy =>
+      case Some(_) =>
+        channelFindOne(channelId) match {
+          case Some(channel) if channel.createdBy == request.accessToken.map(_.getUserId) && channel.channelId != "general" =>
+            val channelName = request.body.asFormUrlEncoded.get("channelName").head.toString.slice(0, 255)
+            val description = request.body.asFormUrlEncoded.get("description").head.toString.slice(0, 255)
+            val updatedAt = java.time.OffsetDateTime.now()
 
-        val channel = Channel(channelId, channelName, description, Some(createdBy), updatedAt)
+            val editChannel = Channel(
+              channelId = channel.channelId,
+              channelName = channelName,
+              description = description,
+              createdBy = request.accessToken.map(_.getUserId),
+              updatedAt = updatedAt
+            )
+            channelUpsert(editChannel)
 
-        ChannelRepository.upsert(channel)
+            val channelData = s"""{"channelName": "${channelName}", "description": "${description}", "updatedAt": "${updatedAt}"}"""
+            Ok(Json.parse(channelData))
 
+          case _ => NotFound("指定されたチャンネルがない、または、編集する権限がありません")
+        }
 
-
-        val result = s"""{"channelName": "${channelName}", "description": "${description}", "updatedAt": "${updatedAt}"}"""
-
-        Ok(Json.parse(result))
       case None => Redirect(routes.OAuthController.login())
     }
+  }
 
+  def delete(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
+    request.accessToken match {
+      case Some(_) =>
+        channelFindOne(channelId) match {
+          case Some(channel) if channel.createdBy == request.accessToken.map(_.getUserId) && channel.channelId != "general" =>
+
+            channelAndMessageDelete(channelId)
+            Redirect(routes.ChannelController.read("general"))
+
+          case _ => NotFound("指定されたチャンネルがない、または、削除する権限がありません")
+        }
+
+      case None => Redirect(routes.OAuthController.login())
+    }
   }
 
 }
