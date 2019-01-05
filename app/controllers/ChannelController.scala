@@ -1,11 +1,12 @@
 package controllers
 
 import javax.inject._
-import play.api.cache.SyncCacheApi
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.I18nSupport
+import play.api.cache.SyncCacheApi
 import play.api.mvc._
+import play.api.libs.json._
 import models._
 
 case class ChannelForm(channelName: String, description: String)
@@ -29,7 +30,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
-            Ok(views.html.channel(request.accessToken)(channelForm)(channel, channels, messages))
+
+            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, messages))
 
           case None => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -48,8 +51,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
+
+            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error)(channel, channels, messages)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages)),
               form => {
                 val channelId = java.util.UUID.randomUUID().toString
                 val channelName = form.channelName
@@ -68,9 +73,38 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
       case None => Redirect(routes.OAuthController.login())
     }
+  }
 
+  def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
+
+
+    val channelName = request.body.asFormUrlEncoded.get("channelName").head.toString.slice(0, 255)
+    val description = request.body.asFormUrlEncoded.get("description").head.toString.slice(0, 255)
+    val createdBy = request.body.asFormUrlEncoded.get("userId").head.toLong
+    val updatedAt = java.time.OffsetDateTime.now()
+
+    println(request.body)
+    println(description)
+
+
+
+    request.accessToken match {
+      case Some(accessToken) if accessToken.getUserId == createdBy =>
+
+        val channel = Channel(channelId, channelName, description, Some(createdBy), updatedAt)
+
+        ChannelRepository.upsert(channel)
+
+
+
+        val result = s"""{"channelName": "${channelName}", "description": "${description}", "updatedAt": "${updatedAt}"}"""
+
+        Ok(Json.parse(result))
+      case None => Redirect(routes.OAuthController.login())
+    }
 
 
   }
+
 }
 

@@ -62,3 +62,39 @@ connection.onmessage = event => {
     }
 };
 
+
+const editBtn = $('#edit-button');
+editBtn.click(() => {
+    const channelId = editBtn.data('channel-id');
+    const userId = editBtn.data('user-id');
+    const channelName = $('#channelName-form').val();
+    const description = $('#description-form').val();
+    const CSRF_TOKEN = $('input[name="csrfToken"]').attr('value');
+    const jsonData = {
+        "channelName": channelName,
+        "description": description,
+        "userId": userId
+    };
+
+    if (channelName && description) {
+        $.ajax({
+            type: "POST",
+            url: `/channels/${channelId}/update  `,
+            data: jsonData,
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Csrf-Token', CSRF_TOKEN);
+            },
+            success: function (data) {
+                console.log(data);
+
+                $('#channel-channelName').text(data.channelName);
+                $('#channel-description').text(data.description);
+                $('#channel-updatedAt').text(data.updatedAt);
+                // $('#self-comment').text(data.comment);
+            }
+        })
+    }
+
+
+});
+

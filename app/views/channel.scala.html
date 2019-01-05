@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -45,6 +45,28 @@
 
     </div>
 
+    @if(accessToken.map(_.getUserId) == channel._1.createdBy) {
+        <div>
+            <h3>チャンネルを編集する</h3>
+            <div>
+                @CSRF.formField
+                <div>
+                    <label for="channelName-form">名前</label>
+                    <input id="channelName-form" type="text" name="channelName" value="@editForm("channelName").value">
+                </div>
+
+                <div>
+                    <label for="description-form">チャンネルの説明</label>
+                    <input id="description-form" type="text" name="description" value="@editForm("description").value">
+                </div>
+
+                <div>
+                    <button id="edit-button" data-channel-id="@channel._1.channelId" data-user-id="@{accessToken.map(_.getUserId).getOrElse("null")}">チャンネルを編集する</button>
+                </div>
+            </div>
+        </div>
+    }
+
     <div>
         <h3>チャンネル一覧</h3>
         @for(channel <- channels) {
@@ -55,18 +77,18 @@
 
     <div>
         <h3>チャンネル詳細</h3>
-        <h4>@channel._1.channelName</h4>
+        <h4 id="channel-channelName">@channel._1.channelName</h4>
         <div>
             <p>製作者</p>
             <p>@channel._2.userName</p>
         </div>
         <div>
             <p>説明</p>
-            <p>@channel._1.description</p>
+            <p id="channel-description">@channel._1.description</p>
         </div>
         <div>
             <p>作成日</p>
-            <p>@channel._1.updatedAt</p>
+            <p id="channel-updatedAt">@channel._1.updatedAt</p>
         </div>
     </div>
 

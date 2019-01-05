@@ -37,9 +37,17 @@ object ChannelRepository {
     """.map { implicit rs =>
       (Channel(c.resultName), User(u.resultName))
     }.single().apply()
-
-
   }
+
+  def upsert(channel: Channel): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into channels (channelId, channelName, description, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.createdBy}, ${channel.updatedAt})
+       on conflict (channelId)
+       do update set channelName = ${channel.channelName}, description = ${channel.description}, updatedAt = ${channel.updatedAt}
+    """.update().apply()
+  }
+
 
 
 

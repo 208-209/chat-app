@@ -134,7 +134,6 @@ connection.onmessage = function (event) {
   console.log(event.data);
   var jsonData = JSON.parse(event.data);
   console.log(_typeof(jsonData));
-  console.log(jsonData);
   console.log(jsonData.msg);
   console.log(jsonData.members);
 
@@ -149,6 +148,37 @@ connection.onmessage = function (event) {
     $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
   }
 };
+
+var editBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-button');
+editBtn.click(function () {
+  var channelId = editBtn.data('channel-id');
+  var userId = editBtn.data('user-id');
+  var channelName = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channelName-form').val();
+  var description = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#description-form').val();
+  var CSRF_TOKEN = jquery__WEBPACK_IMPORTED_MODULE_0___default()('input[name="csrfToken"]').attr('value');
+  var jsonData = {
+    "channelName": channelName,
+    "description": description,
+    "userId": userId
+  };
+
+  if (channelName && description) {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+      type: "POST",
+      url: "/channels/".concat(channelId, "/update  "),
+      data: jsonData,
+      beforeSend: function beforeSend(xhr) {
+        xhr.setRequestHeader('Csrf-Token', CSRF_TOKEN);
+      },
+      success: function success(data) {
+        console.log(data);
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-channelName').text(data.channelName);
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-description').text(data.description);
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-updatedAt').text(data.updatedAt); // $('#self-comment').text(data.comment);
+      }
+    });
+  }
+});
 
 /***/ }),
 /* 1 */

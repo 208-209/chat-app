@@ -6,6 +6,8 @@ POST    /channels                   controllers.ChannelController.create(channel
 
 GET     /channels/:channelId/users/:userId/message     controllers.MessageController.socket(channelId: String, userId: Long)
 
+POST    /channels/:channelId/update                 controllers.ChannelController.update(channelId: String)
+
 
 # Twitter Login
 GET     /login                      controllers.OAuthController.login
