@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './app/views/index.js',
+    entry: ['./app/views/index.js', './app/views/ajax.js', './app/views/webSocket.js'],
     mode: 'none',
     output: {
         filename: 'main.js',

@@ -86,68 +86,30 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(1);
+__webpack_require__(2);
+module.exports = __webpack_require__(4);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+ // node_modules/.bin/webpack --config conf/webpack.config.js
+
+/***/ }),
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
- // node_modules/.bin/webpack --config conf/webpack.config.js
-
-var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
-var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
-var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
-var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
-var channelId = $btn.data('channel-id');
-var userId = $btn.data('user-id');
-console.log("channelId: ".concat(channelId, ", userId: ").concat(userId));
-var connection = new WebSocket("ws://localhost:9000/channels/".concat(channelId, "/users/").concat(userId, "/message"));
-$messages.before("<p>foo</p>");
-$btn.prop("disabled", true);
-
-connection.onopen = function () {
-  $btn.prop("disabled", false);
-  $btn.click(function () {
-    var text = $meg.val();
-    var msg = {
-      "message": text
-    };
-    console.log(text);
-    $meg.val('');
-    connection.send(JSON.stringify(msg));
-  });
-};
-
-connection.onclose = function () {
-  $btn.prop("disabled", true);
-};
-
-connection.onerror = function (error) {
-  console.log('WebSocket Error ', error);
-};
-
-connection.onmessage = function (event) {
-  console.log(event.data);
-  var jsonData = JSON.parse(event.data);
-  console.log(_typeof(jsonData));
-  console.log(jsonData.msg);
-  console.log(jsonData.members);
-
-  if (jsonData.members) {
-    var membersHtml = jsonData.members.split(',').map(function (m) {
-      return "<p>" + m + "</p>";
-    }).join('\n');
-    $members.html("<div>" + membersHtml + "</div>");
-  }
-
-  if (jsonData.message) {
-    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
-  }
-};
 
 var editBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-button');
 editBtn.click(function () {
@@ -179,7 +141,7 @@ editBtn.click(function () {
 });
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10548,6 +10510,70 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+
+var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
+var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
+var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
+var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
+var channelId = $btn.data('channel-id');
+var userId = $btn.data('user-id');
+console.log("channelId: ".concat(channelId, ", userId: ").concat(userId));
+var connection = new WebSocket("ws://localhost:9000/channels/".concat(channelId, "/users/").concat(userId, "/message"));
+$messages.before("<p>foo</p>");
+$btn.prop("disabled", true);
+
+connection.onopen = function () {
+  $btn.prop("disabled", false);
+  $btn.click(function () {
+    var text = $meg.val();
+    var msg = {
+      "message": text
+    };
+    console.log(text);
+    $meg.val('');
+    connection.send(JSON.stringify(msg));
+  });
+};
+
+connection.onclose = function () {
+  $btn.prop("disabled", true);
+};
+
+connection.onerror = function (error) {
+  console.log('WebSocket Error ', error);
+};
+
+connection.onmessage = function (event) {
+  console.log(event.data);
+  var jsonData = JSON.parse(event.data);
+  console.log(_typeof(jsonData));
+  console.log(jsonData.msg);
+  console.log(jsonData.members);
+
+  if (jsonData.members) {
+    var membersHtml = jsonData.members.split(',').map(function (m) {
+      return "<p>" + m + "</p>";
+    }).join('\n');
+    $members.html("<div>" + membersHtml + "</div>");
+  }
+
+  if (jsonData.message) {
+    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
+  }
+};
 
 /***/ })
 /******/ ]);
