@@ -51,8 +51,8 @@ connection.onmessage = event => {
     console.log(jsonData.members);
 
     if (jsonData.members) {
-        const membersHtml = jsonData.members.split(',').map(m => "<p>" + m + "</p>").join('\n');
-        $members.html("<div>" + membersHtml + "</div>");
+        const membersHtml = jsonData.members.split(',').map(member => `<li class="list-group-item">${member}</li>`).join('\n');
+        $members.html(membersHtml);
     }
 
     if (jsonData.message) {

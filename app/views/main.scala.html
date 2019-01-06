@@ -9,15 +9,29 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-        @if(accessToken.isEmpty) {
-            <a href="@routes.OAuthController.login">Twitterでログイン</a>
-        } else {
-            <p>@{accessToken.map(_.getScreenName).getOrElse("null")} でログイン中</p>
-            <a href="@routes.OAuthController.logout">ログアウト</a>
-        }
-        @content
+
+
+        <div class="container-fluid">
+
+            <nav class="navbar navbar-dark bg-dark fixed-top">
+                <a class="navbar-brand" href="@routes.ChannelController.read("general")">chat-app</a>
+                @if(accessToken.isEmpty) {
+                    <a href="@routes.OAuthController.login" class="btn btn-outline-success my-2 my-sm-0" role="button">Twitter でログイン</a>
+                } else {
+                    <span class="navbar-text">@title</span>
+                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{accessToken.map(_.getScreenName).getOrElse("null")} をログアウト</a>
+                }
+            </nav>
+
+            <div class="row">
+                @content
+            </div>
+
+        </div>
 
         <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
     </body>
