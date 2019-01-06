@@ -2,10 +2,88 @@
 
 @import helper._
 
-@main("chat-app")(accessToken) {
-    <h1>@channel._1.channelName</h1>
+@main(channel._1.channelName)(accessToken) {
 
-    <div>
+    <div class="col-md-3">
+
+        <div class="card">
+            <div class="card-header">
+                <i class="far fa-plus-square float-right"></i>
+                <span>チャンネル</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                @for(c <- channels) {
+                    @if(channel._1.channelId == c.channelId) {
+                        <li class="list-group-item">@{c.channelName}</li>
+                    } else {
+                        <li class="list-group-item"><a href="@routes.ChannelController.read(c.channelId)">@{c.channelName}</a></li>
+                    }
+                }
+            </ul>
+        </div>
+
+
+        <div>
+            <h4>チャンネルの作成</h4>
+            @form(routes.ChannelController.create(channel._1.channelId)) {
+                @CSRF.formField
+                <div>
+                    <label for="channelName">名前</label>
+                    <input type="text" id="channelName" name="channelName">
+
+                </div>
+
+                <div>
+                    <label for="description">チャンネルの説明</label>
+                    <input id="description" type="text" name="description">
+                </div>
+
+                <div>
+                    <input type="submit" value="チャンネルをつくる">
+                </div>
+
+            }
+
+        </div>
+
+
+        <div>
+            <h4>チャンネルの編集と削除</h4>
+            @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
+                <div>
+                    <h4>チャンネルを編集する</h4>
+                    <div>
+                        @CSRF.formField
+                        <div>
+                            <label for="channelName-form">名前</label>
+                            <input id="channelName-form" type="text" name="channelName" value="@editForm("channelName").value">
+                        </div>
+
+                        <div>
+                            <label for="description-form">チャンネルの説明</label>
+                            <input id="description-form" type="text" name="description" value="@editForm("description").value">
+                        </div>
+
+                        <div>
+                            <button id="edit-button" data-channel-id="@channel._1.channelId">チャンネルを編集する</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>チャンネルを削除する</h4>
+                    @form(routes.ChannelController.delete(channel._1.channelId)) {
+                        @CSRF.formField
+                        <input type="submit" value="チャンネルを削除する">
+                        }
+                </div>
+            }
+
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
         <div id="messages">
             @for(message <- messages) {
                 <div>
@@ -23,88 +101,47 @@
         </div>
     </div>
 
-    <div>
-        <h3>チャンネルを作成する</h3>
-        @form(routes.ChannelController.create(channel._1.channelId)) {
-            @CSRF.formField
-            <div>
-                <label for="channelName">名前</label>
-                <input type="text" id="channelName" name="channelName">
-            </div>
+    <div class="col-md-3">
 
-            <div>
-                <label for="description">チャンネルの説明</label>
-                <input id="description" type="text" name="description">
+        <div class="card">
+            <div class="card-header">
+                @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
+                    <i class="fas fa-edit float-right"></i>
+                }
+                <span id="channel-channelName">@channel._1.channelName</span>
             </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <p class="card-title">製作者</p>
+                    <p class="card-text">@channel._2.userName</p>
+                </li>
+                <li class="list-group-item">
+                    <p class="card-title">説明</p>
+                    <p id="channel-description" class="card-text">@channel._1.description</p>
+                </li>
+                <li class="list-group-item">
+                    <p class="card-title">更新日</p>
+                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt</p>
+                </li>
+            </ul>
+        </div>
 
-            <div>
-                <input type="submit" value="チャンネルをつくる">
+        <div class="card">
+            <div class="card-header">
+                ログインメンバー
             </div>
-
-        }
+            <ul id="members" class="list-group list-group-flush">
+                <li>hoge</li>
+            </ul>
+        </div>
 
     </div>
 
-    @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-        <div>
-            <h3>チャンネルを編集する</h3>
-            <div>
-                @CSRF.formField
-                <div>
-                    <label for="channelName-form">名前</label>
-                    <input id="channelName-form" type="text" name="channelName" value="@editForm("channelName").value">
-                </div>
 
-                <div>
-                    <label for="description-form">チャンネルの説明</label>
-                    <input id="description-form" type="text" name="description" value="@editForm("description").value">
-                </div>
 
-                <div>
-                    <button id="edit-button" data-channel-id="@channel._1.channelId">チャンネルを編集する</button>
-                </div>
-            </div>
-        </div>
 
-        <div>
-            <h3>チャンネルを削除する</h3>
-            @form(routes.ChannelController.delete(channel._1.channelId)) {
-                @CSRF.formField
-                <input type="submit" value="チャンネルを削除する">
-            }
-        </div>
-    }
 
-    <div>
-        <h3>チャンネル一覧</h3>
-        @for(channel <- channels) {
-            <p><a href="@routes.ChannelController.read(channel.channelId)">@{channel.channelName}</a></p>
-        }
 
-    </div>
 
-    <div>
-        <h3>チャンネル詳細</h3>
-        <h4 id="channel-channelName">@channel._1.channelName</h4>
-        <div>
-            <p>製作者</p>
-            <p>@channel._2.userName</p>
-        </div>
-        <div>
-            <p>説明</p>
-            <p id="channel-description">@channel._1.description</p>
-        </div>
-        <div>
-            <p>作成日</p>
-            <p id="channel-updatedAt">@channel._1.updatedAt</p>
-        </div>
-    </div>
-
-    <div>
-        <h3>ログインメンバー</h3>
-        <div id="members">
-            <p>hoge</p>
-        </div>
-    </div>
 
 }
