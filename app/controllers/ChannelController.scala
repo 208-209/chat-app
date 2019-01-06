@@ -16,8 +16,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   val channelForm = Form(
     mapping(
-      "channelName" -> nonEmptyText,
-      "description" -> text
+      "channelName" -> nonEmptyText(minLength = 3, maxLength = 20),
+      "description" -> text(minLength = 3, maxLength = 255)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
 
@@ -26,7 +26,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(_) =>
 
-        ChannelRepository.findOne(channelId) match {
+        channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
@@ -47,7 +47,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(_) =>
 
-        ChannelRepository.findOne(channelId) match {
+        channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
@@ -79,23 +79,29 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
     request.accessToken match {
       case Some(_) =>
-        channelFindOne(channelId) match {
-          case Some(channel) if channel.createdBy == request.accessToken.map(_.getUserId) && channel.channelId != "general" =>
-            val channelName = request.body.asFormUrlEncoded.get("channelName").head.toString.slice(0, 255)
-            val description = request.body.asFormUrlEncoded.get("description").head.toString.slice(0, 255)
-            val updatedAt = java.time.OffsetDateTime.now()
+        channelAndUserFindOne(channelId) match {
+          case Some(channel) if channel._1.createdBy == request.accessToken.map(_.getUserId) && channel._1.channelId != "general" =>
 
-            val editChannel = Channel(
-              channelId = channel.channelId,
-              channelName = channelName,
-              description = description,
-              createdBy = request.accessToken.map(_.getUserId),
-              updatedAt = updatedAt
+            val channels = ChannelRepository.findAll()
+            val messages = MessageRepository.findAll(channelId)
+            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+
+
+            channelForm.bindFromRequest.fold(
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages)),
+              form => {
+                val editChannel = Channel(
+                  channelId = channel._1.channelId,
+                  channelName = form.channelName,
+                  description = form.description,
+                  createdBy = request.accessToken.map(_.getUserId),
+                  updatedAt = java.time.OffsetDateTime.now()
+                )
+
+                channelUpsert(editChannel)
+                Redirect(routes.ChannelController.read(channelId))
+              }
             )
-            channelUpsert(editChannel)
-
-            val channelData = s"""{"channelName": "${channelName}", "description": "${description}", "updatedAt": "${updatedAt}"}"""
-            Ok(Json.parse(channelData))
 
           case _ => NotFound("指定されたチャンネルがない、または、編集する権限がありません")
         }
