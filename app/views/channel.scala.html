@@ -3,12 +3,12 @@
 @import helper._
 
 @main(channel._1.channelName)(accessToken) {
-
+    <!-- Left -->
     <div class="col-md-3">
 
         <div class="card">
             <div class="card-header">
-                <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal"></i>
+                <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
                 <span>チャンネル</span>
             </div>
             <ul class="list-group list-group-flush">
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-
+    <!-- Center -->
     <div class="col-md-6">
         <div id="messages">
             @for(message <- messages) {
@@ -42,12 +42,13 @@
         </div>
     </div>
 
+    <!-- Right -->
     <div class="col-md-3">
 
         <div class="card">
             <div class="card-header">
                 @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-                    <i class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal"></i>
+                    <i class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
                 }
                 <span id="channel-channelName">@channel._1.channelName</span>
             </div>
@@ -83,33 +84,33 @@
     <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
 
+                <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">チャンネルの新規作成</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body">
                 @form(routes.ChannelController.create(channel._1.channelId)) {
                     @CSRF.formField
-                    <div>
-                        <label for="channelName">名前</label>
-                        <input type="text" id="channelName" name="channelName">
-
+                    <div class="form-group">
+                        <label for="entry-channelName">名前</label>
+                        <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前を入力してください">
+                        <small id="entry-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
                     </div>
 
-                    <div>
-                        <label for="description">チャンネルの説明</label>
-                        <input id="description" type="text" name="description">
+                    <div class="form-group">
+                        <label for="entry-description">チャンネルの説明</label>
+                        <textarea class="form-control" id="entry-description" rows="3" name="description"></textarea>
+                        <small id="entry-description-help" class="form-text text-muted">エラー文を表示する場所</small>
                     </div>
 
-                    <div>
-                        <input type="submit" class="btn btn-primary" value="チャンネルをつくる">
-                    </div>
-
+                    <input type="submit" class="btn btn-primary" value="チャンネルをつくる">
                 }
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
@@ -129,28 +130,29 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
-                        @CSRF.formField
-                        <div>
-                            <label for="channelName-form">名前</label>
-                            <input id="channelName-form" type="text" name="channelName" value="@editForm("channelName").value">
-                        </div>
-
-                        <div>
-                            <label for="description-form">チャンネルの説明</label>
-                            <input id="description-form" type="text" name="description" value="@editForm("description").value">
-                        </div>
-
-                        <div>
-                            <button id="edit-button" data-channel-id="@channel._1.channelId">チャンネルを編集する</button>
-                        </div>
-
-                        @form(routes.ChannelController.delete(channel._1.channelId)) {
+                        @form(routes.ChannelController.update(channel._1.channelId)) {
                             @CSRF.formField
-                            <input type="submit" value="チャンネルを削除する">
+                            <div class="form-group">
+                                <label for="edit-channelName">名前</label>
+                                <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
+                                <small id="edit-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-description">チャンネルの説明</label>
+                                <textarea class="form-control" id="edit-description" rows="3" name="description">@editForm("description").value</textarea>
+                                <small id="edit-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            </div>
+
+                            <input type="submit" class="btn btn-primary" value="チャンネルを編集する">
                         }
+
                     </div>
                     <div class="modal-footer">
+                        @form(routes.ChannelController.delete(channel._1.channelId)) {
+                            @CSRF.formField
+                            <button class="btn btn-danger">チャンネルを削除する</button>
+                        }
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>

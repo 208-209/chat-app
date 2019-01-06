@@ -2,6 +2,7 @@
 
 import $ from 'jquery';
 
+/*
 const editBtn = $('#edit-button');
 editBtn.click(() => {
     const channelId = editBtn.data('channel-id');
@@ -31,3 +32,4 @@ editBtn.click(() => {
         })
     }
 });
+*/

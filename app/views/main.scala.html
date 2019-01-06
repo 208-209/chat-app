@@ -22,7 +22,6 @@
                 @if(accessToken.isEmpty) {
                     <a href="@routes.OAuthController.login" class="btn btn-outline-success my-2 my-sm-0" role="button">Twitter でログイン</a>
                 } else {
-                    <span class="navbar-text">@title</span>
                     <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{accessToken.map(_.getScreenName).getOrElse("null")} をログアウト</a>
                 }
             </nav>

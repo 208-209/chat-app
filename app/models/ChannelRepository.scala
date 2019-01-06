@@ -27,17 +27,6 @@ object ChannelRepository {
     }.list().apply()
   }
 
-  def findOne(channelId: String): Option[(Channel, User)] = DB readOnly { implicit session =>
-    val (c, u) = (Channel.syntax("c"), User.syntax("u"))
-    sql"""
-       select ${c.result.*}, ${u.result.*}
-       from ${Channel.as(c)}
-       inner join ${User.as(u)} on ${c.createdBy} = ${u.userId}
-       where channelId = ${channelId}
-    """.map { implicit rs =>
-      (Channel(c.resultName), User(u.resultName))
-    }.single().apply()
-  }
 
 
 

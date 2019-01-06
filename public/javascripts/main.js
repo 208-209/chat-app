@@ -109,6 +109,9 @@ __webpack_require__.r(__webpack_exports__);
 var global = Function('return this;')();
 global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
 
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-toggle="tooltip"]').tooltip();
+});
 
 /***/ }),
 /* 2 */
@@ -17353,34 +17356,37 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var editBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-button');
-editBtn.click(function () {
-  var channelId = editBtn.data('channel-id');
-  var channelName = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channelName-form').val();
-  var description = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#description-form').val();
-  var CSRF_TOKEN = jquery__WEBPACK_IMPORTED_MODULE_0___default()('input[name="csrfToken"]').attr('value');
-  var editData = {
-    "channelName": channelName,
-    "description": description
-  };
+/*
+const editBtn = $('#edit-button');
+editBtn.click(() => {
+    const channelId = editBtn.data('channel-id');
+    const channelName = $('#channelName-form').val();
+    const description = $('#description-form').val();
+    const CSRF_TOKEN = $('input[name="csrfToken"]').attr('value');
+    const editData = {
+        "channelName": channelName,
+        "description": description
+    };
 
-  if (channelName && description) {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
-      type: "POST",
-      url: "/channels/".concat(channelId, "/update"),
-      data: editData,
-      beforeSend: function beforeSend(xhr) {
-        xhr.setRequestHeader('Csrf-Token', CSRF_TOKEN);
-      },
-      success: function success(data) {
-        console.log(data);
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-channelName').text(data.channelName);
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-description').text(data.description);
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#channel-updatedAt').text(data.updatedAt);
-      }
-    });
-  }
+    if (channelName && description) {
+        $.ajax({
+            type: "POST",
+            url: `/channels/${channelId}/update`,
+            data: editData,
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Csrf-Token', CSRF_TOKEN);
+            },
+            success: function (data) {
+                console.log(data);
+
+                $('#channel-channelName').text(data.channelName);
+                $('#channel-description').text(data.description);
+                $('#channel-updatedAt').text(data.updatedAt);
+            }
+        })
+    }
 });
+*/
 
 /***/ }),
 /* 7 */

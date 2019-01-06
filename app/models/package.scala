@@ -18,6 +18,19 @@ package object models {
     }.single().apply()
   }
 
+  def channelAndUserFindOne(channelId: String): Option[(Channel, User)] = DB readOnly { implicit session =>
+    val (c, u) = (Channel.syntax("c"), User.syntax("u"))
+    sql"""
+       select ${c.result.*}, ${u.result.*}
+       from ${Channel.as(c)}
+       inner join ${User.as(u)} on ${c.createdBy} = ${u.userId}
+       where channelId = ${channelId}
+    """.map { implicit rs =>
+      (Channel(c.resultName), User(u.resultName))
+    }.single().apply()
+  }
+
+
   def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
        insert into channels (channelId, channelName, description, createdBy, updatedAt)
