@@ -22,7 +22,8 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-config"           % "3.3.1",
   "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.6.0-scalikejdbc-3.3"
 )
-libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
+// libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
+libraryDependencies += "org.postgresql" % "postgresql" % "9.4-1201-jdbc41"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
