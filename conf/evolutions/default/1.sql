@@ -25,7 +25,7 @@ create index channelId_messages on messages (channelId);
 create index createdBy_messages on messages (createdBy);
 
 insert into channels (channelId, channelName, description, createdBy, updatedAt)
-values ('general', 'general チャンネル', 'チャンネルの説明を書く場所', 937000074978107392, '2019-01-03T15:30:30.412+09:00');
+values ('general', 'general', 'チャンネルの説明を書く場所', 937000074978107392, '2019-01-03T15:30:30.412+09:00');
 
 # --- !Downs
 drop table users;
