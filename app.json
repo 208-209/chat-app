@@ -1,0 +1,7 @@
+{
+  "name": "chat-app",
+  "description": "chat-app",
+  "logo": "",
+  "keywords": ["node"],
+  "image": "heroku/nodejs"
+}
