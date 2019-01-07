@@ -9,4 +9,4 @@ import bootstrap from 'bootstrap';
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
-})
+});
