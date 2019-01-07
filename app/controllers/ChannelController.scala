@@ -8,6 +8,7 @@ import play.api.cache.SyncCacheApi
 import play.api.mvc._
 import play.api.libs.json._
 import models._
+import play.Play
 
 case class ChannelForm(channelName: String, description: String)
 
@@ -22,6 +23,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   )
 
   def read(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
+
+    println("url:" + sys.env.getOrElse("HEROKU_URL", "/localhost:9000"))
+    val webSocketUrl = routes.ChannelController.read(channelId).webSocketURL()
+    println(webSocketUrl)
 
     request.accessToken match {
       case Some(_) =>

@@ -17407,8 +17407,9 @@ var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
 var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
 var channelId = $btn.data('channel-id');
 var userId = $btn.data('user-id');
-console.log("channelId: ".concat(channelId, ", userId: ").concat(userId));
-var connection = new WebSocket("ws://localhost:9000/channels/".concat(channelId, "/users/").concat(userId, "/message"));
+var webSocketUrl = $btn.data('url');
+console.log("channelId: ".concat(channelId, ", userId: ").concat(userId, ", url: ").concat(webSocketUrl));
+var connection = new WebSocket("".concat(webSocketUrl, "/users/").concat(userId, "/message"));
 $messages.before("<p>foo</p>");
 $btn.prop("disabled", true);
 

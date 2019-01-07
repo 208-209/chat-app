@@ -10,12 +10,12 @@ const $btn = $("#btn");
 
 const channelId = $btn.data('channel-id');
 const userId = $btn.data('user-id');
-const url = $btn.data('url');
+const webSocketUrl = $btn.data('url');
 
-console.log(`channelId: ${channelId}, userId: ${userId}, url: ${url}`);
+console.log(`channelId: ${channelId}, userId: ${userId}, url: ${webSocketUrl}`);
 
 
-const connection = new WebSocket(`ws://${url}/channels/${channelId}/users/${userId}/message`);
+const connection = new WebSocket(`${webSocketUrl}/users/${userId}/message`);
 
 $messages.before("<p>foo</p>");
 
