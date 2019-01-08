@@ -25,6 +25,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
   def sameOriginCheck(request: RequestHeader): Boolean = {
+    println("request.headers.get(\"Origin\") : " + request.headers.get("Origin")) // TODO
+
     request.headers.get("Origin") match {
       case Some(originValue) if originMatches(originValue) => true
       case _ => false
@@ -33,26 +35,25 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   def originMatches(origin: String): Boolean = {
     val url = new URL(origin)
-    println("url : " + url)
-    println("url host : " + url.getHost)
-    println("port : " + sys.env.getOrElse("PORT", ""))
+
+    println("url : " + url) // TODO
+    println("host : " + url.getHost) // TODO
+    println("port : " + url.getPort) // TODO
+    println("sys.env.getOrElse(\"PORT\", \"\") : " + sys.env.getOrElse("PORT", "")) // TODO
 
     sys.env.get("HEROKU_URL") match {
-      case Some(_) if url.getHost == "play-chat-app.herokuapp.com" && url.getPort == sys.env.getOrElse("PORT", "") => true
+      case Some(_) if url.getHost == "play-chat-app.herokuapp.com" => true
       case None if url.getHost == "localhost" && url.getPort == 9000 => true
       case _ => false
     }
   }
 
   def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
-
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
 
-
     Future.successful(accessToken match {
       case Some(token) if token.getUserId == userId && sameOriginCheck(request) =>
-
         Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
     })
@@ -70,8 +71,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       case None =>
         val room = new WaitingRoom()
         roomMap = roomMap + (channelId -> room)
-        println(room)
-        println(roomMap)
+        println(room) // TODO
+        println(roomMap) // TODO
         room
     }
 
@@ -84,8 +85,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
         MessageRepository.insert(Message(messageId, message, channelId, Some(userId), updatedAt))
 
-        println(msg("message").getClass)
-        println((msg \ "message").as[String].getClass)
+        println(msg("message").getClass) // TODO
+        println((msg \ "message").as[String].getClass) // TODO
 
         val msgJson = s"""{"messageId": "${messageId}", "message": "${message}", "updatedAt": "${updatedAt}"}"""
 
@@ -105,7 +106,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         out ! Json.parse(members)
       }
 
-
     }
 
     override def postStop(): Unit = {
@@ -118,9 +118,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       }
 
     }
-
-
-
 
   }
 
