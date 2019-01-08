@@ -35,9 +35,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     val url = new URL(origin)
     println("url : " + url)
     println("url host : " + url.getHost)
+    println("port : " + sys.env.getOrElse("PORT", ""))
 
     sys.env.get("HEROKU_URL") match {
-      case Some(_) => true
+      case Some(_) if url.getHost == "play-chat-app.herokuapp.com" && url.getPort == sys.env.getOrElse("PORT", "") => true
       case None if url.getHost == "localhost" && url.getPort == 9000 => true
       case _ => false
     }
