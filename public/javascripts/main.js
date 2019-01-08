@@ -17401,57 +17401,58 @@ __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
-var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
-var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
-var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
 var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
-var channelId = $btn.data('channel-id');
-var userId = $btn.data('user-id');
 var webSocketUrl = $btn.data('url');
-console.log("channelId: ".concat(channelId, ", userId: ").concat(userId, ", url: ").concat(webSocketUrl));
-var connection = new WebSocket("".concat(webSocketUrl, "/users/").concat(userId, "/message"));
-$messages.before("<p>foo</p>");
-$btn.prop("disabled", true);
+console.log("webSocketUrl: ".concat(webSocketUrl));
 
-connection.onopen = function () {
-  $btn.prop("disabled", false);
-  $btn.click(function () {
-    var text = $meg.val();
-    var msg = {
-      "message": text
-    };
-    console.log(text);
-    $meg.val('');
-    connection.send(JSON.stringify(msg));
-  });
-};
-
-connection.onclose = function () {
+if (webSocketUrl) {
+  var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
+  var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
+  var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
+  var connection = new WebSocket(webSocketUrl);
+  $messages.before("<p>foo</p>");
   $btn.prop("disabled", true);
-};
 
-connection.onerror = function (error) {
-  console.log('WebSocket Error ', error);
-};
+  connection.onopen = function () {
+    $btn.prop("disabled", false);
+    $btn.click(function () {
+      var text = $meg.val();
+      var msg = {
+        "message": text
+      };
+      console.log(text);
+      $meg.val('');
+      connection.send(JSON.stringify(msg));
+    });
+  };
 
-connection.onmessage = function (event) {
-  console.log(event.data);
-  var jsonData = JSON.parse(event.data);
-  console.log(_typeof(jsonData));
-  console.log(jsonData.msg);
-  console.log(jsonData.members);
+  connection.onclose = function () {
+    $btn.prop("disabled", true);
+  };
 
-  if (jsonData.members) {
-    var membersHtml = jsonData.members.split(',').map(function (member) {
-      return "<li class=\"list-group-item\">".concat(member, "</li>");
-    }).join('\n');
-    $members.html(membersHtml);
-  }
+  connection.onerror = function (error) {
+    console.log('WebSocket Error ', error);
+  };
 
-  if (jsonData.message) {
-    $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
-  }
-};
+  connection.onmessage = function (event) {
+    console.log(event.data);
+    var jsonData = JSON.parse(event.data);
+    console.log(_typeof(jsonData));
+    console.log(jsonData.msg);
+    console.log(jsonData.members);
+
+    if (jsonData.members) {
+      var membersHtml = jsonData.members.split(',').map(function (member) {
+        return "<li class=\"list-group-item\">".concat(member, "</li>");
+      }).join('\n');
+      $members.html(membersHtml);
+    }
+
+    if (jsonData.message) {
+      $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
+    }
+  };
+}
 
 /***/ })
 /******/ ]);

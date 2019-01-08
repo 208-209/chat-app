@@ -42,7 +42,7 @@
         </div>
         <div>
             <input type="text" id="meg" type="text">
-            <button id="btn" class="btn btn-primary" data-channel-id="@channel._1.channelId" data-user-id="@{accessToken.map(_.getUserId).getOrElse("null")}" data-url="@routes.ChannelController.read(channel._1.channelId).webSocketURL()">送信</button>
+            <button id="btn" class="btn btn-primary" data-url="@routes.MessageController.socket(channel._1.channelId, accessToken.map(_.getUserId).get).webSocketURL()">送信</button>
         </div>
     </div>
 
