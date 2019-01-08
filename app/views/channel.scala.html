@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -42,7 +42,7 @@
         </div>
         <div>
             <input type="text" id="meg" type="text">
-            <button id="btn" class="btn btn-primary" data-url="@routes.MessageController.socket(channel._1.channelId, accessToken.map(_.getUserId).get).webSocketURL()">送信</button>
+            <button id="btn" class="btn btn-primary" data-url="@webSocketUrl">送信</button>
         </div>
     </div>
 

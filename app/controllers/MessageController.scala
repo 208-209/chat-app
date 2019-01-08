@@ -95,6 +95,14 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     }
 
+    /*
+    def sameOriginCheck(implicit rh: RequestHeader): Boolean = {
+      rh.headers.get("Origin") match {
+        case Some(or)
+      }
+    }
+    */
+
   }
 
 }

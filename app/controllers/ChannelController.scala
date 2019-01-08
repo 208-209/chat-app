@@ -24,20 +24,25 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   def read(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
-    println("url:" + sys.env.getOrElse("HEROKU_URL", "/localhost:9000"))
-    val webSocketUrl = routes.ChannelController.read(channelId).webSocketURL()
-    println(webSocketUrl)
+
+
 
     request.accessToken match {
-      case Some(_) =>
+      case Some(accessToken) =>
 
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
-
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
-            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, messages))
+            val webSocketUrl =
+              sys.env.get("HEROKU_URL") match {
+                case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
+                case None => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL()
+              }
+            println(webSocketUrl)
+
+            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, messages, webSocketUrl))
 
           case None => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -50,16 +55,22 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   def create(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
     request.accessToken match {
-      case Some(_) =>
+      case Some(accessToken) =>
 
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
-
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            val webSocketUrl =
+              sys.env.get("HEROKU_URL") match {
+                case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
+                case None => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL()
+              }
+
+
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages, webSocketUrl)),
               form => {
                 val channelId = java.util.UUID.randomUUID().toString
                 val channelName = form.channelName
@@ -83,17 +94,22 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
     request.accessToken match {
-      case Some(_) =>
+      case Some(accessToken) =>
         channelAndUserFindOne(channelId) match {
           case Some(channel) if channel._1.createdBy == request.accessToken.map(_.getUserId) && channel._1.channelId != "general" =>
 
             val channels = ChannelRepository.findAll()
             val messages = MessageRepository.findAll(channelId)
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            val webSocketUrl =
+              sys.env.get("HEROKU_URL") match {
+                case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
+                case None => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL()
+              }
 
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages, webSocketUrl)),
               form => {
                 val editChannel = Channel(
                   channelId = channel._1.channelId,
