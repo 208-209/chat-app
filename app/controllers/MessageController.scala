@@ -1,5 +1,7 @@
 package controllers
 
+import java.net.URL
+
 import play.api.mvc._
 import play.api.libs.streams.ActorFlow
 import play.api.cache.SyncCacheApi
@@ -22,13 +24,34 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
+  def sameOriginCheck(request: RequestHeader): Boolean = {
+    request.headers.get("Origin") match {
+      case Some(originValue) if originMatches(originValue) => true
+      case _ => false
+    }
+  }
+
+  def originMatches(origin: String): Boolean = {
+    val url = new URL(origin)
+    println("url : " + url)
+    println("url host : " + url.getHost)
+
+    sys.env.get("HEROKU_URL") match {
+      case Some(_) => true
+      case None if url.getHost == "localhost" && url.getPort == 9000 => true
+      case _ => false
+    }
+  }
+
   def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
 
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
 
+
     Future.successful(accessToken match {
-      case Some(token) if token.getUserId == userId =>
+      case Some(token) if token.getUserId == userId && sameOriginCheck(request) =>
+
         Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
     })
@@ -95,13 +118,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     }
 
-    /*
-    def sameOriginCheck(implicit rh: RequestHeader): Boolean = {
-      rh.headers.get("Origin") match {
-        case Some(or)
-      }
-    }
-    */
+
+
 
   }
 
