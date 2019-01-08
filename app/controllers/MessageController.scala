@@ -24,26 +24,21 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
-  def sameOriginCheck(request: RequestHeader): Boolean = {
-    println("request.headers.get(\"Origin\") : " + request.headers.get("Origin")) // TODO
-
+  def isSameOrigin(request: RequestHeader): Boolean = {
     request.headers.get("Origin") match {
-      case Some(originValue) if originMatches(originValue) => true
-      case _ => false
-    }
-  }
+      case Some(originValue) =>
+        val url = new URL(originValue)
 
-  def originMatches(origin: String): Boolean = {
-    val url = new URL(origin)
+        println("url : " + url)
+        println("url host : " + url.getHost)
+        println("url.toString : " + url.toString)
+        println("port : " + sys.env.getOrElse("PORT", ""))
 
-    println("url : " + url) // TODO
-    println("host : " + url.getHost) // TODO
-    println("port : " + url.getPort) // TODO
-    println("sys.env.getOrElse(\"PORT\", \"\") : " + sys.env.getOrElse("PORT", "")) // TODO
-
-    sys.env.get("HEROKU_URL") match {
-      case Some(_) if url.getHost == "play-chat-app.herokuapp.com" => true
-      case None if url.getHost == "localhost" && url.getPort == 9000 => true
+        sys.env.get("HEROKU_URL") match {
+          case Some(_) if url.toString == "https://play-chat-app.herokuapp.com" => true
+          case None if url.toString == "http://localhost:9000" => true
+          case _ => false
+        }
       case _ => false
     }
   }
@@ -53,7 +48,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
 
     Future.successful(accessToken match {
-      case Some(token) if token.getUserId == userId && sameOriginCheck(request) =>
+      case Some(token) if token.getUserId == userId && isSameOrigin(request) =>
         Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
     })

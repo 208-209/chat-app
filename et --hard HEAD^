@@ -1,0 +1,275 @@
+[33mcommit cf9e523fcecae8f963bd9118348b1f9bef71d9fb[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 20:14:18 2019 +0900
+
+    同一生成元ポリシーのチェックを実装
+
+[33mcommit 3c3af2956abaf9e753309123ca04da56f0a7cc1d[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 19:22:44 2019 +0900
+
+    portチェックの実装
+
+[33mcommit bf02152dcc03380c06ee81361ac8a4dc378ac5de[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 19:16:13 2019 +0900
+
+    host チェックの実装
+
+[33mcommit 782f3ba3a5f036cbf0f9d0e4d5df1509f1cad8d9[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 18:36:44 2019 +0900
+
+    webSocketUrlを実装時はセキュアになるよう変更
+
+[33mcommit 1e4410e6ae4342cf806adee9b77562756e5be40c[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 18:06:36 2019 +0900
+
+    AllowedHostsFilterに変更
+
+[33mcommit d095bac701756b800418d25f4c3d92706c92d65c[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 17:53:07 2019 +0900
+
+    allowed hosts の修正
+
+[33mcommit f9b794a2dab979439840fb0c097355aaa022c075[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Tue Jan 8 17:39:09 2019 +0900
+
+    webSocketUrlがある場合のみ通信するよう変更
+
+[33mcommit bcc0a68b9159878bafa67c2f565383562be033ab[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 23:52:53 2019 +0900
+
+    urlの取得をwebSocketURLメソッドを使うよう変更
+
+[33mcommit a88e89725941e21df6cfad90965b5072419e33e1[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 23:38:22 2019 +0900
+
+    wsのurlをカスタムデータ属性から取得するよう変更
+
+[33mcommit 9e3797a8f7f5eeb1f4d2d5d436efb66ca3669e0a[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:59:59 2019 +0900
+
+    Twitter認証の環境変数の名前を変更
+
+[33mcommit 8a54634db80264937a738007b133a38fe6221856[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:47:35 2019 +0900
+
+    play.filters.hostsの追加
+
+[33mcommit b4775326132c94357f40888a2c260d5369c8180a[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:40:52 2019 +0900
+
+    アプリケーションシークレットを.confに移動
+
+[33mcommit a52d62e5c44ec69a7e30536895bc4df636618e6c[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:34:59 2019 +0900
+
+    APPLICATION_SECRETの追加
+
+[33mcommit e3dadc5dab8e901ccacdc613d87080ce7cf90a7b[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:30:32 2019 +0900
+
+    再修正
+
+[33mcommit 033554a4aff4d18fd7affc0a669deddbb505ba43[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:22:18 2019 +0900
+
+    procfileの修正
+
+[33mcommit fd820edb4acb218a9d7ddbf454eacb5a8d54cb02[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 22:07:55 2019 +0900
+
+    Procfileの文言を修正
+
+[33mcommit 27039dc13fef6b5f9cde088d39ec9f8c5908769a[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:57:54 2019 +0900
+
+    app.jsonの追加とpackage.jsonの修正
+
+[33mcommit 6d9f4cfe832da0507034f2fbbbe7c200a335d11f[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:47:05 2019 +0900
+
+    1.sqlを追加
+
+[33mcommit 349fb39585c81db6df56ff7c50e71d606d0d1b0c[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:41:52 2019 +0900
+
+    1.sqlをいったん削除
+
+[33mcommit 5030023866bc0dff0d2b978b311cc9009b5e8909[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:34:20 2019 +0900
+
+    applyEvolutions.default=true の追加
+
+[33mcommit f378daece35923b9cc8fd850d693d6819de21fad[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:20:15 2019 +0900
+
+    Procfileにデータベスのオプションを追加
+
+[33mcommit d605a4a0582a69b6d781510f217a01b18f1481b6[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 21:15:55 2019 +0900
+
+    postgresqlの依存情報を変更
+
+[33mcommit 427692e137e2724d12ee922dda16dfdaf55816e4[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 20:46:52 2019 +0900
+
+    Herokuのデータベース設定の登録
+
+[33mcommit 9742823970d585386c4df7e823a54b80e85b01ab[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 18:47:46 2019 +0900
+
+    Herokuの環境変数を利用できるように修正
+
+[33mcommit b7c9c20ef6307e4be5cda29f95c131f9308d0add[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 18:24:27 2019 +0900
+
+    Heroku対応
+
+[33mcommit ffd29e12ca112c24b4356808f8528bb567eb24f0[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 03:21:57 2019 +0900
+
+    ツールチップの実装
+
+[33mcommit 0ac1dd1a558a6a81a52ae5d180630c44f1fdea33[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 03:01:34 2019 +0900
+
+    チャンネルの編集をフォームで行うよう変更
+
+[33mcommit 5542823a6b5d16249efd46afcdf6e851556e882f[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Mon Jan 7 02:12:52 2019 +0900
+
+    entryとeditのフォームをモーダルに移動
+
+[33mcommit 6f14ba818d59020e048b93e59c05163363a7ce66[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sun Jan 6 20:43:42 2019 +0900
+
+    Bootstrapのグリッドでページを三分割
+
+[33mcommit 5e607814c79232ea69656cb9e1fc505df1643b5e[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sun Jan 6 00:31:07 2019 +0900
+
+    jsファイルを分割
+
+[33mcommit 9d345ff8ac13180c6fe780472abae2f0ea19e1dd[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sun Jan 6 00:13:05 2019 +0900
+
+    チャンネルの削除機能を実装
+
+[33mcommit 7f657e896c626b07308fe28af1feb1a304e40cea[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sat Jan 5 19:51:10 2019 +0900
+
+    チャンネルの編集機能を実装
+
+[33mcommit bd5e1c152e942ce87b18b82800b15d722a8fa734[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sat Jan 5 02:08:46 2019 +0900
+
+    messageIdをUUIDに変更
+
+[33mcommit 31552f7337486a2dfed1196a00f7d32f8fc19e36[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Sat Jan 5 01:30:04 2019 +0900
+
+    メッセージの永続化と表示を実装
+
+[33mcommit d2dcbdf5d6c832eeea449435592952cb61ea7c4a[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Fri Jan 4 21:59:55 2019 +0900
+
+    msgはjsonのままスルーするよう変更
+
+[33mcommit e7ec145799ccf1755e3c4d4c736e73feac49eeb5[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Fri Jan 4 21:10:38 2019 +0900
+
+    ログインメンバーの表示を実装（仮）
+
+[33mcommit 56fe2a246ff6d7083a37fa7a860176f2febc91b8[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Fri Jan 4 19:31:07 2019 +0900
+
+    チャンネルごとにメッセージの振り分けを
+
+[33mcommit 6fee7d6e05d69b5fdedd4f32f6a6d07b94bf0bc8[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Fri Jan 4 18:23:08 2019 +0900
+
+    WebScoketで単純なメッセージの受け渡しを実装
+
+[33mcommit b90960e956b0e8cf9191ab2792afa7644bbe7724[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Fri Jan 4 16:19:34 2019 +0900
+
+    webpackの実装
+
+[33mcommit b06c9a445e452e4c00fb7f566f8e06b67b4f0680[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Thu Jan 3 19:03:41 2019 +0900
+
+    チャンネルの表示を実装
+
+[33mcommit a8c9672a8cc159964c3c00f6c6f0e436417d60f8[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Thu Jan 3 02:05:41 2019 +0900
+
+    データベース操作メソッドをRepositoryオブジェクトに移動
+
+[33mcommit 7fb73b032089457029b104fa4319d60073c2812c[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Thu Jan 3 01:59:48 2019 +0900
+
+    ユーザー情報の保存を実装
+
+[33mcommit 44b15f05eb7bcd46ca0197b50b9be59210844e5b[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Thu Jan 3 01:33:29 2019 +0900
+
+    データモデリングの実装
+
+[33mcommit 290ae8be2bf0fcae673cf6aa418b764c3dc9d57a[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Wed Jan 2 19:32:46 2019 +0900
+
+    Twitter 認証の実装
+
+[33mcommit 875ae4fab816e049f63698da6d1cd8c178f89420[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Wed Jan 2 18:55:51 2019 +0900
+
+    基本ファイルの作成
+
+[33mcommit 64bae6fffc31607fdf43ea23a91dd6adf4cbf415[m
+Author: 208-209 <208_209@outlook.jp>
+Date:   Wed Jan 2 18:30:05 2019 +0900
+
+    first commit
