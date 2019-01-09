@@ -112,6 +112,16 @@ global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-toggle="tooltip"]').tooltip();
 });
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.form-check-input').click(function () {
+  var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryRadioBtn [name=isPublic]:checked').val();
+  console.log(check);
+
+  if (check === 'true') {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryCheckBox').hide();
+  } else {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryCheckBox').show();
+  }
+});
 
 /***/ }),
 /* 2 */
