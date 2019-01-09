@@ -8,7 +8,6 @@ import play.api.cache.SyncCacheApi
 import play.api.mvc._
 import play.api.libs.json._
 import models._
-import play.Play
 
 case class ChannelForm(channelName: String, description: String)
 

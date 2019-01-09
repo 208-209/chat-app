@@ -20,6 +20,13 @@ create table messages (
                         updatedAt timestamp not null
 );
 
+create table bookmarks (
+                        channelId varchar(36) not null ,
+                        createdBy bigint not null ,
+                        isBookmark boolean not null ,
+                        UNIQUE (channelId, createdBy)
+);
+
 create index createdBy_channels on channels (createdBy);
 create index channelId_messages on messages (channelId);
 create index createdBy_messages on messages (createdBy);
