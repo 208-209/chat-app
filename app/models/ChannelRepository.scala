@@ -11,25 +11,5 @@ object ChannelRepository {
     """.update().apply()
   }
 
-  def findAll(): Seq[Channel] = DB readOnly { implicit session =>
-    sql"""
-       select *
-       from channels
-       order by updatedAt asc
-    """.map { rs =>
-      Channel(
-        rs.string("channelId"),
-        rs.string("channelName"),
-        rs.string("description"),
-        rs.longOpt("createdBy"),
-        rs.offsetDateTime("updatedAt")
-      )
-    }.list().apply()
-  }
-
-
-
-
-
 
 }

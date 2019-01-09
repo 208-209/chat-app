@@ -2,6 +2,55 @@
 
 import $ from 'jquery';
 
+// AJAXによるBookmarkの更新
+$('.bookmark-toggle-button').each((i, e) => {
+    const button = $(e);
+    button.click(() => {
+
+        const channelId = button.data('channel-id');
+        const userId = button.data('user-id');
+        const bookmark = button.data('bookmark');
+        const CSRF_TOKEN = $('input[name="csrfToken"]').attr('value');
+
+        console.log(`channelId: ${channelId}, userId: ${userId}, bookmark: ${bookmark}`);
+
+        $.ajax({
+            type: "POST",
+            url: `/channels/${channelId}/users/${userId}/bookmark`,
+            data: { "bookmark": bookmark },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Csrf-Token", CSRF_TOKEN);
+            },
+            success: function (data) {
+                const jsonData = JSON.parse(data);
+                console.log("jsonData.bookmark :" + Boolean(jsonData.bookmark));
+
+                console.log(typeof Boolean(jsonData.bookmark));
+
+                button.data('bookmark', jsonData.bookmark);
+
+                button.removeClass('fas', 'far');
+                const className = jsonData.bookmark == 'true' ? 'fas' : 'far';
+                button.addClass(className)
+            }
+        });
+
+
+
+        /*
+        $.post(`/users/${userId}/games/${gameId}/favorite`,
+            { favorite: nextFavorite },
+            (data) => {
+                button.data('favorite', data.favorite);
+                const buttonStyles = ['fa-star-o', 'fa-star'];
+                button.removeClass('fa-star-o', 'fa-star');
+                button.addClass(buttonStyles[data.favorite]);
+            });
+
+        */
+    });
+});
+
 /*
 const editBtn = $('#edit-button');
 editBtn.click(() => {

@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -12,19 +12,50 @@
                 <span>チャンネル</span>
             </div>
             <ul class="list-group list-group-flush">
-                @for(c <- channels) {
-                    @if(channel._1.channelId == c.channelId) {
-                        <li class="list-group-item">
-                            @{c.channelName}
-                        </li>
+                <li class="list-group-item">
+                    @if(channel._1.channelId == "general") {
+                        general
                     } else {
+                        <a href="@routes.ChannelController.read("general")">general</a>
+                    }
+                </li>
+
+                @for(b <- bookmarks) {
+                    <li class="list-group-item">
+                        @if(b._1.channelId == channel._1.channelId) {
+                            @{b._2.channelName}
+                        } else {
+                            <a href="@routes.ChannelController.read(b._1.channelId)">@{b._2.channelName}</a>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span>チャンネル一覧</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                @for(c <- channels) {
+                    @if(c.channelId != "general") {
                         <li class="list-group-item">
-                            <a href="@routes.ChannelController.read(c.channelId)">@{c.channelName}</a>
+                            @if(bookmarkMap.getOrElse(c.channelId, false)) {
+                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
+                            } else {
+                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
+                            }
+                            @if(c.channelId == channel._1.channelId) {
+                                @{c.channelName}
+                            } else {
+                                <a href="@routes.ChannelController.read(c.channelId)">@{c.channelName}</a>
+                            }
                         </li>
                     }
                 }
             </ul>
         </div>
+
     </div>
 
     <!-- Center -->

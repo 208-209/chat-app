@@ -31,7 +31,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
-            val channels = ChannelRepository.findAll()
+            val channels = channelFindAll()
+            println(channels)
+            val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
+            val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
@@ -41,7 +44,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
               }
             println(webSocketUrl)
 
-            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, messages, webSocketUrl))
+            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl))
 
           case None => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -58,7 +61,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
-            val channels = ChannelRepository.findAll()
+            val channels = channelFindAll()
+            val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
+            val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
@@ -69,7 +74,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages, webSocketUrl)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl)),
               form => {
                 val channelId = java.util.UUID.randomUUID().toString
                 val channelName = form.channelName
@@ -97,7 +102,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         channelAndUserFindOne(channelId) match {
           case Some(channel) if channel._1.createdBy == request.accessToken.map(_.getUserId) && channel._1.channelId != "general" =>
 
-            val channels = ChannelRepository.findAll()
+            val channels = channelFindAll()
+            val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
+            val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
             val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
@@ -108,7 +115,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, messages, webSocketUrl)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl)),
               form => {
                 val editChannel = Channel(
                   channelId = channel._1.channelId,

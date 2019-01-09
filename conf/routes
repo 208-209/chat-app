@@ -7,6 +7,9 @@ POST    /channels                   controllers.ChannelController.create(channel
 # WebSocket
 GET     /channels/:channelId/users/:userId/message     controllers.MessageController.socket(channelId: String, userId: Long)
 
+# AJAX
+POST    /channels/:channelId/users/:userId/bookmark          controllers.BookmarkController.ajax(channelId: String, userId: Long)
+
 POST    /channels/:channelId/update                 controllers.ChannelController.update(channelId: String)
 
 # delete

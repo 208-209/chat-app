@@ -22,9 +22,9 @@ create table messages (
 
 create table bookmarks (
                         channelId varchar(36) not null ,
-                        createdBy bigint not null ,
+                        userId bigint not null ,
                         isBookmark boolean not null ,
-                        UNIQUE (channelId, createdBy)
+                        UNIQUE (channelId, userId)
 );
 
 create index createdBy_channels on channels (createdBy);

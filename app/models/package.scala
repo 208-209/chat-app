@@ -52,5 +52,52 @@ package object models {
     """.update().apply()
   }
 
+  def channelFindAll(): Seq[Channel] = DB readOnly { implicit session =>
+    sql"""
+       select *
+       from channels
+       order by updatedAt asc
+    """.map { rs =>
+      Channel(
+        rs.string("channelId"),
+        rs.string("channelName"),
+        rs.string("description"),
+        rs.longOpt("createdBy"),
+        rs.offsetDateTime("updatedAt")
+      )
+    }.list().apply()
+  }
+
+
+  def bookmarkAndChannelFindAll(userId: Long): Seq[(Bookmark, Channel)] = DB readOnly { implicit  session =>
+    val (b, c) = (Bookmark.syntax("b"), Channel.syntax("c"))
+    sql"""
+       select ${b.result.*}, ${c.result.*}
+       from ${Bookmark.as(b)}
+       inner join ${Channel.as(c)} on ${b.channelId} = ${c.channelId}
+       where userId = $userId and isBookmark = true
+       order by updatedAt
+    """.map { implicit rs => (Bookmark(b.resultName), Channel(c.resultName))}.list().apply()
+  }
+
+
+  def bookmarkTuple(userId: Long): Seq[(String, Boolean)] = DB readOnly { implicit session =>
+    sql"""
+          SELECT *
+          FROM bookmarks
+          WHERE userId = $userId
+       """.map { rs => (rs.string("channelId") -> rs.boolean("isBookmark"))
+    }.list().apply()
+
+  }
+
+  def bookmarkUpsert(bookmark: Bookmark): Unit = DB localTx { implicit session =>
+    sql"""
+       INSERT INTO bookmarks (channelId, userId, isBookmark)
+       VALUES (${bookmark.channelId}, ${bookmark.userId}, ${bookmark.isBookmark})
+       ON CONFLICT (channelId, userId)
+       DO UPDATE SET isBookmark = ${bookmark.isBookmark}
+    """.update().apply()
+  }
 
 }

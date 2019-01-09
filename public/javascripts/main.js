@@ -17355,7 +17355,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+ // AJAXによるBookmarkの更新
+
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(function (i, e) {
+  var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
+  button.click(function () {
+    var channelId = button.data('channel-id');
+    var userId = button.data('user-id');
+    var bookmark = button.data('bookmark');
+    var CSRF_TOKEN = jquery__WEBPACK_IMPORTED_MODULE_0___default()('input[name="csrfToken"]').attr('value');
+    console.log("channelId: ".concat(channelId, ", userId: ").concat(userId, ", bookmark: ").concat(bookmark));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+      type: "POST",
+      url: "/channels/".concat(channelId, "/users/").concat(userId, "/bookmark"),
+      data: {
+        "bookmark": bookmark
+      },
+      beforeSend: function beforeSend(xhr) {
+        xhr.setRequestHeader("Csrf-Token", CSRF_TOKEN);
+      },
+      success: function success(data) {
+        var jsonData = JSON.parse(data);
+        console.log("jsonData.bookmark :" + Boolean(jsonData.bookmark));
+        console.log(_typeof(Boolean(jsonData.bookmark)));
+        button.data('bookmark', jsonData.bookmark);
+        button.removeClass('fas', 'far');
+        var className = jsonData.bookmark == 'true' ? 'fas' : 'far';
+        button.addClass(className);
+      }
+    });
+    /*
+    $.post(`/users/${userId}/games/${gameId}/favorite`,
+        { favorite: nextFavorite },
+        (data) => {
+            button.data('favorite', data.favorite);
+            const buttonStyles = ['fa-star-o', 'fa-star'];
+            button.removeClass('fa-star-o', 'fa-star');
+            button.addClass(buttonStyles[data.favorite]);
+        });
+     */
+  });
+});
 /*
 const editBtn = $('#edit-button');
 editBtn.click(() => {
