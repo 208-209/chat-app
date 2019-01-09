@@ -24,22 +24,21 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
-  def sameOriginCheck(request: RequestHeader): Boolean = {
+  def isSameOrigin(request: RequestHeader): Boolean = {
     request.headers.get("Origin") match {
-      case Some(originValue) if originMatches(originValue) => true
-      case _ => false
-    }
-  }
+      case Some(originValue) =>
+        val url = new URL(originValue)
 
-  def originMatches(origin: String): Boolean = {
-    val url = new URL(origin)
-    println("url : " + url)
-    println("url host : " + url.getHost)
-    println("port : " + sys.env.getOrElse("PORT", ""))
+        println("url : " + url)
+        println("url host : " + url.getHost)
+        println("url.toString : " + url.toString)
+        println("port : " + sys.env.getOrElse("PORT", ""))
 
-    sys.env.get("HEROKU_URL") match {
-      case Some(_) if url.getHost == "play-chat-app.herokuapp.com" && url.getPort == sys.env.getOrElse("PORT", "") => true
-      case None if url.getHost == "localhost" && url.getPort == 9000 => true
+        sys.env.get("HEROKU_URL") match {
+          case Some(_) if url.toString == "https://play-chat-app.herokuapp.com" => true
+          case None if url.toString == "http://localhost:9000" => true
+          case _ => false
+        }
       case _ => false
     }
   }
@@ -51,7 +50,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
 
     Future.successful(accessToken match {
-      case Some(token) if token.getUserId == userId && sameOriginCheck(request) =>
+      case Some(token) if token.getUserId == userId && isSameOrigin(request) =>
 
         Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
