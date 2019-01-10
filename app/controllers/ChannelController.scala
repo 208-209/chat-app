@@ -9,15 +9,17 @@ import play.api.mvc._
 import play.api.libs.json._
 import models._
 
-case class ChannelForm(channelName: String, description: String)
+case class ChannelForm(isPublic: Boolean, channelName: String, description: String, members: Seq[Long])
 
 @Singleton
 class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents) extends TwitterLoginController(cc) with I18nSupport {
 
   val channelForm = Form(
     mapping(
+      "isPublic" -> boolean,
       "channelName" -> nonEmptyText(minLength = 3, maxLength = 20),
-      "description" -> text(minLength = 3, maxLength = 255)
+      "description" -> text(minLength = 3, maxLength = 255),
+      "members" -> seq(longNumber)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
 
@@ -32,11 +34,12 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = channelFindAll()
-            println(channels)
+            val users = userFindAll()
             val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
             val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
-            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            val editForm = channelForm
+            //val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
               sys.env.get("HEROKU_URL") match {
                 case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
@@ -44,7 +47,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
               }
             println(webSocketUrl)
 
-            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl))
+            Ok(views.html.channel(request.accessToken)(channelForm, editForm)(channel, channels, users, bookmarks, bookmarkMap, messages, webSocketUrl))
 
           case None => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -62,10 +65,12 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         channelAndUserFindOne(channelId) match {
           case Some(channel) =>
             val channels = channelFindAll()
+            val users = userFindAll()
             val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
             val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
-            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            val editForm = channelForm
+            //val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
               sys.env.get("HEROKU_URL") match {
                 case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
@@ -74,8 +79,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, users, bookmarks, bookmarkMap, messages, webSocketUrl)),
               form => {
+                println(form)
                 val channelId = java.util.UUID.randomUUID().toString
                 val channelName = form.channelName
                 val description = form.description
@@ -101,12 +107,13 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case Some(accessToken) =>
         channelAndUserFindOne(channelId) match {
           case Some(channel) if channel._1.createdBy == request.accessToken.map(_.getUserId) && channel._1.channelId != "general" =>
-
             val channels = channelFindAll()
+            val users = userFindAll()
             val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
             val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
             val messages = MessageRepository.findAll(channelId)
-            val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
+            val editForm = channelForm
+            //val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
             val webSocketUrl =
               sys.env.get("HEROKU_URL") match {
                 case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
@@ -115,7 +122,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, bookmarks, bookmarkMap, messages, webSocketUrl)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, users, bookmarks, bookmarkMap, messages, webSocketUrl)),
               form => {
                 val editChannel = Channel(
                   channelId = channel._1.channelId,

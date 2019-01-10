@@ -100,4 +100,14 @@ package object models {
     """.update().apply()
   }
 
+  def userFindAll(): Seq[User] = DB readOnly { implicit session =>
+    sql"""
+       select *
+       from users
+       order by userName
+    """.map { rs =>
+      User(rs.longOpt("userId"), rs.stringOpt("userName"))
+    }.list().apply()
+  }
+
 }
