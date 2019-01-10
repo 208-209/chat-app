@@ -157,11 +157,19 @@
                     <div class="form-group " id="entryCheckBox">
                         <p>招待するユーザー</p>
                         @for(user <- users) {
-                            <div class="form-check-inline">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
-                                </label>
-                            </div>
+                            @if(user.userId == accessToken.map(_.getUserId)) {
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked disabled>@user.userName
+                                    </label>
+                                </div>
+                            } else {
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                    </label>
+                                </div>
+                            }
                         }
                     </div>
 

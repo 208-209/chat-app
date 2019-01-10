@@ -2,6 +2,7 @@ package object models {
 
   import scalikejdbc._
 
+  /*
   def channelFindOne(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
        select *
@@ -12,11 +13,14 @@ package object models {
         rs.string("channelId"),
         rs.string("channelName"),
         rs.string("description"),
+        rs.boolean("isPublic"),
+        rs.string("members"),
         rs.longOpt("createdBy"),
         rs.offsetDateTime("updatedAt")
       )
     }.single().apply()
   }
+  */
 
   def channelAndUserFindOne(channelId: String): Option[(Channel, User)] = DB readOnly { implicit session =>
     val (c, u) = (Channel.syntax("c"), User.syntax("u"))
@@ -30,7 +34,7 @@ package object models {
     }.single().apply()
   }
 
-
+  /*
   def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
        insert into channels (channelId, channelName, description, createdBy, updatedAt)
@@ -39,6 +43,7 @@ package object models {
        do update set channelName = ${channel.channelName}, description = ${channel.description}, updatedAt = ${channel.updatedAt}
     """.update().apply()
   }
+  */
 
   def channelAndMessageDelete(channelId: String): Unit = DB localTx { implicit session =>
     sql"""
@@ -62,11 +67,21 @@ package object models {
         rs.string("channelId"),
         rs.string("channelName"),
         rs.string("description"),
+        rs.boolean("isPublic"),
+        rs.stringOpt("members"),
         rs.longOpt("createdBy"),
         rs.offsetDateTime("updatedAt")
       )
     }.list().apply()
   }
+
+  def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+    """.update().apply()
+  }
+
 
 
   def bookmarkAndChannelFindAll(userId: Long): Seq[(Bookmark, Channel)] = DB readOnly { implicit  session =>
