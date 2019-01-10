@@ -21,12 +21,12 @@
                     }
                 </li>
 
-                @for(b <- bookmarks) {
+                @for(bookmark <- bookmarks) {
                     <li class="list-group-item">
-                        @if(b._1.channelId == channel._1.channelId) {
-                            @{b._2.channelName}
+                        @if(bookmark._1.channelId == channel._1.channelId) {
+                            @{bookmark._2.channelName}
                         } else {
-                            <a href="@routes.ChannelController.read(b._1.channelId)">@{b._2.channelName}</a>
+                            <a href="@routes.ChannelController.read(bookmark._1.channelId)">@{bookmark._2.channelName}</a>
                         }
                     </li>
                 }
@@ -45,6 +45,11 @@
                                 <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
                             } else {
                                 <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
+                            }
+                            @if(c.isPublic) {
+                                <i class="fas fa-flag"></i>
+                            } else {
+                                <i class="fas fa-key"></i>
                             }
                             @if(c.channelId == channel._1.channelId) {
                                 @{c.channelName}
@@ -86,6 +91,11 @@
                 @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
                     <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
                 }
+                @if(channel._1.isPublic) {
+                    <i class="fas fa-flag"></i>
+                } else {
+                    <i class="fas fa-key"></i>
+                }
                 <span id="channel-channelName">@channel._1.channelName</span>
             </div>
             <ul class="list-group list-group-flush">
@@ -101,6 +111,7 @@
                     <p class="card-title"><strong>更新日</strong></p>
                     <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt</p>
                 </li>
+
             </ul>
         </div>
 
@@ -158,6 +169,8 @@
                     <!-- CheckBox -->
                     <div class="form-group " id="entryCheckBox">
                         <p>招待するユーザー</p>
+
+
                         @for(user <- users) {
                             @if(user.userId == accessToken.map(_.getUserId)) {
                                 <div class="form-check-inline" hidden>

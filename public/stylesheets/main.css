@@ -2,8 +2,17 @@ body {
     padding-top: 70px;
 }
 
-i:hover {
+.fa-plus-square, .fa-heart, .fa-edit:hover {
     cursor: pointer;
+}
+
+.fa-heart {
+    color: hotpink;
+}
+
+
+.fa-flag, .fa-key {
+    color: gray;
 }
 
 #entryCheckBox {
