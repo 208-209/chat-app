@@ -112,7 +112,7 @@ global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-toggle="tooltip"]').tooltip();
 });
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('.form-check-input').click(function () {
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.entry-form').click(function () {
   var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryRadioBtn [name=isPublic]:checked').val();
   console.log(check);
 
@@ -120,6 +120,25 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.form-check-input').click(functio
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryCheckBox').hide();
   } else {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryCheckBox').show();
+  }
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.edit-form').click(function () {
+  var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editRadioBtn [name=isPublic]:checked').val();
+  console.log(check);
+
+  if (check === 'true') {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox').hide();
+  } else {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox').show();
+  }
+});
+var $editCheckBox = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox');
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editBtn').click(function () {
+  var isPublic = $editCheckBox.data("isPublic");
+  console.log(isPublic);
+
+  if (isPublic === 'true') {
+    $editCheckBox.hide();
   }
 });
 

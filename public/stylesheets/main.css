@@ -5,3 +5,7 @@ body {
 i:hover {
     cursor: pointer;
 }
+
+#entryCheckBox {
+    display: none;
+}

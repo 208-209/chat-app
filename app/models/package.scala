@@ -2,8 +2,7 @@ package object models {
 
   import scalikejdbc._
 
-  /*
-  def channelFindOne(channelId: String): Option[Channel] = DB readOnly { implicit session =>
+  def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
        select *
        from channels
@@ -20,7 +19,6 @@ package object models {
       )
     }.single().apply()
   }
-  */
 
   def channelAndUserFindOne(channelId: String): Option[(Channel, User)] = DB readOnly { implicit session =>
     val (c, u) = (Channel.syntax("c"), User.syntax("u"))
@@ -68,7 +66,7 @@ package object models {
         rs.string("channelName"),
         rs.string("description"),
         rs.boolean("isPublic"),
-        rs.stringOpt("members"),
+        rs.string("members"),
         rs.longOpt("createdBy"),
         rs.offsetDateTime("updatedAt")
       )

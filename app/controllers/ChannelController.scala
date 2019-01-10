@@ -55,7 +55,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                 val channelName = form.channelName
                 val description = form.description
                 val isPublic = form.isPublic
-                val members = if(form.members.isEmpty) Option(accessToken.getUserId.toString) else Option(form.members.mkString(","))
+                val members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(",")
                 val createdBy = request.accessToken.map(_.getUserId)
                 val updatedAt = java.time.OffsetDateTime.now()
 
@@ -100,7 +100,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   channelName = form.channelName,
                   description = form.description,
                   isPublic = form.isPublic,
-                  members = Option(form.members.mkString(",")),
+                  members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(","),
                   createdBy = request.accessToken.map(_.getUserId),
                   updatedAt = java.time.OffsetDateTime.now()
                 )
@@ -145,14 +145,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @return
     */
   private def isEnter(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-
-    if (channel._1.isPublic)
-      true
-    else
-      channel._1.members match {
-        case Some(m) if m.split(',').map(_.toLong).contains(accessToken.getUserId) => true
-        case _ => false
-      }
+    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(accessToken.getUserId)
   }
 
 
@@ -175,15 +168,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     */
   private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
-    val channels = channelFindAll().filter { channel =>
-      if (channel.isPublic)
-        true
-      else channel.members match {
-        case Some(s) if s.split(',').map(_.toLong).contains(accessToken.getUserId) => true
-        case _ => false
-      }
-    }
-    println(channels)
+    val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
     val users = userFindAll()
     val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
     val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
@@ -192,11 +177,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case Some(_) => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL(secure = true)
       case None => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL()
     }
-    val members = channel._1.members match {
-      case Some(s) => s.split(',').map(_.toLong).toSeq
-      case None => Seq[Long]()
-    }
-
+    val members = channel._1.members.split(",").map(_.toLong).toSeq
     val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.description, members))
 
     (channels, users, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)

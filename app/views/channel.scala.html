@@ -3,6 +3,7 @@
 @import helper._
 
 @main(channel._1.channelName)(accessToken) {
+
     <!-- Left -->
     <div class="col-md-3">
 
@@ -83,7 +84,7 @@
         <div class="card">
             <div class="card-header">
                 @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-                    <i class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
+                    <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
                 }
                 <span id="channel-channelName">@channel._1.channelName</span>
             </div>
@@ -132,13 +133,13 @@
                     @CSRF.formField
 
                     <div class="form-group" id="entryRadioBtn">
-                        <div class="form-check-inline">
-                            <input class="form-check-input" type="radio" name="isPublic" id="isPublicTrue" value="true">
-                            <label class="form-check-label" for="isPublicTrue">パブリック</label>
+                        <div class="form-check-inline entry-form">
+                            <input class="form-check-input" type="radio" name="isPublic" id="entryPublicTrue" value="true" checked>
+                            <label class="form-check-label" for="entryPublicTrue">パブリック</label>
                         </div>
-                        <div class="form-check-inline">
-                            <input class="form-check-input" type="radio" name="isPublic" id="isPublicFalse" value="false" checked>
-                            <label class="form-check-label" for="isPublicFalse">プライベート</label>
+                        <div class="form-check-inline entry-form">
+                            <input class="form-check-input" type="radio" name="isPublic" id="entryPublicFalse" value="false">
+                            <label class="form-check-label" for="entryPublicFalse">プライベート</label>
                         </div>
                     </div>
 
@@ -154,13 +155,14 @@
                         <small id="entry-description-help" class="form-text text-muted">エラー文を表示する場所</small>
                     </div>
 
+                    <!-- CheckBox -->
                     <div class="form-group " id="entryCheckBox">
                         <p>招待するユーザー</p>
                         @for(user <- users) {
                             @if(user.userId == accessToken.map(_.getUserId)) {
-                                <div class="form-check-inline">
+                                <div class="form-check-inline" hidden>
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked disabled>@user.userName
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
                                     </label>
                                 </div>
                             } else {
@@ -198,6 +200,34 @@
                     <div class="modal-body">
                         @form(routes.ChannelController.update(channel._1.channelId)) {
                             @CSRF.formField
+
+                            @if(channel._1.isPublic) {
+                                <div class="form-group" id="editRadioBtn">
+                                    <div class="form-check-inline edit-form">
+                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true" checked>
+                                        <label class="form-check-label" for="editPublicTrue">パブリック</label>
+                                    </div>
+                                    <div class="form-check-inline edit-form">
+                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false">
+                                        <label class="form-check-label" for="editPublicFalse">プライベート</label>
+                                    </div>
+                                </div>
+
+                            } else {
+                                <div class="form-group" id="editRadioBtn">
+                                    <div class="form-check-inline edit-form">
+                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true">
+                                        <label class="form-check-label" for="editPublicTrue">パブリック</label>
+                                    </div>
+                                    <div class="form-check-inline edit-form">
+                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false" checked>
+                                        <label class="form-check-label" for="editPublicFalse">プライベート</label>
+                                    </div>
+                                </div>
+
+                            }
+
+
                             <div class="form-group">
                                 <label for="edit-channelName">名前</label>
                                 <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
@@ -208,6 +238,36 @@
                                 <label for="edit-description">チャンネルの説明</label>
                                 <textarea class="form-control" id="edit-description" rows="3" name="description">@editForm("description").value</textarea>
                                 <small id="edit-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            </div>
+
+                            @** チェックボックス **@
+                            <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
+                                <p>招待するユーザー</p>
+                                @for(user <- users) {
+                                    @if(user.userId == accessToken.map(_.getUserId)) {
+                                        <div class="form-check-inline" hidden>
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                            </label>
+                                        </div>
+                                    } else {
+                                        @if(channel._1.members.split(",").map(_.toLong).contains(user.userId.get)) {
+
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                                </label>
+                                            </div>
+
+                                        } else {
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                }
                             </div>
 
                             <input type="submit" class="btn btn-primary" value="チャンネルを編集する">
