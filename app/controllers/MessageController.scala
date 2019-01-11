@@ -16,7 +16,7 @@ import scala.concurrent.Future
 
 class WaitingRoom() {
   var actorSet = Set[ActorRef]()
-  var userNameSet = Set[String]()
+  var userNameSet = Set[Long]()
 }
 
 @Singleton
@@ -52,16 +52,16 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     Future.successful(accessToken match {
       case Some(token) if token.getUserId == userId && isSameOrigin(request) =>
 
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId)})
       case _ => Left(Forbidden)
     })
   }
 
   object MyWebSocketActor {
-    def props(out: ActorRef, channelId: String, userId: Long, userName: String) = Props(new MyWebSocketActor(out, channelId, userId, userName))
+    def props(out: ActorRef, channelId: String, userId: Long) = Props(new MyWebSocketActor(out, channelId, userId))
   }
 
-  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String) extends Actor {
+  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long) extends Actor {
 
 
     val myRoom = roomMap.get(channelId) match {
@@ -96,7 +96,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     override def preStart(): Unit = {
       myRoom.actorSet = myRoom.actorSet + out
-      myRoom.userNameSet = myRoom.userNameSet + userName
+      myRoom.userNameSet = myRoom.userNameSet + userId
       println(myRoom.userNameSet)
 
       myRoom.actorSet.foreach { out =>
@@ -109,7 +109,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     override def postStop(): Unit = {
       myRoom.actorSet = myRoom.actorSet - out
-      myRoom.userNameSet = myRoom.userNameSet - userName
+      myRoom.userNameSet = myRoom.userNameSet - userId
 
       myRoom.actorSet.foreach { out =>
         val members = s"""{"members": "${myRoom.userNameSet.mkString(",")}"}"""
