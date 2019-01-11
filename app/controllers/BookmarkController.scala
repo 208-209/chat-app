@@ -15,9 +15,7 @@ class BookmarkController @Inject()(val cache: SyncCacheApi, cc: ControllerCompon
 
     val isBookmark = !request.body.asFormUrlEncoded.get("bookmark").head.toBoolean
 
-    val bookmark = Bookmark(channelId, Some(userId), isBookmark)
-
-    bookmarkUpsert(bookmark)
+    bookmarkUpsert(Bookmark(channelId, Some(userId), isBookmark))
 
     val result = s"""{"bookmark": "${isBookmark}"}"""
 

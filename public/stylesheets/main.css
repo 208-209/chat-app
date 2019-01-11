@@ -21,4 +21,5 @@ body {
 
 .isLogin {
     color: blueviolet;
+    font-weight: bold;
 }

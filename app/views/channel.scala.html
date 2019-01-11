@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-header">
                 <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
-                <span>チャンネル</span>
+                <span>ブックマーク</span>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -212,7 +212,7 @@
                         }
                     </div>
 
-                    <input type="submit" class="btn btn-primary" value="チャンネルをつくる">
+                    <input type="submit" class="btn btn-primary float-right" value="チャンネルをつくる">
                 }
                 </div>
 
@@ -236,6 +236,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
+
+
+
                         @form(routes.ChannelController.update(channel._1.channelId)) {
                             @CSRF.formField
 
@@ -308,15 +311,21 @@
                                 }
                             </div>
 
-                            <input type="submit" class="btn btn-primary" value="チャンネルを編集する">
+                            <input type="submit" class="btn btn-success float-right" value="チャンネルを編集する">
+
                         }
 
-                    </div>
-                    <div class="modal-footer">
                         @form(routes.ChannelController.delete(channel._1.channelId)) {
                             @CSRF.formField
                             <button class="btn btn-danger">チャンネルを削除する</button>
                         }
+
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
