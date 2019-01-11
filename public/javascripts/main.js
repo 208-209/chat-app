@@ -17504,10 +17504,14 @@ if (webSocketUrl) {
     console.log(jsonData.members);
 
     if (jsonData.members) {
-      var membersHtml = jsonData.members.split(',').map(function (member) {
-        return "<li class=\"list-group-item\">".concat(member, "</li>");
-      }).join('\n');
+      /*
+      const membersHtml = jsonData.members.split(',').map(member => `<li class="list-group-item">${member}</li>`).join('\n');
       $members.html(membersHtml);
+       */
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.members').removeClass('isLogin');
+      jsonData.members.split(',').map(function (member) {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(member)).addClass('isLogin');
+      });
     }
 
     if (jsonData.message) {

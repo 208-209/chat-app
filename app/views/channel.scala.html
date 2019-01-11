@@ -1,6 +1,7 @@
 @(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Option[Long], Option[String]], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
+@import java.time.format.DateTimeFormatter
 
 @main(channel._1.channelName)(accessToken) {
 
@@ -111,7 +112,7 @@
                 </li>
                 <li class="list-group-item">
                     <p class="card-title"><strong>更新日</strong></p>
-                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt</p>
+                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))</p>
                 </li>
 
             </ul>
@@ -125,17 +126,17 @@
             <ul class="list-group list-group-flush">
                 @if(channel._1.isPublic) {
                     @for(user <- users) {
-                        <li id="@user.userId.get" class="list-group-item">@user.userName.getOrElse("")</li>
+                        <li id="@user.userId.get" class="members list-group-item">@user.userName.getOrElse("")</li>
                     }
                 } else {
                     @for(user <- channel._1.members.split(",").map(_.toLong)) {
-                        <li id="@user" class="list-group-item">@userMap.getOrElse(Some(user), "")</li>
+                        <li id="@user" class="members list-group-item">@userMap.getOrElse(Some(user), "")</li>
                     }
                 }
             </ul>
         </div>
 
-
+        @**
         <!-- ログインメンバー -->
         <div class="card">
             <div class="card-header">
@@ -145,6 +146,7 @@
                 <li>hoge</li>
             </ul>
         </div>
+            **@
 
     </div>
 

@@ -50,8 +50,15 @@ if (webSocketUrl) {
         console.log(jsonData.members);
 
         if (jsonData.members) {
+            /*
             const membersHtml = jsonData.members.split(',').map(member => `<li class="list-group-item">${member}</li>`).join('\n');
             $members.html(membersHtml);
+             */
+
+            $('.members').removeClass('isLogin');
+            jsonData.members.split(',').map(member => {
+                $(`#${member}`).addClass('isLogin')
+            });
         }
 
         if (jsonData.message) {
