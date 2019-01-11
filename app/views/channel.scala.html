@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Option[Long], Option[String]], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -6,7 +6,7 @@
 
     <!-- Left -->
     <div class="col-md-3">
-
+        <!-- チャンネル -->
         <div class="card">
             <div class="card-header">
                 <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
@@ -33,6 +33,7 @@
             </ul>
         </div>
 
+        <!-- チャンネル一覧 -->
         <div class="card">
             <div class="card-header">
                 <span>チャンネル一覧</span>
@@ -86,6 +87,7 @@
     <!-- Right -->
     <div class="col-md-3">
 
+        <!-- チャンネル詳細 -->
         <div class="card">
             <div class="card-header">
                 @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
@@ -115,6 +117,26 @@
             </ul>
         </div>
 
+        <!-- メンバー一覧 -->
+        <div class="card">
+            <div class="card-header">
+                メンバー
+            </div>
+            <ul class="list-group list-group-flush">
+                @if(channel._1.isPublic) {
+                    @for(user <- users) {
+                        <li id="@user.userId.get" class="list-group-item">@user.userName.getOrElse("")</li>
+                    }
+                } else {
+                    @for(user <- channel._1.members.split(",").map(_.toLong)) {
+                        <li id="@user" class="list-group-item">@userMap.getOrElse(Some(user), "")</li>
+                    }
+                }
+            </ul>
+        </div>
+
+
+        <!-- メンバー -->
         <div class="card">
             <div class="card-header">
                 ログインメンバー
@@ -199,8 +221,9 @@
         </div>
     </div>
 
+
+    <!-- Edit Modal -->
     @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-        <!-- Edit Modal -->
         <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -298,16 +321,5 @@
             </div>
         </div>
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

@@ -36,12 +36,3 @@ $('.edit-form').click(() => {
         $('#editCheckBox').show();
     }
 });
-
-const $editCheckBox = $('#editCheckBox');
-$('#editBtn').click(() => {
-    const isPublic = $editCheckBox.data("isPublic");
-    console.log(isPublic);
-    if(isPublic === 'true') {
-        $editCheckBox.hide();
-    }
-});

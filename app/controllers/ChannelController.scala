@@ -29,8 +29,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         channelAndUserFindOne(channelId) match {
           case Some(channel) if isEnter(accessToken, channel) =>
             val bundleData =  bundle(accessToken, channel)
-            Ok(views.html.channel(request.accessToken)(channelForm, bundleData._7)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6))
-          case None => NotFound("指定されたチャンネルは見つかりません。")
+            Ok(views.html.channel(request.accessToken)(channelForm, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
+          case _ => NotFound("指定されたチャンネルは見つかりません。")
         }
       case None => Redirect(routes.OAuthController.login())
     }
@@ -47,7 +47,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val bundleData = bundle(accessToken, channel)
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, bundleData._7)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
               form => {
                 println(form)
 
@@ -76,24 +76,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
     request.accessToken match {
       case Some(accessToken) =>
+
         channelAndUserFindOne(channelId) match {
           case Some(channel) if isMain(accessToken, channel) =>
-            val channels = channelFindAll()
-            val users = userFindAll()
-            val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
-            val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
-            val messages = MessageRepository.findAll(channelId)
-            val editForm = channelForm
-            //val editForm = channelForm.fill(ChannelForm(channel._1.channelName, channel._1.description))
-            val webSocketUrl =
-              sys.env.get("HEROKU_URL") match {
-                case Some(_) => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL(secure = true)
-                case None => routes.MessageController.socket(channelId, accessToken.getUserId).webSocketURL()
-              }
 
+            val bundleData = bundle(accessToken, channel)
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, editForm)(channel, channels, users, bookmarks, bookmarkMap, messages, webSocketUrl)),
+              error => BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
               form => {
                 val editChannel = Channel(
                   channelId = channel._1.channelId,
@@ -105,7 +95,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   updatedAt = java.time.OffsetDateTime.now()
                 )
 
-                // channelUpsert(editChannel)
+                channelUpsert(editChannel)
                 Redirect(routes.ChannelController.read(channelId))
               }
             )
@@ -157,7 +147,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @return
     */
   private def isMain(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.createdBy == accessToken.getUserId && channel._1.channelId != "general"
+    channel._1.createdBy == Option(accessToken.getUserId) && channel._1.channelId != "general"
   }
 
   /**
@@ -166,10 +156,11 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @param channel
     * @return
     */
-  private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Option[Long], Option[String]], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
     val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
     val users = userFindAll()
+    val userMap = userTuple().toMap
     val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
     val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
     val messages = MessageRepository.findAll(channel._1.channelId)
@@ -180,7 +171,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     val members = channel._1.members.split(",").map(_.toLong).toSeq
     val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.description, members))
 
-    (channels, users, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)
+    (channels, users, userMap, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)
   }
 
 

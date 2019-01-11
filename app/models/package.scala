@@ -32,16 +32,14 @@ package object models {
     }.single().apply()
   }
 
-  /*
   def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
-       insert into channels (channelId, channelName, description, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.createdBy}, ${channel.updatedAt})
+       insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
        on conflict (channelId)
-       do update set channelName = ${channel.channelName}, description = ${channel.description}, updatedAt = ${channel.updatedAt}
+       do update set channelName = ${channel.channelName}, description = ${channel.description}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
     """.update().apply()
   }
-  */
 
   def channelAndMessageDelete(channelId: String): Unit = DB localTx { implicit session =>
     sql"""
@@ -121,6 +119,15 @@ package object models {
     """.map { rs =>
       User(rs.longOpt("userId"), rs.stringOpt("userName"))
     }.list().apply()
+  }
+
+  def userTuple(): Seq[(Option[Long], Option[String])] = DB readOnly { implicit session =>
+    sql"""
+          SELECT *
+          FROM users
+       """.map { rs => (rs.longOpt("userId") -> rs.stringOpt("userName"))
+    }.list().apply()
+
   }
 
 }

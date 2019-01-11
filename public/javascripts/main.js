@@ -132,15 +132,6 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.edit-form').click(function () {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox').show();
   }
 });
-var $editCheckBox = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox');
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editBtn').click(function () {
-  var isPublic = $editCheckBox.data("isPublic");
-  console.log(isPublic);
-
-  if (isPublic === 'true') {
-    $editCheckBox.hide();
-  }
-});
 
 /***/ }),
 /* 2 */

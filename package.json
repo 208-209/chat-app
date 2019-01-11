@@ -32,5 +32,7 @@
     "url": "https://github.com/208-209/chat-app/issues"
   },
   "homepage": "https://github.com/208-209/chat-app#readme",
-  "engines": { "node": "8.9.4" }
+  "engines": {
+    "node": "8.9.4"
+  }
 }
