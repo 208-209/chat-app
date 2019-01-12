@@ -81,10 +81,17 @@
             }
         </div>
         <!-- message-form -->
-        <div class="fixed-bottom text-center">
-            <input type="text" id="meg" type="text">
-            <button id="btn" class="btn btn-primary" data-url="@webSocketUrl">送信</button>
+        <div class="fixed-bottom message-form form-row">
+            <div class="col-sm-10">
+                <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" type="text" autofocus autocomplete="off" spellcheck="false" autocorrect="off" class="form-control">
+
+            </div>
+            <div class="col-sm-2">
+                <button id="btn" class="btn btn-info" data-url="@webSocketUrl">送信</button>
+            </div>
+
         </div>
+
     </div>
 
     <!-- Right -->

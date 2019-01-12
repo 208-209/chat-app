@@ -36,3 +36,8 @@ $('.edit-form').click(() => {
         $('#editCheckBox').show();
     }
 });
+
+window.scrollTo({
+    top: window.innerHeight,
+    behavior: "smooth"
+});

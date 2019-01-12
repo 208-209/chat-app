@@ -132,6 +132,10 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.edit-form').click(function () {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox').show();
   }
 });
+window.scrollTo({
+  top: window.innerHeight,
+  behavior: "smooth"
+});
 
 /***/ }),
 /* 2 */
