@@ -6,7 +6,7 @@
 @main(channel._1.channelName)(accessToken) {
 
     <!-- Left -->
-    <div class="col-md-3">
+    <div class="left-sidebar">
         <!-- チャンネル -->
         <div class="card">
             <div class="card-header">
@@ -67,7 +67,8 @@
     </div>
 
     <!-- Center -->
-    <div class="col-md-6">
+    <div class="center">
+        <!-- message-area -->
         <div id="messages">
             @for(message <- messages) {
                 <div>
@@ -79,14 +80,15 @@
                 </div>
             }
         </div>
-        <div>
+        <!-- message-form -->
+        <div class="fixed-bottom text-center">
             <input type="text" id="meg" type="text">
             <button id="btn" class="btn btn-primary" data-url="@webSocketUrl">送信</button>
         </div>
     </div>
 
     <!-- Right -->
-    <div class="col-md-3">
+    <div class="right-sidebar">
 
         <!-- チャンネル詳細 -->
         <div class="card">

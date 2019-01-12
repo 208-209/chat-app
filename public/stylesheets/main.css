@@ -1,5 +1,5 @@
 body {
-    padding-top: 70px;
+    padding:4.5rem 0;
 }
 
 .fa-plus-square, .fa-heart, .fa-edit:hover {
@@ -22,4 +22,30 @@ body {
 .isLogin {
     color: blueviolet;
     font-weight: bold;
+}
+
+
+.main-container {
+    display: flex;
+}
+
+.left-sidebar {
+    flex: 0 0 220px;
+    position: fixed;
+    left: 0;
+    width: 220px;
+    height: 100%;
+}
+
+.right-sidebar {
+    flex: 0 0 220px;
+    position: fixed;
+    right: 0;
+    width: 220px;
+    height: 100%;
+}
+
+.center {
+    flex: 1 1 auto;
+    margin: 0 220px;
 }
