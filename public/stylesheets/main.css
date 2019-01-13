@@ -36,6 +36,7 @@ body {
     width: 220px;
     height: 100%;
     padding-left: 16px;
+    overflow-y: auto;
 }
 
 .right-sidebar {
@@ -45,6 +46,7 @@ body {
     width: 220px;
     height: 100%;
     padding-right: 16px;
+    overflow-y: auto;
 }
 
 .center {
@@ -53,7 +55,7 @@ body {
 }
 
 .message-form {
-    padding: 16px 220px;
+    padding: 16px 220px 16px 236px;
 }
 
 .message-hr {
