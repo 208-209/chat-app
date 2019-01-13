@@ -11,14 +11,18 @@ class BookmarkController @Inject()(val cache: SyncCacheApi, cc: ControllerCompon
 
   def ajax(channelId: String, userId: Long) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
-    println(request.body)
+    request.accessToken match {
+      case Some(accessToken) =>
+        channelAndUserFindOne(channelId) match {
+          case Some(channel) if userId == accessToken.getUserId =>
+            val isBookmark = !request.body.asFormUrlEncoded.get("bookmark").head.toBoolean
+            bookmarkUpsert(Bookmark(channelId, Some(userId), isBookmark))
+            val result = s"""{"bookmark": "$isBookmark"}"""
+            Ok(result)
+          case _ => NotFound("指定されたチャンネルは見つかりません。")
+        }
+      case None => Redirect(routes.OAuthController.login())
+    }
 
-    val isBookmark = !request.body.asFormUrlEncoded.get("bookmark").head.toBoolean
-
-    bookmarkUpsert(Bookmark(channelId, Some(userId), isBookmark))
-
-    val result = s"""{"bookmark": "${isBookmark}"}"""
-
-    Ok(result)
   }
 }

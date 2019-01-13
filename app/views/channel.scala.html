@@ -71,13 +71,9 @@
         <!-- message-area -->
         <div id="messages">
             @for(message <- messages) {
-                <div>
-                    <p>
-                        <span>名前：@{message._2.userName}</span>
-                        <span>日付：@{message._1.updatedAt}</span>
-                    </p>
-                    <p>内容：@{message._1.message}</p>
-                </div>
+                <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
+                <div><strong>@message._2.userName</strong></div>
+                <div class="balloon">@{message._1.message}</div>
             }
         </div>
         <!-- message-form -->
@@ -121,7 +117,7 @@
                 </li>
                 <li class="list-group-item">
                     <p class="card-title"><strong>更新日</strong></p>
-                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))</p>
+                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))</p>
                 </li>
 
             </ul>

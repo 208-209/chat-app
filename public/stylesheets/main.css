@@ -55,3 +55,41 @@ body {
 .message-form {
     padding: 16px 220px;
 }
+
+.message-hr {
+    margin-top: 48px;
+    border: none;
+    border-top: 1px dotted #8c8b8b;
+    text-align: center;
+}
+
+hr::before {
+    content: attr(data-date);
+    display: inline-block;
+    position: relative;
+    top: -12px;
+    background-color: #ffffff;
+    padding: 0 16px;
+}
+
+.balloon {
+    padding: 16px;
+    border-radius: 8px;
+}
+
+
+/*
+hr {
+    margin-top: 48px;
+    border: none;
+    border-top: 3px dashed pink;
+    text-align: center;
+}
+
+hr::before {
+    content: attr(data-date)"";
+    display: inline-block;
+    position: relative;
+    top: -12px;
+}
+*/
