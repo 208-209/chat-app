@@ -17379,14 +17379,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
  // AJAXによるBookmarkの更新
 
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(function (i, e) {
   var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
   button.click(function () {
     var channelId = button.data('channel-id');
+    var channelName = button.data('channel-name');
     var userId = button.data('user-id');
     var bookmark = button.data('bookmark');
     var CSRF_TOKEN = jquery__WEBPACK_IMPORTED_MODULE_0___default()('input[name="csrfToken"]').attr('value');
@@ -17402,12 +17401,22 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
       },
       success: function success(data) {
         var jsonData = JSON.parse(data);
-        console.log("jsonData.bookmark :" + Boolean(jsonData.bookmark));
-        console.log(_typeof(Boolean(jsonData.bookmark)));
         button.data('bookmark', jsonData.bookmark);
         button.removeClass('fas', 'far');
         var className = jsonData.bookmark == 'true' ? 'fas' : 'far';
-        button.addClass(className);
+        button.addClass(className); // ブックマークエリアに要素の追加と削除
+
+        if (jsonData.bookmark === 'true') {
+          var anchor = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<a>').attr({
+            href: "/channels/".concat(channelId)
+          }).text(channelName);
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li>').attr({
+            id: channelId,
+            class: 'list-group-item'
+          }).append(anchor).appendTo('#bookmark');
+        } else {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(channelId)).remove();
+        }
       }
     });
     /*

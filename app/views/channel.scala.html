@@ -13,7 +13,7 @@
                 <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
                 <span>ブックマーク</span>
             </div>
-            <ul class="list-group list-group-flush">
+            <ul class="list-group list-group-flush" id="bookmark">
                 <li class="list-group-item">
                     @if(channel._1.channelId == "general") {
                         general
@@ -23,7 +23,7 @@
                 </li>
 
                 @for(bookmark <- bookmarks) {
-                    <li class="list-group-item">
+                    <li class="list-group-item" id="@bookmark._1.channelId">
                         @if(bookmark._1.channelId == channel._1.channelId) {
                             @{bookmark._2.channelName}
                         } else {
@@ -44,9 +44,9 @@
                     @if(c.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(c.channelId, false)) {
-                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
+                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-channel-name="@c.channelName" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
                             } else {
-                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
+                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-channel-name="@c.channelName" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
                             }
                             @if(c.isPublic) {
                                 <i class="fas fa-flag"></i>

@@ -6,8 +6,8 @@ import $ from 'jquery';
 $('.bookmark-toggle-button').each((i, e) => {
     const button = $(e);
     button.click(() => {
-
         const channelId = button.data('channel-id');
+        const channelName = button.data('channel-name');
         const userId = button.data('user-id');
         const bookmark = button.data('bookmark');
         const CSRF_TOKEN = $('input[name="csrfToken"]').attr('value');
@@ -23,15 +23,20 @@ $('.bookmark-toggle-button').each((i, e) => {
             },
             success: function (data) {
                 const jsonData = JSON.parse(data);
-                console.log("jsonData.bookmark :" + Boolean(jsonData.bookmark));
 
-                console.log(typeof Boolean(jsonData.bookmark));
-
+                // アイコン
                 button.data('bookmark', jsonData.bookmark);
-
                 button.removeClass('fas', 'far');
                 const className = jsonData.bookmark == 'true' ? 'fas' : 'far';
                 button.addClass(className)
+
+                // ブックマークエリアに要素の追加と削除
+                if(jsonData.bookmark === 'true') {
+                    const anchor = $('<a>').attr({ href: `/channels/${channelId}` }).text(channelName);
+                    $('<li>').attr({ id: channelId, class: 'list-group-item' }).append(anchor).appendTo('#bookmark');
+                } else {
+                    $(`#${channelId}`).remove()
+                }
             }
         });
 
