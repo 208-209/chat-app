@@ -1,7 +1,5 @@
 package controllers
 
-import java.net.URL
-
 import play.api.mvc._
 import play.api.libs.streams.ActorFlow
 import play.api.cache.SyncCacheApi
@@ -11,7 +9,8 @@ import akka.actor._
 import akka.stream.Materializer
 import twitter4j.auth.AccessToken
 import models._
-
+import java.net.URL
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class WaitingRoom() {
@@ -52,16 +51,16 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     Future.successful(accessToken match {
       case Some(token) if token.getUserId == userId && isSameOrigin(request) =>
 
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId)})
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
       case _ => Left(Forbidden)
     })
   }
 
   object MyWebSocketActor {
-    def props(out: ActorRef, channelId: String, userId: Long) = Props(new MyWebSocketActor(out, channelId, userId))
+    def props(out: ActorRef, channelId: String, userId: Long, userName: String) = Props(new MyWebSocketActor(out, channelId, userId, userName))
   }
 
-  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long) extends Actor {
+  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String) extends Actor {
 
 
     val myRoom = roomMap.get(channelId) match {
@@ -83,10 +82,12 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
         MessageRepository.insert(Message(messageId, message, channelId, Some(userId), updatedAt))
 
+        val formattedUpdatedAt = updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))
+
         println(msg("message").getClass)
         println((msg \ "message").as[String].getClass)
 
-        val msgJson = s"""{"messageId": "${messageId}", "message": "${message}", "updatedAt": "${updatedAt}"}"""
+        val msgJson = s"""{"messageId": "${messageId}", "message": "${message}", "updatedAt": "${formattedUpdatedAt}", "userName": "${userName}"}"""
 
 
         myRoom.actorSet.foreach { out =>

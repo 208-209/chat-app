@@ -133,7 +133,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.edit-form').click(function () {
   }
 });
 window.scrollTo({
-  top: window.innerHeight,
+  top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
   behavior: "smooth"
 });
 
@@ -17400,7 +17400,8 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
         xhr.setRequestHeader("Csrf-Token", CSRF_TOKEN);
       },
       success: function success(data) {
-        var jsonData = JSON.parse(data);
+        var jsonData = JSON.parse(data); // アイコン
+
         button.data('bookmark', jsonData.bookmark);
         button.removeClass('fas', 'far');
         var className = jsonData.bookmark == 'true' ? 'fas' : 'far';
@@ -17473,36 +17474,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-
-var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#btn");
-var webSocketUrl = $btn.data('url');
+var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
+var webSocketUrl = $messages.data('url');
 console.log("webSocketUrl: ".concat(webSocketUrl));
 
 if (webSocketUrl) {
-  var $members = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#members");
-  var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messages");
-  var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
   var connection = new WebSocket(webSocketUrl);
-  $messages.before("<p>foo</p>");
-  $btn.prop("disabled", true);
+  var $sendBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message-send-button");
+  $sendBtn.prop("disabled", true);
 
   connection.onopen = function () {
-    $btn.prop("disabled", false);
-    $btn.click(function () {
+    $sendBtn.prop("disabled", false); // メッセージの送信
+
+    $sendBtn.click(function () {
+      var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
       var text = $meg.val();
       var msg = {
         "message": text
       };
-      console.log(text);
+      console.log("msg : " + msg);
       $meg.val('');
       connection.send(JSON.stringify(msg));
+    }); // メッセージの削除
+
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('.message-del-button').each(function (i, e) {
+      var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
+      button.click(function () {
+        var deleteId = button.data('message-id');
+        console.log("deleteId : " + deleteId);
+      });
     });
   };
 
   connection.onclose = function () {
-    $btn.prop("disabled", true);
+    $sendBtn.prop("disabled", true);
   };
 
   connection.onerror = function (error) {
@@ -17510,11 +17516,8 @@ if (webSocketUrl) {
   };
 
   connection.onmessage = function (event) {
-    console.log(event.data);
     var jsonData = JSON.parse(event.data);
-    console.log(_typeof(jsonData));
-    console.log(jsonData.msg);
-    console.log(jsonData.members);
+    console.log(jsonData);
 
     if (jsonData.members) {
       /*
@@ -17528,7 +17531,29 @@ if (webSocketUrl) {
     }
 
     if (jsonData.message) {
-      $messages.append(jquery__WEBPACK_IMPORTED_MODULE_0___default()("<p>" + jsonData.message + "</p>"));
+      var messageId = jsonData.messageId;
+      var message = jsonData.message;
+      var updatedAt = jsonData.updatedAt;
+      var userName = jsonData.userName;
+      var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
+        class: 'message-hr',
+        'data-date': updatedAt
+      });
+      var iEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
+        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+        'data-message-id': messageId
+      });
+      var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
+      var divEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+        class: 'balloon'
+      }).text(message);
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+        id: messageId
+      }).append(hrEle, strongEle, divEle).appendTo($messages);
+      window.scrollTo({
+        top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
+        behavior: "smooth"
+      });
     }
   };
 }

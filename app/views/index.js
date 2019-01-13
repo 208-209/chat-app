@@ -38,6 +38,6 @@ $('.edit-form').click(() => {
 });
 
 window.scrollTo({
-    top: window.innerHeight,
+    top: $(document).height(),
     behavior: "smooth"
 });

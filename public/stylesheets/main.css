@@ -2,7 +2,7 @@ body {
     padding:4.5rem 0;
 }
 
-.fa-plus-square, .fa-heart, .fa-edit:hover {
+.fa-plus-square, .fa-heart, .fa-edit:hover, .fa-trash-alt {
     cursor: pointer;
 }
 

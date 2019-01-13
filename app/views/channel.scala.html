@@ -3,6 +3,7 @@
 @import helper._
 @import java.time.format.DateTimeFormatter
 
+
 @main(channel._1.channelName)(accessToken) {
 
     <!-- Left -->
@@ -69,11 +70,17 @@
     <!-- Center -->
     <div class="center">
         <!-- message-area -->
-        <div id="messages">
+        <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
-                <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
-                <div><strong>@message._2.userName</strong></div>
-                <div class="balloon">@{message._1.message}</div>
+                <div id="@message._1.messageId">
+
+                    <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
+                    <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId"></i>
+                    <strong>@message._2.userName</strong>
+
+                    <div class="balloon">@{message._1.message}</div>
+
+                </div>
             }
         </div>
         <!-- message-form -->
@@ -83,7 +90,7 @@
 
             </div>
             <div class="col-sm-2">
-                <button id="btn" class="btn btn-info" data-url="@webSocketUrl">送信</button>
+                <button id="message-send-button" class="btn btn-info">送信</button>
             </div>
 
         </div>

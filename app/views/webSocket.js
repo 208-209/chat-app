@@ -2,39 +2,51 @@
 
 import $ from 'jquery';
 
-const $btn = $("#btn");
-const webSocketUrl = $btn.data('url');
+const $messages = $('#messages');
+const webSocketUrl = $messages.data('url');
 
 console.log(`webSocketUrl: ${webSocketUrl}`);
 
 if (webSocketUrl) {
 
-    const $members = $("#members");
-    const $messages = $("#messages");
-    const $meg = $("#meg");
-
     const connection = new WebSocket(webSocketUrl);
+    const $sendBtn = $("#message-send-button");
 
-    $messages.before("<p>foo</p>");
-
-    $btn.prop("disabled", true);
-
-
+    $sendBtn.prop("disabled", true);
 
     connection.onopen = () => {
-        $btn.prop("disabled", false);
-        $btn.click(() => {
+        $sendBtn.prop("disabled", false);
+
+        // メッセージの送信
+        $sendBtn.click(() => {
+            const $meg = $("#meg");
             const text = $meg.val();
             const msg = {"message": text};
-            console.log(text);
+
+            console.log("msg : " + msg);
+
             $meg.val('');
             connection.send(JSON.stringify(msg))
 
         });
+
+        // メッセージの削除
+        $('.message-del-button').each((i, e) => {
+           const button = $(e);
+           button.click(() => {
+               const deleteId = button.data('message-id');
+
+               console.log("deleteId : " + deleteId)
+
+           });
+        });
+
+
+
     };
 
     connection.onclose = () => {
-        $btn.prop("disabled", true);
+        $sendBtn.prop("disabled", true);
     };
 
 
@@ -43,11 +55,10 @@ if (webSocketUrl) {
     };
 
     connection.onmessage = event => {
-        console.log(event.data);
         const jsonData = JSON.parse(event.data);
-        console.log(typeof jsonData);
-        console.log(jsonData.msg);
-        console.log(jsonData.members);
+
+        console.log(jsonData);
+
 
         if (jsonData.members) {
             /*
@@ -62,7 +73,27 @@ if (webSocketUrl) {
         }
 
         if (jsonData.message) {
-            $messages.append($("<p>" + jsonData.message + "</p>"))
+
+            const messageId = jsonData.messageId;
+            const message = jsonData.message;
+            const updatedAt = jsonData.updatedAt;
+            const userName = jsonData.userName;
+
+            const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+            const iEle = $('<i>').attr({
+                class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+                'data-message-id': messageId
+            });
+            const strongEle = $('<strong>').text(userName);
+            const divEle = $('<div>').attr({ class: 'balloon'}).text(message);
+
+            $('<div>').attr({ id: messageId }).append(hrEle, strongEle, divEle).appendTo($messages);
+
+            window.scrollTo({
+                top: $(document).height(),
+                behavior: "smooth"
+            });
+
         }
     };
 
