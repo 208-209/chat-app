@@ -58,6 +58,7 @@ if (webSocketUrl) {
         const jsonData = JSON.parse(event.data);
 
         console.log(jsonData);
+        
 
 
         if (jsonData.members) {

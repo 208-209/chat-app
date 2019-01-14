@@ -156,14 +156,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @param channel
     * @return
     */
-  private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Option[Long], Option[String]], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, String], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
     val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
-    val users = userFindAll()
-    val userMap = userTuple().toMap
-    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ bookmark => bookmark._1.isBookmark || bookmark._2.members.split(",").map(_.toLong).contains(bookmark._1.userId) }
-    val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
-    val messages = MessageRepository.findAll(channel._1.channelId)
+    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ case (bookmark, channel) => channel.isPublic || channel.members.split(",").map(_.toLong).contains(bookmark.userId) }
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
       case Some(_) => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL(secure = true)
       case None => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL()
@@ -171,7 +167,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     val members = channel._1.members.split(",").map(_.toLong).toSeq
     val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.description, members))
 
-    (channels, users, userMap, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)
+    (channels, userFindAll(), userMap(), bookmarks, bookmarkMap(accessToken.getUserId), messageFindAll(channel._1.channelId), webSocketUrl, editForm)
   }
 
 

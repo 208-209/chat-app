@@ -23,16 +23,24 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
   var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
 
-  def isSameOrigin(request: RequestHeader): Boolean = {
+
+  def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
+
+    val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
+    val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
+
+    // パスのチャンネルが存在する かつ パスのユーザーIDとリクエスト者のIDが一致する かつ 同一生成元ポリシー
+    Future.successful(accessToken match {
+      case Some(token) if channelFindById(channelId).isDefined && userId == token.getUserId && isSameOrigin(request) =>
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
+      case _ => Left(Forbidden)
+    })
+  }
+
+  private def isSameOrigin(request: RequestHeader): Boolean = {
     request.headers.get("Origin") match {
       case Some(originValue) =>
         val url = new URL(originValue)
-
-        println("url : " + url)
-        println("url host : " + url.getHost)
-        println("url.toString : " + url.toString)
-        println("port : " + sys.env.getOrElse("PORT", ""))
-
         sys.env.get("HEROKU_URL") match {
           case Some(_) if url.toString == "https://play-chat-app.herokuapp.com" => true
           case None if url.toString == "http://localhost:9000" => true
@@ -40,20 +48,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         }
       case _ => false
     }
-  }
-
-  def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
-
-    val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
-    val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
-
-
-    Future.successful(accessToken match {
-      case Some(token) if token.getUserId == userId && isSameOrigin(request) =>
-
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
-      case _ => Left(Forbidden)
-    })
   }
 
   object MyWebSocketActor {
@@ -75,6 +69,25 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     def receive = {
       case msg: JsValue =>
+
+        // メッセージの投稿
+        (msg \ "message").asOpt[String].map { message =>
+
+          println("message : " + message)
+
+
+        }
+
+        // メッセージの削除
+        (msg \ "deleteId").asOpt[String].map { deleteId =>
+
+          println("message : " + deleteId)
+
+        }
+
+
+
+
 
         val messageId = java.util.UUID.randomUUID().toString
         val message = (msg \ "message").as[String]

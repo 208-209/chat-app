@@ -86,19 +86,19 @@ package object models {
        select ${b.result.*}, ${c.result.*}
        from ${Bookmark.as(b)}
        inner join ${Channel.as(c)} on ${b.channelId} = ${c.channelId}
-       where userId = $userId
+       where userId = $userId and isBookmark = true
        order by updatedAt
     """.map { implicit rs => (Bookmark(b.resultName), Channel(c.resultName))}.list().apply()
   }
 
 
-  def bookmarkTuple(userId: Long): Seq[(String, Boolean)] = DB readOnly { implicit session =>
+  def bookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
     sql"""
           SELECT *
           FROM bookmarks
           WHERE userId = $userId
-       """.map { rs => (rs.string("channelId") -> rs.boolean("isBookmark"))
-    }.list().apply()
+       """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
+    }.list().apply().toMap
 
   }
 
@@ -121,13 +121,26 @@ package object models {
     }.list().apply()
   }
 
-  def userTuple(): Seq[(Option[Long], Option[String])] = DB readOnly { implicit session =>
+  def userMap(): Map[Long, String] = DB readOnly { implicit session =>
     sql"""
           SELECT *
           FROM users
-       """.map { rs => (rs.longOpt("userId") -> rs.stringOpt("userName"))
-    }.list().apply()
+       """.map { rs => rs.long("userId") -> rs.string("userName")
+    }.list().apply().toMap
 
   }
+
+  def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
+    val (m, u) = (Message.syntax("m"), User.syntax("u"))
+    sql"""
+       select ${m.result.*}, ${u.result.*}
+       from ${Message.as(m)}
+       inner join ${User.as(u)} on ${m.createdBy} = ${u.userId}
+       where channelId = $channelId
+       order by updatedAt ASC
+    """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
+  }
+
+
 
 }

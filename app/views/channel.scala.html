@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Option[Long], Option[String]], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Long, String], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 @import java.time.format.DateTimeFormatter
@@ -147,7 +147,7 @@
                     }
                 } else {
                     @for(user <- channel._1.members.split(",").map(_.toLong)) {
-                        <li id="@user" class="members list-group-item">@userMap.getOrElse(Some(user), "")</li>
+                        <li id="@user" class="members list-group-item">@userMap.getOrElse(user, "")</li>
                     }
                 }
                 </ul>
