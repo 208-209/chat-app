@@ -82,12 +82,14 @@ if (webSocketUrl) {
             const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
             const iEle = $('<i>').attr({
                 class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-                'data-message-id': messageId
+                'data-message-id': messageId,
+                'data-placement': 'bottom',
+                'title': 'このメッセージを削除する場合は、再読込してください'
             });
             const strongEle = $('<strong>').text(userName);
             const divEle = $('<div>').attr({ class: 'balloon'}).text(message);
 
-            $('<div>').attr({ id: messageId }).append(hrEle, strongEle, divEle).appendTo($messages);
+            $('<div>').attr({ id: messageId }).append(hrEle, iEle, strongEle, divEle).appendTo($messages);
 
             window.scrollTo({
                 top: $(document).height(),
