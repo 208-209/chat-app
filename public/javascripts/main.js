@@ -17539,19 +17539,22 @@ if (webSocketUrl) {
         class: 'message-hr',
         'data-date': updatedAt
       });
-      var iEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
-        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-        'data-message-id': messageId,
-        'data-placement': 'bottom',
-        'title': 'このメッセージを削除する場合は、再読込してください'
+      /*
+      const iEle = $('<i>').attr({
+          class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+          'data-message-id': messageId,
+          'data-placement': 'bottom',
+          'title': 'このメッセージを削除する場合は、再読込してください'
       });
+      */
+
       var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
       var divEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
         class: 'balloon'
       }).text(message);
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
         id: messageId
-      }).append(hrEle, iEle, strongEle, divEle).appendTo($messages);
+      }).append(hrEle, strongEle, divEle).appendTo($messages);
       window.scrollTo({
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"

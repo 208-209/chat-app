@@ -161,7 +161,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
     val users = userFindAll()
     val userMap = userTuple().toMap
-    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ bookmark => bookmark._2.members.split(",").map(_.toLong).contains(bookmark._1.userId) }
+    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ bookmark => bookmark._1.isBookmark || bookmark._2.members.split(",").map(_.toLong).contains(bookmark._1.userId) }
     val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
     val messages = MessageRepository.findAll(channel._1.channelId)
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
