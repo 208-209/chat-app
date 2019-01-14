@@ -62,8 +62,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       case None =>
         val room = new WaitingRoom()
         roomMap = roomMap + (channelId -> room)
-        println(room)
-        println(roomMap)
         room
     }
 
@@ -71,7 +69,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       case msg: JsValue =>
 
         // メッセージの投稿
-        (msg \ "message").asOpt[String].map { message =>
+        (msg \ "message").asOpt[String].foreach { message =>
 
           println("message : " + message)
 
@@ -79,7 +77,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         }
 
         // メッセージの削除
-        (msg \ "deleteId").asOpt[String].map { deleteId =>
+        (msg \ "deleteId").asOpt[String].foreach { deleteId =>
 
           println("message : " + deleteId)
 

@@ -43,7 +43,7 @@
                     <span>チャンネル一覧</span>
                 </div>
                 <ul class="list-group list-group-flush">
-
+                @* generalチャンネルは除外 *@
                 @for(ch <- channels if ch.channelId != "general") {
                     <li class="list-group-item">
                         @if(bookmarkMap.getOrElse(ch.channelId, false)) {

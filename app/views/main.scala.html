@@ -19,13 +19,11 @@
 
             <nav class="navbar navbar-dark bg-dark fixed-top">
                 <a class="navbar-brand" href="@routes.ChannelController.read("general")">chat-app</a>
-
-                @if(accessToken.isEmpty) {
-                    <a href="@routes.OAuthController.login" class="btn btn-outline-success my-2 my-sm-0" role="button">Twitter でログイン</a>
-                } else {
-                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{accessToken.map(_.getScreenName).getOrElse("null")} をログアウト</a>
+                @accessToken.map { token =>
+                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{token.getScreenName} をログアウト</a>
+                }.getOrElse {
+                    <a href="@routes.OAuthController.login" class="btn btn-outline-success" role="button">Twitter でログイン</a>
                 }
-
             </nav>
 
             <div class="main-container">
