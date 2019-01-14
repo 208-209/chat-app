@@ -56,7 +56,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                 val description = form.description
                 val isPublic = form.isPublic
                 val members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(",")
-                val createdBy = request.accessToken.map(_.getUserId)
+                val createdBy = accessToken.getUserId
                 val updatedAt = java.time.OffsetDateTime.now()
 
                 channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
@@ -91,7 +91,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   description = form.description,
                   isPublic = form.isPublic,
                   members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(","),
-                  createdBy = request.accessToken.map(_.getUserId),
+                  createdBy = accessToken.getUserId,
                   updatedAt = java.time.OffsetDateTime.now()
                 )
 
@@ -147,7 +147,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @return
     */
   private def isMain(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.createdBy == Option(accessToken.getUserId) && channel._1.channelId != "general"
+    channel._1.createdBy == accessToken.getUserId && channel._1.channelId != "general"
   }
 
   /**
@@ -161,7 +161,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
     val users = userFindAll()
     val userMap = userTuple().toMap
-    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId)
+    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ bookmark => bookmark._2.members.split(",").map(_.toLong).contains(bookmark._1.userId) }
     val bookmarkMap = bookmarkTuple(accessToken.getUserId).toMap
     val messages = MessageRepository.findAll(channel._1.channelId)
     val webSocketUrl = sys.env.get("HEROKU_URL") match {

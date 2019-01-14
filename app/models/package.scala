@@ -14,7 +14,7 @@ package object models {
         rs.string("description"),
         rs.boolean("isPublic"),
         rs.string("members"),
-        rs.longOpt("createdBy"),
+        rs.long("createdBy"),
         rs.offsetDateTime("updatedAt")
       )
     }.single().apply()
@@ -65,7 +65,7 @@ package object models {
         rs.string("description"),
         rs.boolean("isPublic"),
         rs.string("members"),
-        rs.longOpt("createdBy"),
+        rs.long("createdBy"),
         rs.offsetDateTime("updatedAt")
       )
     }.list().apply()
@@ -117,7 +117,7 @@ package object models {
        from users
        order by userName
     """.map { rs =>
-      User(rs.longOpt("userId"), rs.stringOpt("userName"))
+      User(rs.long("userId"), rs.string("userName"))
     }.list().apply()
   }
 

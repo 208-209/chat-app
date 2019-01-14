@@ -3,7 +3,7 @@ package models
 import java.time.OffsetDateTime
 import scalikejdbc._
 
-case class Channel(channelId: String, channelName: String, description: String, isPublic: Boolean, members: String, createdBy: Option[Long], updatedAt: OffsetDateTime)
+case class Channel(channelId: String, channelName: String, description: String, isPublic: Boolean, members: String, createdBy: Long, updatedAt: OffsetDateTime)
 
 object Channel extends SQLSyntaxSupport[Channel] {
   override val tableName = "channels"
@@ -17,7 +17,7 @@ object Channel extends SQLSyntaxSupport[Channel] {
       description = rs.string(c.description),
       isPublic = rs.boolean(c.isPublic),
       members = rs.string(c.members),
-      createdBy = rs.longOpt(c.createdBy),
+      createdBy = rs.long(c.createdBy),
       updatedAt = rs.offsetDateTime(c.updatedAt)
     )
   }

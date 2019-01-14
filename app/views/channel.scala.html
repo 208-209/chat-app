@@ -6,346 +6,354 @@
 
 @main(channel._1.channelName)(accessToken) {
 
-    <!-- Left -->
-    <div class="left-sidebar">
-        <!-- チャンネル -->
-        <div class="card">
-            <div class="card-header">
-                <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
-                <span>ブックマーク</span>
-            </div>
-            <ul class="list-group list-group-flush" id="bookmark">
-                <li class="list-group-item">
-                    @if(channel._1.channelId == "general") {
-                        general
-                    } else {
-                        <a href="@routes.ChannelController.read("general")">general</a>
-                    }
-                </li>
+    @accessToken.map { token =>
 
-                @for(bookmark <- bookmarks) {
-                    <li class="list-group-item" id="@bookmark._1.channelId">
+        <!-- Left -->
+        <div class="left-sidebar">
+                <!-- チャンネル -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
+                    <span>ブックマーク</span>
+                </div>
+                <ul class="list-group list-group-flush" id="bookmark">
+                    <li class="list-group-item">
+                        @if(channel._1.channelId == "general") {
+                            general
+                        } else {
+                            <a href="@routes.ChannelController.read("general")">general</a>
+                        }
+                    </li>
+
+                    @for(bookmark <- bookmarks) {
+                        <li class="list-group-item" id="@bookmark._1.channelId">
                         @if(bookmark._1.channelId == channel._1.channelId) {
                             @{bookmark._2.channelName}
                         } else {
                             <a href="@routes.ChannelController.read(bookmark._1.channelId)">@{bookmark._2.channelName}</a>
                         }
-                    </li>
-                }
-            </ul>
-        </div>
-
-        <!-- チャンネル一覧 -->
-        <div class="card">
-            <div class="card-header">
-                <span>チャンネル一覧</span>
-            </div>
-            <ul class="list-group list-group-flush">
-                @for(c <- channels) {
-                    @if(c.channelId != "general") {
-                        <li class="list-group-item">
-                            @if(bookmarkMap.getOrElse(c.channelId, false)) {
-                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-channel-name="@c.channelName" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
-                            } else {
-                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@c.channelId" data-channel-name="@c.channelName" data-user-id="@{accessToken.map(_.getUserId).get}" data-bookmark="@{bookmarkMap.getOrElse(c.channelId, false)}"></i>
-                            }
-                            @if(c.isPublic) {
-                                <i class="fas fa-flag"></i>
-                            } else {
-                                <i class="fas fa-key"></i>
-                            }
-                            @if(c.channelId == channel._1.channelId) {
-                                @{c.channelName}
-                            } else {
-                                <a href="@routes.ChannelController.read(c.channelId)">@{c.channelName}</a>
-                            }
                         </li>
                     }
+                </ul>
+            </div>
+
+                <!-- チャンネル一覧 -->
+            <div class="card">
+                <div class="card-header">
+                    <span>チャンネル一覧</span>
+                </div>
+                <ul class="list-group list-group-flush">
+
+                @for(ch <- channels if ch.channelId != "general") {
+                    <li class="list-group-item">
+                        @if(bookmarkMap.getOrElse(ch.channelId, false)) {
+                            <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                        } else {
+                            <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                        }
+                        @if(ch.isPublic) {
+                            <i class="fas fa-flag"></i>
+                        } else {
+                            <i class="fas fa-key"></i>
+                        }
+                        @if(ch.channelId == channel._1.channelId) {
+                            @{ch.channelName}
+                        } else {
+                            <a href="@routes.ChannelController.read(ch.channelId)">@{ch.channelName}</a>
+                        }
+                    </li>
                 }
-            </ul>
+
+                </ul>
+            </div>
+
         </div>
 
-    </div>
-
-    <!-- Center -->
-    <div class="center">
-        <!-- message-area -->
-        <div id="messages" data-url="@webSocketUrl">
+        <!-- Center -->
+        <div class="center">
+                <!-- message-area -->
+            <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
                 <div id="@message._1.messageId">
 
                     <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
-                    @if(accessToken.map(_.getUserId) == message._2.userId) {
+                    @if(token.getUserId == message._2.userId) {
                         <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
 
                     }
-                    <strong>@{message._2.userName.getOrElse("")}</strong>
+                    <strong>@message._2.userName</strong>
 
                     <div class="balloon">@{message._1.message}</div>
 
                 </div>
             }
-        </div>
-        <!-- message-form -->
-        <div class="fixed-bottom message-form form-row">
-            <div class="col-sm-10">
-                <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" type="text" autofocus autocomplete="off" spellcheck="false" autocorrect="off" class="form-control">
+            </div>
+                <!-- message-form -->
+            <div class="fixed-bottom message-form form-row">
+                <div class="col-sm-10">
+                    <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" autofocus autocomplete="off" spellcheck="false" class="form-control">
+
+                </div>
+                <div class="col-sm-2">
+                    <button id="message-send-button" class="btn btn-info">送信</button>
+                </div>
 
             </div>
-            <div class="col-sm-2">
-                <button id="message-send-button" class="btn btn-info">送信</button>
-            </div>
 
-        </div>
-
-    </div>
-
-    <!-- Right -->
-    <div class="right-sidebar">
-
-        <!-- チャンネル詳細 -->
-        <div class="card">
-            <div class="card-header">
-                @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-                    <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
-                }
-                @if(channel._1.isPublic) {
-                    <i class="fas fa-flag"></i>
-                } else {
-                    <i class="fas fa-key"></i>
-                }
-                <span id="channel-channelName">@channel._1.channelName</span>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <p class="card-title"><strong>製作者</strong></p>
-                    <p class="card-text">@channel._2.userName</p>
-                </li>
-                <li class="list-group-item">
-                    <p class="card-title"><strong>説明</strong></p>
-                    <p id="channel-description" class="card-text">@channel._1.description</p>
-                </li>
-                <li class="list-group-item">
-                    <p class="card-title"><strong>更新日</strong></p>
-                    <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))</p>
-                </li>
-
-            </ul>
         </div>
 
-        <!-- メンバー -->
-        <div class="card">
-            <div class="card-header">
-                メンバー
+        <!-- Right -->
+        <div class="right-sidebar">
+
+                <!-- チャンネル詳細 -->
+            <div class="card">
+                <div class="card-header">
+                    @if(token.getUserId == channel._1.createdBy && channel._1.channelId != "general") {
+                        <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
+                    }
+                    @if(channel._1.isPublic) {
+                        <i class="fas fa-flag"></i>
+                    } else {
+                        <i class="fas fa-key"></i>
+                    }
+                    <span id="channel-channelName">@channel._1.channelName</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>製作者</strong></p>
+                        <p class="card-text">@channel._2.userName</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>説明</strong></p>
+                        <p id="channel-description" class="card-text">@channel._1.description</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>更新日</strong></p>
+                        <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))</p>
+                    </li>
+
+                </ul>
             </div>
-            <ul class="list-group list-group-flush">
+
+                <!-- メンバー -->
+            <div class="card">
+                <div class="card-header">
+                    メンバー
+                </div>
+                <ul class="list-group list-group-flush">
                 @if(channel._1.isPublic) {
                     @for(user <- users) {
-                        <li id="@user.userId.get" class="members list-group-item">@user.userName.getOrElse("")</li>
+                        <li id="@user.userId" class="members list-group-item">@user.userName</li>
                     }
                 } else {
                     @for(user <- channel._1.members.split(",").map(_.toLong)) {
                         <li id="@user" class="members list-group-item">@userMap.getOrElse(Some(user), "")</li>
                     }
                 }
-            </ul>
-        </div>
+                </ul>
+            </div>
 
-        @**
-        <!-- ログインメンバー -->
-        <div class="card">
+            @**
+            <!-- ログインメンバー -->
+            <div class="card">
             <div class="card-header">
-                ログインメンバー
+            ログインメンバー
             </div>
             <ul id="members" class="list-group list-group-flush">
-                <li>hoge</li>
+            <li>hoge</li>
             </ul>
-        </div>
+            </div>
             **@
 
-    </div>
-
-
-    <!-- Entry Modal -->
-    <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">チャンネルの新規作成</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                @form(routes.ChannelController.create(channel._1.channelId)) {
-                    @CSRF.formField
-
-                    <div class="form-group" id="entryRadioBtn">
-                        <div class="form-check-inline entry-form">
-                            <input class="form-check-input" type="radio" name="isPublic" id="entryPublicTrue" value="true" checked>
-                            <label class="form-check-label" for="entryPublicTrue">パブリック</label>
-                        </div>
-                        <div class="form-check-inline entry-form">
-                            <input class="form-check-input" type="radio" name="isPublic" id="entryPublicFalse" value="false">
-                            <label class="form-check-label" for="entryPublicFalse">プライベート</label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="entry-channelName">名前</label>
-                        <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前を入力してください">
-                        <small id="entry-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="entry-description">チャンネルの説明</label>
-                        <textarea class="form-control" id="entry-description" rows="3" name="description"></textarea>
-                        <small id="entry-description-help" class="form-text text-muted">エラー文を表示する場所</small>
-                    </div>
-
-                    <!-- CheckBox -->
-                    <div class="form-group " id="entryCheckBox">
-                        <p>招待するユーザー</p>
-
-
-                        @for(user <- users) {
-                            @if(user.userId == accessToken.map(_.getUserId)) {
-                                <div class="form-check-inline" hidden>
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
-                                    </label>
-                                </div>
-                            } else {
-                                <div class="form-check-inline">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
-                                    </label>
-                                </div>
-                            }
-                        }
-                    </div>
-
-                    <input type="submit" class="btn btn-primary float-right" value="チャンネルをつくる">
-                }
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
         </div>
-    </div>
 
 
-    <!-- Edit Modal -->
-    @if(accessToken.map(_.getUserId) == channel._1.createdBy && channel._1.channelId != "general") {
-        <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <!-- Entry Modal -->
+        <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
+
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">@{channel._1.channelName}の編集</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">チャンネルの新規作成</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
+                    @form(routes.ChannelController.create(channel._1.channelId)) {
+                        @CSRF.formField
 
-
-
-                        @form(routes.ChannelController.update(channel._1.channelId)) {
-                            @CSRF.formField
-
-                            @if(channel._1.isPublic) {
-                                <div class="form-group" id="editRadioBtn">
-                                    <div class="form-check-inline edit-form">
-                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true" checked>
-                                        <label class="form-check-label" for="editPublicTrue">パブリック</label>
-                                    </div>
-                                    <div class="form-check-inline edit-form">
-                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false">
-                                        <label class="form-check-label" for="editPublicFalse">プライベート</label>
-                                    </div>
-                                </div>
-
-                            } else {
-                                <div class="form-group" id="editRadioBtn">
-                                    <div class="form-check-inline edit-form">
-                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true">
-                                        <label class="form-check-label" for="editPublicTrue">パブリック</label>
-                                    </div>
-                                    <div class="form-check-inline edit-form">
-                                        <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false" checked>
-                                        <label class="form-check-label" for="editPublicFalse">プライベート</label>
-                                    </div>
-                                </div>
-
-                            }
-
-
-                            <div class="form-group">
-                                <label for="edit-channelName">名前</label>
-                                <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
-                                <small id="edit-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                        <div class="form-group" id="entryRadioBtn">
+                            <div class="form-check-inline entry-form">
+                                <input class="form-check-input" type="radio" name="isPublic" id="entryPublicTrue" value="true" checked>
+                                <label class="form-check-label" for="entryPublicTrue">パブリック</label>
                             </div>
-
-                            <div class="form-group">
-                                <label for="edit-description">チャンネルの説明</label>
-                                <textarea class="form-control" id="edit-description" rows="3" name="description">@editForm("description").value</textarea>
-                                <small id="edit-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            <div class="form-check-inline entry-form">
+                                <input class="form-check-input" type="radio" name="isPublic" id="entryPublicFalse" value="false">
+                                <label class="form-check-label" for="entryPublicFalse">プライベート</label>
                             </div>
+                        </div>
 
-                            @** チェックボックス **@
-                            <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
-                                <p>招待するユーザー</p>
-                                @for(user <- users) {
-                                    @if(user.userId == accessToken.map(_.getUserId)) {
-                                        <div class="form-check-inline" hidden>
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
-                                            </label>
-                                        </div>
-                                    } else {
-                                        @if(channel._1.members.split(",").map(_.toLong).contains(user.userId.get)) {
+                        <div class="form-group">
+                            <label for="entry-channelName">名前</label>
+                            <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前を入力してください">
+                            <small id="entry-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                        </div>
 
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
-                                                </label>
-                                            </div>
+                        <div class="form-group">
+                            <label for="entry-description">チャンネルの説明</label>
+                            <textarea class="form-control" id="entry-description" rows="3" name="description"></textarea>
+                            <small id="entry-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                        </div>
 
-                                        } else {
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
-                                                </label>
-                                            </div>
-                                        }
-                                    }
+                            <!-- CheckBox -->
+                        <div class="form-group " id="entryCheckBox">
+                            <p>招待するユーザー</p>
+
+
+                            @for(user <- users) {
+                                @if(user.userId == token.getUserId) {
+                                    <div class="form-check-inline" hidden>
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                        </label>
+                                    </div>
+                                } else {
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                        </label>
+                                    </div>
                                 }
-                            </div>
+                            }
+                        </div>
 
-                            <input type="submit" class="btn btn-success float-right" value="チャンネルを編集する">
-
+                        <input type="submit" class="btn btn-primary float-right" value="チャンネルをつくる">
                         }
-
-                        @form(routes.ChannelController.delete(channel._1.channelId)) {
-                            @CSRF.formField
-                            <button class="btn btn-danger">チャンネルを削除する</button>
-                        }
-
-
-
-
-
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
+
+        <!-- Edit Modal -->
+        @if(token.getUserId == channel._1.createdBy && channel._1.channelId != "general") {
+            <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">@{channel._1.channelName}の編集</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+
+
+                            @form(routes.ChannelController.update(channel._1.channelId)) {
+                                @CSRF.formField
+
+                                @if(channel._1.isPublic) {
+                                    <div class="form-group" id="editRadioBtn">
+                                        <div class="form-check-inline edit-form">
+                                            <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true" checked>
+                                            <label class="form-check-label" for="editPublicTrue">パブリック</label>
+                                        </div>
+                                        <div class="form-check-inline edit-form">
+                                            <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false">
+                                            <label class="form-check-label" for="editPublicFalse">プライベート</label>
+                                        </div>
+                                    </div>
+
+                                } else {
+                                    <div class="form-group" id="editRadioBtn">
+                                        <div class="form-check-inline edit-form">
+                                            <input class="form-check-input" type="radio" name="isPublic" id="editPublicTrue" value="true">
+                                            <label class="form-check-label" for="editPublicTrue">パブリック</label>
+                                        </div>
+                                        <div class="form-check-inline edit-form">
+                                            <input class="form-check-input" type="radio" name="isPublic" id="editPublicFalse" value="false" checked>
+                                            <label class="form-check-label" for="editPublicFalse">プライベート</label>
+                                        </div>
+                                    </div>
+
+                                }
+
+
+                                <div class="form-group">
+                                    <label for="edit-channelName">名前</label>
+                                    <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
+                                    <small id="edit-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="edit-description">チャンネルの説明</label>
+                                    <textarea class="form-control" id="edit-description" rows="3" name="description">@editForm("description").value</textarea>
+                                    <small id="edit-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                                </div>
+
+                                @** チェックボックス **@
+                                <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
+                                    <p>招待するユーザー</p>
+                                    @for(user <- users) {
+                                        @if(user.userId == token.getUserId) {
+                                            <div class="form-check-inline" hidden>
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                                </label>
+                                            </div>
+                                        } else {
+                                            @if(channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
+
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                                    </label>
+                                                </div>
+
+                                            } else {
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                                    </label>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+
+                                <input type="submit" class="btn btn-success float-right" value="チャンネルを編集する">
+
+                            }
+
+                            @form(routes.ChannelController.delete(channel._1.channelId)) {
+                                @CSRF.formField
+                                <button class="btn btn-danger">チャンネルを削除する</button>
+                            }
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+
+
     }
 
 }

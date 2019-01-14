@@ -16,7 +16,7 @@ class BookmarkController @Inject()(val cache: SyncCacheApi, cc: ControllerCompon
         channelAndUserFindOne(channelId) match {
           case Some(channel) if userId == accessToken.getUserId =>
             val isBookmark = !request.body.asFormUrlEncoded.get("bookmark").head.toBoolean
-            bookmarkUpsert(Bookmark(channelId, Some(userId), isBookmark))
+            bookmarkUpsert(Bookmark(channelId, userId, isBookmark))
             val result = s"""{"bookmark": "$isBookmark"}"""
             Ok(result)
           case _ => NotFound("指定されたチャンネルは見つかりません。")

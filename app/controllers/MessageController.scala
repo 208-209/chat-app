@@ -80,7 +80,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         val message = (msg \ "message").as[String]
         val updatedAt = java.time.OffsetDateTime.now()
 
-        MessageRepository.insert(Message(messageId, message, channelId, Some(userId), updatedAt))
+        MessageRepository.insert(Message(messageId, message, channelId, userId, updatedAt))
 
         val formattedUpdatedAt = updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))
 
