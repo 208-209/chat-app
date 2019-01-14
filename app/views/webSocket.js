@@ -5,8 +5,6 @@ import $ from 'jquery';
 const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
 
-console.log(`webSocketUrl: ${webSocketUrl}`);
-
 if (webSocketUrl) {
 
     const connection = new WebSocket(webSocketUrl);
@@ -21,13 +19,8 @@ if (webSocketUrl) {
         $sendBtn.click(() => {
             const $meg = $("#meg");
             const text = $meg.val();
-            const msg = {"message": text};
-
-            console.log("msg : " + msg);
-
             $meg.val('');
-            connection.send(JSON.stringify(msg))
-
+            connection.send(JSON.stringify({ message: text }))
         });
 
         // メッセージの削除
@@ -35,13 +28,9 @@ if (webSocketUrl) {
            const button = $(e);
            button.click(() => {
                const deleteId = button.data('message-id');
-
-               console.log("deleteId : " + deleteId)
-
+               connection.send(JSON.stringify({ deleteId: deleteId }))
            });
         });
-
-
 
     };
 
@@ -55,31 +44,22 @@ if (webSocketUrl) {
     };
 
     connection.onmessage = event => {
-        const jsonData = JSON.parse(event.data);
+        const result = JSON.parse(event.data);
 
-        console.log(jsonData);
-        
-
-
-        if (jsonData.members) {
-            /*
-            const membersHtml = jsonData.members.split(',').map(member => `<li class="list-group-item">${member}</li>`).join('\n');
-            $members.html(membersHtml);
-             */
-
+        // ログインメンバー情報
+        if (result.members) {
             $('.members').removeClass('isLogin');
-            jsonData.members.split(',').map(member => {
+            result.members.split(',').map(member => {
                 $(`#${member}`).addClass('isLogin')
             });
         }
 
-        if (jsonData.message) {
-
-            const messageId = jsonData.messageId;
-            const message = jsonData.message;
-            const updatedAt = jsonData.updatedAt;
-            const userName = jsonData.userName;
-
+        // メッセージ
+        if (result.message) {
+            const messageId = result.messageId;
+            const message = result.message;
+            const updatedAt = result.updatedAt;
+            const userName = result.userName;
             const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
             /*
             const iEle = $('<i>').attr({
@@ -99,6 +79,11 @@ if (webSocketUrl) {
                 behavior: "smooth"
             });
 
+        }
+
+        // 削除
+        if (result.deleteId) {
+            $(`#${result.deleteId}`).remove()
         }
     };
 

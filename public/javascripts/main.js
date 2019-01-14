@@ -17477,7 +17477,6 @@ __webpack_require__.r(__webpack_exports__);
 
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var webSocketUrl = $messages.data('url');
-console.log("webSocketUrl: ".concat(webSocketUrl));
 
 if (webSocketUrl) {
   var connection = new WebSocket(webSocketUrl);
@@ -17490,19 +17489,19 @@ if (webSocketUrl) {
     $sendBtn.click(function () {
       var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
       var text = $meg.val();
-      var msg = {
-        "message": text
-      };
-      console.log("msg : " + msg);
       $meg.val('');
-      connection.send(JSON.stringify(msg));
+      connection.send(JSON.stringify({
+        message: text
+      }));
     }); // メッセージの削除
 
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('.message-del-button').each(function (i, e) {
       var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
       button.click(function () {
         var deleteId = button.data('message-id');
-        console.log("deleteId : " + deleteId);
+        connection.send(JSON.stringify({
+          deleteId: deleteId
+        }));
       });
     });
   };
@@ -17516,25 +17515,21 @@ if (webSocketUrl) {
   };
 
   connection.onmessage = function (event) {
-    var jsonData = JSON.parse(event.data);
-    console.log(jsonData);
+    var result = JSON.parse(event.data); // ログインメンバー情報
 
-    if (jsonData.members) {
-      /*
-      const membersHtml = jsonData.members.split(',').map(member => `<li class="list-group-item">${member}</li>`).join('\n');
-      $members.html(membersHtml);
-       */
+    if (result.members) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('.members').removeClass('isLogin');
-      jsonData.members.split(',').map(function (member) {
+      result.members.split(',').map(function (member) {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(member)).addClass('isLogin');
       });
-    }
+    } // メッセージ
 
-    if (jsonData.message) {
-      var messageId = jsonData.messageId;
-      var message = jsonData.message;
-      var updatedAt = jsonData.updatedAt;
-      var userName = jsonData.userName;
+
+    if (result.message) {
+      var messageId = result.messageId;
+      var message = result.message;
+      var updatedAt = result.updatedAt;
+      var userName = result.userName;
       var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
         class: 'message-hr',
         'data-date': updatedAt
@@ -17559,6 +17554,11 @@ if (webSocketUrl) {
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"
       });
+    } // 削除
+
+
+    if (result.deleteId) {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(result.deleteId)).remove();
     }
   };
 }

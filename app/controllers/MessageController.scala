@@ -71,39 +71,32 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         // メッセージの投稿
         (msg \ "message").asOpt[String].foreach { message =>
 
-          println("message : " + message)
+          val messageId = java.util.UUID.randomUUID().toString
+          val updatedAt = java.time.OffsetDateTime.now()
 
+          MessageRepository.insert(Message(messageId, message, channelId, userId, updatedAt))
 
+          val formattedUpdatedAt = updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))
+          val result = Map("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName)
+
+          myRoom.actorSet.foreach { out =>
+            out ! Json.toJson(result)
+          }
         }
 
         // メッセージの削除
         (msg \ "deleteId").asOpt[String].foreach { deleteId =>
 
-          println("message : " + deleteId)
+          messageFindById(deleteId).foreach { case message if message.createdBy == userId =>
+            messageDelete(message.messageId)
+            val result = Map("deleteId" -> deleteId)
 
+            myRoom.actorSet.foreach { out =>
+              out ! Json.toJson(result)
+            }
+          }
         }
 
-
-
-
-
-        val messageId = java.util.UUID.randomUUID().toString
-        val message = (msg \ "message").as[String]
-        val updatedAt = java.time.OffsetDateTime.now()
-
-        MessageRepository.insert(Message(messageId, message, channelId, userId, updatedAt))
-
-        val formattedUpdatedAt = updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))
-
-        println(msg("message").getClass)
-        println((msg \ "message").as[String].getClass)
-
-        val msgJson = s"""{"messageId": "${messageId}", "message": "${message}", "updatedAt": "${formattedUpdatedAt}", "userName": "${userName}"}"""
-
-
-        myRoom.actorSet.foreach { out =>
-          out ! Json.parse(msgJson)
-        }
     }
 
     override def preStart(): Unit = {
@@ -112,11 +105,9 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       println(myRoom.userNameSet)
 
       myRoom.actorSet.foreach { out =>
-        val members = s"""{"members": "${myRoom.userNameSet.mkString(",")}"}"""
-        out ! Json.parse(members)
+        val result = Map("members" -> myRoom.userNameSet.mkString(","))
+        out ! Json.toJson(result)
       }
-
-
     }
 
     override def postStop(): Unit = {
@@ -124,15 +115,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
       myRoom.userNameSet = myRoom.userNameSet - userId
 
       myRoom.actorSet.foreach { out =>
-        val members = s"""{"members": "${myRoom.userNameSet.mkString(",")}"}"""
-        out ! Json.parse(members)
+        val result = Map("members" -> myRoom.userNameSet.mkString(","))
+        out ! Json.toJson(result)
       }
-
     }
 
-
-
-
   }
-
 }

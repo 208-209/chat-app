@@ -141,6 +141,31 @@ package object models {
     """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
   }
 
+  def messageFindById(messageId: String): Option[Message] = DB readOnly { implicit session =>
+    sql"""
+       select *
+       from messages
+       where messageId = ${messageId}
+    """.map { rs =>
+      Message(
+        rs.string("messageId"),
+        rs.string("message"),
+        rs.string("channelId"),
+        rs.long("createdBy"),
+        rs.offsetDateTime("updatedAt")
+      )
+    }.single().apply()
+  }
+
+  def messageDelete(messageId: String): Unit = DB localTx { implicit session =>
+    sql"""
+       delete from messages
+       where messageId = $messageId
+    """.update().apply()
+  }
+
+
+
 
 
 }
