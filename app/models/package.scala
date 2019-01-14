@@ -86,7 +86,7 @@ package object models {
        select ${b.result.*}, ${c.result.*}
        from ${Bookmark.as(b)}
        inner join ${Channel.as(c)} on ${b.channelId} = ${c.channelId}
-       where userId = $userId and isBookmark = true
+       where userId = $userId
        order by updatedAt
     """.map { implicit rs => (Bookmark(b.resultName), Channel(c.resultName))}.list().apply()
   }

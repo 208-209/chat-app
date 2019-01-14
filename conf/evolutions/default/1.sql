@@ -32,7 +32,6 @@ create table bookmarks (
 create index createdBy_channels on channels (createdBy);
 create index channelId_messages on messages (channelId);
 create index createdBy_messages on messages (createdBy);
-create index isBookmark_bookmarks on bookmarks (isBookmark);
 
 insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
 values ('general', 'general', 'チャンネルの説明を書く場所', 'true', '937000074978107392', 937000074978107392, '2019-01-03T15:30:30.412+09:00');
