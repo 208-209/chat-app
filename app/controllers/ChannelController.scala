@@ -24,10 +24,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   def read(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
     request.accessToken match {
-      case Some(accessToken) =>
+      case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isEnter(accessToken, channel) =>
-            val bundleData =  bundle(accessToken, channel)
+          case Some(channel) if isEnter(token, channel) =>
+            val bundleData =  bundle(token, channel)
             Ok(views.html.channel(request.accessToken)(channelForm, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
           case _ => NotFound("指定されたチャンネルは見つかりません。")
         }
@@ -38,35 +38,30 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   def create(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
     request.accessToken match {
-      case Some(accessToken) =>
+      case Some(token) =>
 
-        channelAndUserFindOne(channelId) match {
-          case Some(channel) =>
+        channelForm.bindFromRequest.fold(
+          error => { channelAndUserFindOne(channelId) match {
+              case Some(channel) =>
+                val bundleData = bundle(token, channel)
+                BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
+              case None => NotFound("指定されたチャンネルは見つかりません。")
+            }
+          },
+          form => {
+            val channelId = java.util.UUID.randomUUID().toString
+            val channelName = form.channelName
+            val description = form.description
+            val isPublic = form.isPublic
+            val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
+            val createdBy = token.getUserId
+            val updatedAt = java.time.OffsetDateTime.now()
 
-            val bundleData = bundle(accessToken, channel)
+            channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
 
-            channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
-              form => {
-                println(form)
-
-                val channelId = java.util.UUID.randomUUID().toString
-                val channelName = form.channelName
-                val description = form.description
-                val isPublic = form.isPublic
-                val members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(",")
-                val createdBy = accessToken.getUserId
-                val updatedAt = java.time.OffsetDateTime.now()
-
-                channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
-
-                Redirect(routes.ChannelController.read(channelId))
-              }
-            )
-
-          case None => NotFound("指定されたチャンネルは見つかりません。")
-        }
-
+            Redirect(routes.ChannelController.read(channelId))
+          }
+        )
       case None => Redirect(routes.OAuthController.login())
     }
   }
@@ -74,12 +69,12 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
     request.accessToken match {
-      case Some(accessToken) =>
+      case Some(token) =>
 
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMain(accessToken, channel) =>
+          case Some(channel) if isMain(token, channel) =>
 
-            val bundleData = bundle(accessToken, channel)
+            val bundleData = bundle(token, channel)
 
             channelForm.bindFromRequest.fold(
               error => BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
@@ -89,8 +84,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   channelName = form.channelName,
                   description = form.description,
                   isPublic = form.isPublic,
-                  members = if(form.members.isEmpty) accessToken.getUserId.toString else form.members.mkString(","),
-                  createdBy = accessToken.getUserId,
+                  members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(","),
+                  createdBy = token.getUserId,
                   updatedAt = java.time.OffsetDateTime.now()
                 )
 
@@ -109,9 +104,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   def delete(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
     request.accessToken match {
-      case Some(accessToken) =>
+      case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMain(accessToken, channel) =>
+          case Some(channel) if isMain(token, channel) =>
 
             channelAndMessageDelete(channelId)
             Redirect(routes.ChannelController.read("general"))
@@ -123,50 +118,27 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     }
   }
 
-  /**channel._1.members.map(',').map(_.toLong).contains(accessToken.getUserId)
-    * チャンネルを観覧できるかとうか
-    *
-    * パブリックか
-    * メンバーの一員か
-    *
-    * @param accessToken
-    * @param channel
-    * @return
-    */
-  private def isEnter(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(accessToken.getUserId)
+  private def isEnter(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
+    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(token.getUserId)
   }
 
 
-  /**
-    * リクエストユーザーがチャンネルの製作者かどうか
-    * あと、generalは編集と削除ができないように
-    * @param accessToken
-    * @param channel
-    * @return
-    */
-  private def isMain(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.createdBy == accessToken.getUserId && channel._1.channelId != "general"
+  private def isMain(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
+    channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
   }
 
-  /**
-    *
-    * @param accessToken
-    * @param channel
-    * @return
-    */
-  private def bundle(accessToken: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, String], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, String], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
-    val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(accessToken.getUserId))
-    val bookmarks = bookmarkAndChannelFindAll(accessToken.getUserId).filter{ case (bookmark, channel) => channel.isPublic || channel.members.split(",").map(_.toLong).contains(bookmark.userId) }
+    val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
+    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, channel) => channel.isPublic || channel.members.split(",").map(_.toLong).contains(bookmark.userId) }
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
-      case Some(_) => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL(secure = true)
-      case None => routes.MessageController.socket(channel._1.channelId, accessToken.getUserId).webSocketURL()
+      case Some(_) => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL(secure = true)
+      case None => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL()
     }
     val members = channel._1.members.split(",").map(_.toLong).toSeq
     val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.description, members))
 
-    (channels, userFindAll(), userMap(), bookmarks, bookmarkMap(accessToken.getUserId), messageFindAll(channel._1.channelId), webSocketUrl, editForm)
+    (channels, userFindAll(), userMap(), bookmarks, bookmarkMap(token.getUserId), messageFindAll(channel._1.channelId), webSocketUrl, editForm)
   }
 
 
