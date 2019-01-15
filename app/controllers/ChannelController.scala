@@ -8,7 +8,7 @@ import play.api.cache.SyncCacheApi
 import play.api.mvc._
 import models._
 
-case class ChannelForm(isPublic: Boolean, channelName: String, description: String, members: Seq[Long])
+case class ChannelForm(isPublic: Boolean, channelName: String, purpose: String, members: Seq[Long])
 
 @Singleton
 class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents) extends TwitterLoginController(cc) with I18nSupport {
@@ -16,8 +16,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   val channelForm = Form(
     mapping(
       "isPublic" -> boolean,
-      "channelName" -> nonEmptyText(minLength = 3, maxLength = 20),
-      "description" -> text(minLength = 3, maxLength = 255),
+      "channelName" -> text(minLength = 3, maxLength = 255),
+      "purpose" -> text(minLength = 3, maxLength = 255),
       "members" -> seq(longNumber)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
@@ -51,7 +51,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           form => {
             val channelId = java.util.UUID.randomUUID().toString
             val channelName = form.channelName
-            val description = form.description
+            val description = form.purpose
             val isPublic = form.isPublic
             val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
             val createdBy = token.getUserId
@@ -82,7 +82,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                 val editChannel = Channel(
                   channelId = channel._1.channelId,
                   channelName = form.channelName,
-                  description = form.description,
+                  purpose = form.purpose,
                   isPublic = form.isPublic,
                   members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(","),
                   createdBy = token.getUserId,
@@ -136,7 +136,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case None => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL()
     }
     val members = channel._1.members.split(",").map(_.toLong).toSeq
-    val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.description, members))
+    val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.purpose, members))
 
     (channels, userFindAll(), userMap(), bookmarks, bookmarkMap(token.getUserId), messageFindAll(channel._1.channelId), webSocketUrl, editForm)
   }

@@ -27,8 +27,8 @@ $('.bookmark-toggle-button').each((i, e) => {
                 // アイコン
                 button.data('bookmark', jsonData.bookmark);
                 button.removeClass('fas', 'far');
-                const className = jsonData.bookmark == 'true' ? 'fas' : 'far';
-                button.addClass(className)
+                const className = jsonData.bookmark === 'true' ? 'fas' : 'far';
+                button.addClass(className);
 
                 // ブックマークエリアに要素の追加と削除
                 if(jsonData.bookmark === 'true') {

@@ -1,0 +1,2 @@
+error.minLength = 3文字以上を入力してください
+error.maxLength = 255以内で入力してください

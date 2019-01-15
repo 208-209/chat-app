@@ -124,8 +124,8 @@
                         <p class="card-text">@channel._2.userName</p>
                     </li>
                     <li class="list-group-item">
-                        <p class="card-title"><strong>説明</strong></p>
-                        <p id="channel-description" class="card-text">@channel._1.description</p>
+                        <p class="card-title"><strong>目的</strong></p>
+                        <p id="channel-purpose" class="card-text">@channel._1.purpose</p>
                     </li>
                     <li class="list-group-item">
                         <p class="card-title"><strong>更新日</strong></p>
@@ -183,7 +183,6 @@
                     <div class="modal-body">
                     @form(routes.ChannelController.create(channel._1.channelId)) {
                         @CSRF.formField
-
                         <div class="form-group" id="entryRadioBtn">
                             <div class="form-check-inline entry-form">
                                 <input class="form-check-input" type="radio" name="isPublic" id="entryPublicTrue" value="true" checked>
@@ -197,14 +196,18 @@
 
                         <div class="form-group">
                             <label for="entry-channelName">名前</label>
-                            <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前を入力してください">
-                            <small id="entry-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前">
+                            @for(error <- channelForm("channelName").errors) {
+                                <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
+                            }
                         </div>
 
                         <div class="form-group">
-                            <label for="entry-description">チャンネルの説明</label>
-                            <textarea class="form-control" id="entry-description" rows="3" name="description"></textarea>
-                            <small id="entry-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                            <label for="entry-purpose">目的</label>
+                            <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの説明"></textarea>
+                            @for(error <- channelForm("purpose").errors) {
+                                <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
+                            }
                         </div>
 
                             <!-- CheckBox -->
@@ -259,6 +262,8 @@
                             @form(routes.ChannelController.update(channel._1.channelId)) {
                                 @CSRF.formField
 
+
+
                                 @if(channel._1.isPublic) {
                                     <div class="form-group" id="editRadioBtn">
                                         <div class="form-check-inline edit-form">
@@ -289,13 +294,17 @@
                                 <div class="form-group">
                                     <label for="edit-channelName">名前</label>
                                     <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
-                                    <small id="edit-channelName-help" class="form-text text-muted">エラー文を表示する場所</small>
+                                    @for(error <- channelForm("channelName").errors) {
+                                        <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
+                                    }
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="edit-description">チャンネルの説明</label>
-                                    <textarea class="form-control" id="edit-description" rows="3" name="description">@editForm("description").value</textarea>
-                                    <small id="edit-description-help" class="form-text text-muted">エラー文を表示する場所</small>
+                                    <label for="edit-purpose">目的</label>
+                                    <textarea class="form-control" id="edit-purpose" rows="3" name="purpose">@editForm("purpose").value</textarea>
+                                    @for(error <- channelForm("purpose").errors) {
+                                        <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
+                                    }
                                 </div>
 
                                 @** チェックボックス **@

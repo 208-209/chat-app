@@ -11,7 +11,7 @@ package object models {
       Channel(
         rs.string("channelId"),
         rs.string("channelName"),
-        rs.string("description"),
+        rs.string("purpose"),
         rs.boolean("isPublic"),
         rs.string("members"),
         rs.long("createdBy"),
@@ -34,10 +34,10 @@ package object models {
 
   def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
-       insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
        on conflict (channelId)
-       do update set channelName = ${channel.channelName}, description = ${channel.description}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
+       do update set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
     """.update().apply()
   }
 
@@ -62,7 +62,7 @@ package object models {
       Channel(
         rs.string("channelId"),
         rs.string("channelName"),
-        rs.string("description"),
+        rs.string("purpose"),
         rs.boolean("isPublic"),
         rs.string("members"),
         rs.long("createdBy"),
@@ -73,8 +73,8 @@ package object models {
 
   def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
-       insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.description}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
     """.update().apply()
   }
 

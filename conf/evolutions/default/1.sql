@@ -7,9 +7,9 @@ create table users (
 create table channels (
                         channelId varchar(36) not null primary key ,
                         channelName varchar(225) not null ,
-                        description varchar(225) ,
+                        purpose varchar(225) not null ,
                         isPublic boolean not null,
-                        members text ,
+                        members text not null ,
                         createdBy bigint not null ,
                         updatedAt timestamp not null
 );
@@ -34,7 +34,7 @@ create index channelId_messages on messages (channelId);
 create index createdBy_messages on messages (createdBy);
 create index isBookmark_bookmarks on bookmarks (isBookmark);
 
-insert into channels (channelId, channelName, description, isPublic, members, createdBy, updatedAt)
+insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
 values ('general', 'general', 'チャンネルの説明を書く場所', 'true', '937000074978107392', 937000074978107392, '2019-01-01T00:00:00.000+09:00');
 
 # --- !Downs
