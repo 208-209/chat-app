@@ -137,7 +137,7 @@
                 <ul class="list-group list-group-flush">
                     @for(u <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(u.userId)) {
                         <li id="@u.userId" class="members list-group-item">
-                            <img src="@u.profileImageUrl" alt="" class="rounded profile-image">
+                            <img src="@u.profileImageUrl" alt="" class="rounded members-profile-image">
                             @u.userName
                         </li>
                     }

@@ -18,14 +18,27 @@
         <div class="container-fluid">
 
             <nav class="navbar navbar-dark bg-dark fixed-top">
-                <a class="navbar-brand" href="@routes.ChannelController.read("general")">chat-app</a>
+
+                <ul class="navbar-nav mr-auto">
+                    <li>
+                        <a class="navbar-brand" href="@routes.ChannelController.read("general")">chat-app</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    @user.map { user =>
+                        <li>
+                            <img src="@user.profileImageUrl" alt="" class="rounded nav-profile-image">
+                            <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{user.userName} をログアウト</a>
+                        </li>
+                    }.getOrElse {
+                            <li>
+                                <a href="@routes.OAuthController.login" class="btn btn-outline-success" role="button">Twitter でログイン</a>
+                            </li>
+                    }
+                </ul>
 
 
-                @user.map { user =>
-                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{user.userName} をログアウト</a>
-                }.getOrElse {
-                    <a href="@routes.OAuthController.login" class="btn btn-outline-success" role="button">Twitter でログイン</a>
-                }
             </nav>
 
             <div class="main-container">

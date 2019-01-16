@@ -55,11 +55,18 @@ hr::before {
     word-break : break-all;
 }
 
-.profile-image {
+.members-profile-image {
     max-width: 100%;
     height: 24px;
     margin-right: 8px;
     vertical-align: bottom;
+}
+
+.nav-profile-image {
+    max-width: 100%;
+    height: 36px;
+    margin-right: 8px;
+    vertical-align: center;
 }
 
 
