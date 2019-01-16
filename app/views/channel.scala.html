@@ -204,7 +204,7 @@
 
                         <div class="form-group">
                             <label for="entry-purpose">目的</label>
-                            <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの説明"></textarea>
+                            <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの目的"></textarea>
                             @for(error <- channelForm("purpose").errors) {
                                 <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
                             }
@@ -293,7 +293,7 @@
 
                                 <div class="form-group">
                                     <label for="edit-channelName">名前</label>
-                                    <input type="text" class="form-control" id="edit-channelName" name="channelName" placeholder="チャンネルの名前を入力してください" value="@editForm("channelName").value">
+                                    <input type="text" class="form-control" id="edit-channelName" name="channelName" value="@editForm("channelName").value">
                                     @for(error <- channelForm("channelName").errors) {
                                         <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
                                     }

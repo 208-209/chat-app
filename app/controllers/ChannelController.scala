@@ -29,7 +29,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           case Some(channel) if isEnter(token, channel) =>
             val bundleData =  bundle(token, channel)
             Ok(views.html.channel(request.accessToken)(channelForm, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
-          case _ => NotFound("指定されたチャンネルは見つかりません。")
+          case _ => NotFound("指定されたチャンネルは見つかりません")
         }
       case None => Redirect(routes.OAuthController.login())
     }
@@ -45,7 +45,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
               case Some(channel) =>
                 val bundleData = bundle(token, channel)
                 BadRequest(views.html.channel(request.accessToken)(error, bundleData._8)(channel, bundleData._1, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
-              case None => NotFound("指定されたチャンネルは見つかりません。")
+              case None => NotFound("指定されたチャンネルは見つかりません")
             }
           },
           form => {
@@ -72,7 +72,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case Some(token) =>
 
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMain(token, channel) =>
+          case Some(channel) if isMineChannel(token, channel) =>
 
             val bundleData = bundle(token, channel)
 
@@ -106,7 +106,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMain(token, channel) =>
+          case Some(channel) if isMineChannel(token, channel) =>
 
             channelAndMessageDelete(channelId)
             Redirect(routes.ChannelController.read("general"))
@@ -123,14 +123,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   }
 
 
-  private def isMain(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
+  private def isMineChannel(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
     channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
   }
 
   private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, String], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
-    val channels = channelFindAll.filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
-    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, channel) => channel.isPublic || channel.members.split(",").map(_.toLong).contains(bookmark.userId) }
+    val channels = channelFindAll().filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
+    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || ch.members.split(",").map(_.toLong).contains(bookmark.userId) }
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
       case Some(_) => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL(secure = true)
       case None => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL()

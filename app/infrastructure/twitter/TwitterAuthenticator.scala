@@ -51,9 +51,12 @@ class TwitterAuthenticator @Inject() (
     * @return アクセストークン
     * @throws TwitterException 何らかの理由でTwitterのアクセストークンを取得できなかった
     */
-  def getAccessToken(sessionId: String, verifier: String): AccessToken =
+  def getAccessToken(sessionId: String, verifier: String): (AccessToken, String) =
     try {
-      cache.get[Twitter](cacheKeyTwitter(sessionId)).get.getOAuthAccessToken(verifier)
+      val token = cache.get[Twitter](cacheKeyTwitter(sessionId)).get.getOAuthAccessToken(verifier)
+      // twitterのプロフィール画像を取得
+      val profileImageUrl = cache.get[Twitter](cacheKeyTwitter(sessionId)).get.verifyCredentials().getBiggerProfileImageURLHttps
+      (token, profileImageUrl)
     } catch {
       case NonFatal(e) =>
         throw TwitterException(s"Could not get an access token. SessionId: $sessionId", e)
