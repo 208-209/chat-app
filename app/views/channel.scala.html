@@ -135,15 +135,22 @@
                     メンバー
                 </div>
                 <ul class="list-group list-group-flush">
+                    @for(user <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
+                        <li id="@user.userId" class="members list-group-item">@user.userName</li>
+                    }
+
+
+                @*
                 @if(channel._1.isPublic) {
                     @for(user <- users) {
                         <li id="@user.userId" class="members list-group-item">@user.userName</li>
                     }
                 } else {
                     @for(user <- channel._1.members.split(",").map(_.toLong)) {
-                        <li id="@user" class="members list-group-item">@userMap.getOrElse(user, "")</li>
+                        <li id="@user" class="members list-group-item">@userMap.getOrElse(user, ("", ""))._1</li>
                     }
                 }
+                    *@
                 </ul>
             </div>
         </aside>
@@ -209,21 +216,12 @@
                         <div class="form-group " id="entryCheckBox">
                             <p>招待するユーザー</p>
 
-
-                            @for(user <- users) {
-                                @if(user.userId == token.getUserId) {
-                                    <div class="form-check-inline" hidden>
-                                        <label class="form-check-label">
-                                            <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
-                                        </label>
-                                    </div>
-                                } else {
-                                    <div class="form-check-inline">
-                                        <label class="form-check-label">
-                                            <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
-                                        </label>
-                                    </div>
-                                }
+                            @for(user <- users if user.userId != token.getUserId) {
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                    </label>
+                                </div>
                             }
                         </div>
 
@@ -305,29 +303,21 @@
                                 @** チェックボックス **@
                                 <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
                                     <p>招待するユーザー</p>
-                                    @for(user <- users) {
-                                        @if(user.userId == token.getUserId) {
-                                            <div class="form-check-inline" hidden>
+                                    @for(user <- users if user.userId != token.getUserId) {
+                                        @if(channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
+
+                                            <div class="form-check-inline">
                                                 <label class="form-check-label">
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
                                                 </label>
                                             </div>
+
                                         } else {
-                                            @if(channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
-
-                                                <div class="form-check-inline">
-                                                    <label class="form-check-label">
-                                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
-                                                    </label>
-                                                </div>
-
-                                            } else {
-                                                <div class="form-check-inline">
-                                                    <label class="form-check-label">
-                                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
-                                                    </label>
-                                                </div>
-                                            }
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                                </label>
+                                            </div>
                                         }
                                     }
                                 </div>
@@ -350,10 +340,6 @@
             </div>
         }
 
-
-
-
-
-    }.getOrElse("")
+    }
 
 }

@@ -8,7 +8,7 @@ import play.api.cache.SyncCacheApi
 import play.api.mvc._
 import models._
 
-case class ChannelForm(isPublic: Boolean, channelName: String, purpose: String, members: Seq[Long])
+case class ChannelForm(isPublic: Boolean, channelName: String, purpose: String, members: List[Long])
 
 @Singleton
 class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents) extends TwitterLoginController(cc) with I18nSupport {
@@ -18,7 +18,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       "isPublic" -> boolean,
       "channelName" -> text(minLength = 3, maxLength = 255),
       "purpose" -> text(minLength = 3, maxLength = 255),
-      "members" -> seq(longNumber)
+      "members" -> list(longNumber)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
 
@@ -53,7 +53,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val channelName = form.channelName
             val description = form.purpose
             val isPublic = form.isPublic
-            val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
+            println("form.members : " + form.members)
+            val members = (token.getUserId :: form.members).mkString(",")
+            println("members : " + members)
+            //val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
             val createdBy = token.getUserId
             val updatedAt = java.time.OffsetDateTime.now()
 
@@ -84,7 +87,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   channelName = form.channelName,
                   purpose = form.purpose,
                   isPublic = form.isPublic,
-                  members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(","),
+                  members = (token.getUserId :: form.members).mkString(","),
                   createdBy = token.getUserId,
                   updatedAt = java.time.OffsetDateTime.now()
                 )
@@ -135,7 +138,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case Some(_) => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL(secure = true)
       case None => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL()
     }
-    val members = channel._1.members.split(",").map(_.toLong).toSeq
+    val members = channel._1.members.split(",").map(_.toLong).toList
     val editForm = channelForm.fill(ChannelForm(channel._1.isPublic, channel._1.channelName, channel._1.purpose, members))
 
     (channels, userFindAll(), userMap(), bookmarks, bookmarkMap(token.getUserId), messageFindAll(channel._1.channelId), webSocketUrl, editForm)
