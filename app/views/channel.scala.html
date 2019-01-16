@@ -4,7 +4,7 @@
 @import java.time.format.DateTimeFormatter
 
 
-@main(channel._1.channelName)(accessToken) {
+@main(channel._1.channelName)(accessToken)(userMap) {
 
     @accessToken.map { token =>
 
@@ -71,6 +71,7 @@
 
         <!-- Center -->
         <div class="center">
+            <h5 class="text-center">@{channel._1.channelName}</h5>
                 <!-- message-area -->
             <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
@@ -87,17 +88,6 @@
                     </div>
                 </div>
             }
-            </div>
-                <!-- message-form -->
-            <div class="fixed-bottom message-form form-row">
-                <div class="col-sm-10">
-                    <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" autocomplete="off" spellcheck="false" class="form-control" autofocus>
-
-                </div>
-                <div class="col-sm-2">
-                    <button id="message-send-button" class="btn btn-info">送信</button>
-                </div>
-
             </div>
 
         </div>
@@ -152,23 +142,23 @@
                 }
                 </ul>
             </div>
+        </div>
 
-            @**
-            <!-- ログインメンバー -->
-            <div class="card">
-            <div class="card-header">
-            ログインメンバー
+        <!-- message-form -->
+        <div class="fixed-bottom message-form form-row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" autocomplete="off" spellcheck="false" class="form-control" autofocus>
+
             </div>
-            <ul id="members" class="list-group list-group-flush">
-            <li>hoge</li>
-            </ul>
+            <div class="col-sm-3">
+                <button id="message-send-button" class="btn btn-info">送信</button>
             </div>
-            **@
 
         </div>
 
 
-        <!-- Entry Modal -->
+    <!-- Entry Modal -->
         <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

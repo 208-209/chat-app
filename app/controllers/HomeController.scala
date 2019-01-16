@@ -9,6 +9,8 @@ import play.api.mvc._
 class HomeController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents) extends TwitterLoginController(cc) with I18nSupport {
 
   def index() = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
+
+
     Ok(views.html.index(request.accessToken))
   }
 }
