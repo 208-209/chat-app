@@ -112,7 +112,7 @@ package object models {
   }
 
 
-  def bookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
+  def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
     sql"""
           SELECT *
           FROM bookmarks
@@ -141,6 +141,7 @@ package object models {
     }.list().apply()
   }
 
+  /*
   def userMap(): Map[Long, (String, String)] = DB readOnly { implicit session =>
     sql"""
           SELECT *
@@ -149,6 +150,7 @@ package object models {
     }.list().apply().toMap
 
   }
+  */
 
   def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
     val (m, u) = (Message.syntax("m"), User.syntax("u"))

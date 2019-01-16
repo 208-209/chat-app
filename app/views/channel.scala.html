@@ -1,12 +1,12 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Long, (String, String)], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 @import java.time.format.DateTimeFormatter
 
 
-@main(channel._1.channelName)(accessToken) {
+@main(channel._1.channelName)(user) {
 
-    @accessToken.map { token =>
+    @user.map { user =>
 
         <!-- Center -->
         <main class="center">
@@ -16,7 +16,7 @@
             @for(message <- messages) {
                 <div id="@message._1.messageId" >
                     <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
-                    @if(token.getUserId == message._1.createdBy) {
+                    @if(user.userId == message._1.createdBy) {
                         <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
                     }
                     <div class="row">
@@ -74,9 +74,9 @@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
                             } else {
-                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
                             }
                             @if(ch.isPublic) {
                                 <i class="fas fa-flag"></i>
@@ -102,7 +102,7 @@
                 <!-- チャンネル詳細 -->
             <div class="card">
                 <div class="card-header">
-                    @if(token.getUserId == channel._1.createdBy && channel._1.channelId != "general") {
+                    @if(user.userId == channel._1.createdBy && channel._1.channelId != "general") {
                         <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
                     }
                     @if(channel._1.isPublic) {
@@ -135,8 +135,11 @@
                     メンバー
                 </div>
                 <ul class="list-group list-group-flush">
-                    @for(user <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
-                        <li id="@user.userId" class="members list-group-item">@user.userName</li>
+                    @for(u <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(u.userId)) {
+                        <li id="@u.userId" class="members list-group-item">
+                            <img src="@u.profileImageUrl" alt="" class="rounded profile-image">
+                            @u.userName
+                        </li>
                     }
 
 
@@ -216,10 +219,10 @@
                         <div class="form-group " id="entryCheckBox">
                             <p>招待するユーザー</p>
 
-                            @for(user <- users if user.userId != token.getUserId) {
+                            @for(u <- users if u.userId != user.userId) {
                                 <div class="form-check-inline">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId">@u.userName
                                     </label>
                                 </div>
                             }
@@ -238,7 +241,7 @@
 
 
         <!-- Edit Modal -->
-        @if(token.getUserId == channel._1.createdBy && channel._1.channelId != "general") {
+        @if(user.userId == channel._1.createdBy && channel._1.channelId != "general") {
             <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -303,19 +306,19 @@
                                 @** チェックボックス **@
                                 <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
                                     <p>招待するユーザー</p>
-                                    @for(user <- users if user.userId != token.getUserId) {
-                                        @if(channel._1.members.split(",").map(_.toLong).contains(user.userId)) {
+                                    @for(u <- users if u.userId != user.userId) {
+                                        @if(channel._1.members.split(",").map(_.toLong).contains(u.userId)) {
 
                                             <div class="form-check-inline">
                                                 <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId" checked>@user.userName
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId" checked>@u.userName
                                                 </label>
                                             </div>
 
                                         } else {
                                             <div class="form-check-inline">
                                                 <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@user.userId">@user.userName
+                                                    <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId">@u.userName
                                                 </label>
                                             </div>
                                         }

@@ -1,4 +1,4 @@
-@(title: String)(accessToken: Option[twitter4j.auth.AccessToken])(content: Html)
+@(title: String)(user: Option[User])(content: Html)
 
 <!doctype html>
 <html lang="ja">
@@ -21,8 +21,8 @@
                 <a class="navbar-brand" href="@routes.ChannelController.read("general")">chat-app</a>
 
 
-                @accessToken.map { token =>
-                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{token.getScreenName} をログアウト</a>
+                @user.map { user =>
+                    <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{user.userName} をログアウト</a>
                 }.getOrElse {
                     <a href="@routes.OAuthController.login" class="btn btn-outline-success" role="button">Twitter でログイン</a>
                 }
