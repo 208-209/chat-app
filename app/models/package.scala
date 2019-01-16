@@ -11,6 +11,16 @@ package object models {
     """.update().apply()
   }
 
+  def userFindById(userId: Long): Option[User] = DB readOnly { implicit session =>
+    sql"""
+       select *
+       from users
+       where userId = $userId
+    """.map { rs =>
+      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
+    }.single().apply()
+  }
+
 
   def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""

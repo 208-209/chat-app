@@ -17404,7 +17404,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
 
         button.data('bookmark', jsonData.bookmark);
         button.removeClass('fas', 'far');
-        var className = jsonData.bookmark == 'true' ? 'fas' : 'far';
+        var className = jsonData.bookmark === 'true' ? 'fas' : 'far';
         button.addClass(className); // ブックマークエリアに要素の追加と削除
 
         if (jsonData.bookmark === 'true') {
@@ -17530,9 +17530,18 @@ if (webSocketUrl) {
       var message = result.message;
       var updatedAt = result.updatedAt;
       var userName = result.userName;
+      var profileImageUrl = result.profileImageUrl;
+      console.log(profileImageUrl);
       var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
         class: 'message-hr',
         'data-date': updatedAt
+      });
+      var col2div = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2');
+      var col10div = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10');
+      var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
+        src: profileImageUrl,
+        alt: 'profile-image',
+        class: 'rounded mx-auto d-block'
       });
       /*
       const iEle = $('<i>').attr({
@@ -17544,12 +17553,13 @@ if (webSocketUrl) {
       */
 
       var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
-      var divEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
-        class: 'balloon'
-      }).text(message);
+      var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
+      var imgArea = col2div.append(imgEle);
+      var messageArea = col10div.append(strongEle, messageEle);
+      var divElement = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(imgArea, messageArea);
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
         id: messageId
-      }).append(hrEle, strongEle, divEle).appendTo($messages);
+      }).append(hrEle, divElement).appendTo($messages);
       window.scrollTo({
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"

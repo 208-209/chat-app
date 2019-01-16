@@ -4,12 +4,39 @@
 @import java.time.format.DateTimeFormatter
 
 
-@main(channel._1.channelName)(accessToken)(userMap) {
+@main(channel._1.channelName)(accessToken) {
 
     @accessToken.map { token =>
 
+        <!-- Center -->
+        <main class="center">
+            <h5 class="text-center">@{channel._1.channelName}</h5>
+                <!-- message-area -->
+            <div id="messages" data-url="@webSocketUrl">
+            @for(message <- messages) {
+                <div id="@message._1.messageId" >
+                    <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
+                    @if(token.getUserId == message._1.createdBy) {
+                        <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
+                    }
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block">
+                        </div>
+                        <div class="col-sm-10">
+                            <strong>@message._2.userName</strong>
+                            <p class="message-area">@message._1.message</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+
+        </main>
+
+
         <!-- Left -->
-        <div class="left-sidebar">
+        <aside class="left-sidebar">
                 <!-- チャンネル -->
             <div class="card">
                 <div class="card-header">
@@ -18,11 +45,11 @@
                 </div>
                 <ul class="list-group list-group-flush" id="bookmark">
                     <li class="list-group-item">
-                        @if(channel._1.channelId == "general") {
-                            general
-                        } else {
-                            <a href="@routes.ChannelController.read("general")">general</a>
-                        }
+                    @if(channel._1.channelId == "general") {
+                        general
+                    } else {
+                        <a href="@routes.ChannelController.read("general")">general</a>
+                    }
                     </li>
 
                     @for(bookmark <- bookmarks) {
@@ -43,57 +70,34 @@
                     <span>チャンネル一覧</span>
                 </div>
                 <ul class="list-group list-group-flush">
-                @* generalチャンネルは除外 *@
-                @for(ch <- channels if ch.channelId != "general") {
-                    <li class="list-group-item">
-                        @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                            <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
-                        } else {
-                            <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
-                        }
-                        @if(ch.isPublic) {
-                            <i class="fas fa-flag"></i>
-                        } else {
-                            <i class="fas fa-key"></i>
-                        }
-                        @if(ch.channelId == channel._1.channelId) {
-                            @{ch.channelName}
-                        } else {
-                            <a href="@routes.ChannelController.read(ch.channelId)">@{ch.channelName}</a>
-                        }
-                    </li>
-                }
+                    @* generalチャンネルは除外 *@
+                    @for(ch <- channels if ch.channelId != "general") {
+                        <li class="list-group-item">
+                            @if(bookmarkMap.getOrElse(ch.channelId, false)) {
+                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                            } else {
+                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@token.getUserId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                            }
+                            @if(ch.isPublic) {
+                                <i class="fas fa-flag"></i>
+                            } else {
+                                <i class="fas fa-key"></i>
+                            }
+                            @if(ch.channelId == channel._1.channelId) {
+                                @{ch.channelName}
+                            } else {
+                                <a href="@routes.ChannelController.read(ch.channelId)">@{ch.channelName}</a>
+                            }
+                        </li>
+                    }
 
                 </ul>
             </div>
 
-        </div>
-
-        <!-- Center -->
-        <div class="center">
-            <h5 class="text-center">@{channel._1.channelName}</h5>
-                <!-- message-area -->
-            <div id="messages" data-url="@webSocketUrl">
-            @for(message <- messages) {
-                <div id="@message._1.messageId" >
-                    <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block rounded-circle">
-                        </div>
-                        <div class="col-sm-10">
-                            <strong>@message._2.userName</strong>
-                            <p class="message-area">@message._1.message</p>
-                        </div>
-                    </div>
-                </div>
-            }
-            </div>
-
-        </div>
+        </aside>
 
         <!-- Right -->
-        <div class="right-sidebar">
+        <aside class="right-sidebar">
 
                 <!-- チャンネル詳細 -->
             <div class="card">
@@ -142,7 +146,8 @@
                 }
                 </ul>
             </div>
-        </div>
+        </aside>
+
 
         <!-- message-form -->
         <div class="fixed-bottom message-form form-row">
@@ -336,10 +341,6 @@
                                 <button class="btn btn-danger">チャンネルを削除する</button>
                             }
 
-
-
-
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -353,6 +354,6 @@
 
 
 
-    }
+    }.getOrElse("")
 
 }

@@ -5,6 +5,7 @@ import $ from 'jquery';
 const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
 
+
 if (webSocketUrl) {
 
     const connection = new WebSocket(webSocketUrl);
@@ -60,7 +61,19 @@ if (webSocketUrl) {
             const message = result.message;
             const updatedAt = result.updatedAt;
             const userName = result.userName;
+            const profileImageUrl = result.profileImageUrl;
+
+            console.log(profileImageUrl);
+
             const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+            const col2div = $('<div>').addClass('col-sm-2');
+            const col10div = $('<div>').addClass('col-sm-10');
+
+
+
+
+            const imgEle = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
+
             /*
             const iEle = $('<i>').attr({
                 class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
@@ -70,9 +83,17 @@ if (webSocketUrl) {
             });
             */
             const strongEle = $('<strong>').text(userName);
-            const divEle = $('<div>').attr({ class: 'balloon'}).text(message);
+            const messageEle = $('<p>').addClass('message-area').text(message);
 
-            $('<div>').attr({ id: messageId }).append(hrEle, strongEle, divEle).appendTo($messages);
+
+            const imgArea = col2div.append(imgEle);
+
+            const messageArea =col10div.append(strongEle, messageEle);
+
+
+            const divElement = $('<div>').addClass('row').append(imgArea, messageArea);
+
+            $('<div>').attr({ id: messageId }).append(hrEle, divElement).appendTo($messages);
 
             window.scrollTo({
                 top: $(document).height(),

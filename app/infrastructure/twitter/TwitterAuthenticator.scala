@@ -48,7 +48,7 @@ class TwitterAuthenticator @Inject() (
     * Twitterのアクセストークンを取得する
     * @param sessionId Twitterの認証をしたいセッションID
     * @param verifier OAuth Verifier
-    * @return アクセストークン
+    * @return アクセストークンとプロフィール画像のurlのタプル
     * @throws TwitterException 何らかの理由でTwitterのアクセストークンを取得できなかった
     */
   def getAccessToken(sessionId: String, verifier: String): (AccessToken, String) =

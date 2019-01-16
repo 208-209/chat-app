@@ -32,7 +32,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     // パスのチャンネルが存在する かつ パスのユーザーIDとリクエスト者のIDが一致する かつ 同一生成元ポリシー
     Future.successful(accessToken match {
       case Some(token) if channelFindById(channelId).isDefined && userId == token.getUserId && isSameOrigin(request) =>
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName)})
+
+        val profileImageUrl =  userFindById(userId).map(_.profileImageUrl).getOrElse("")
+
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName, profileImageUrl)})
       case _ => Left(Forbidden)
     })
   }
@@ -51,10 +54,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
   }
 
   object MyWebSocketActor {
-    def props(out: ActorRef, channelId: String, userId: Long, userName: String) = Props(new MyWebSocketActor(out, channelId, userId, userName))
+    def props(out: ActorRef, channelId: String, userId: Long, userName: String, profileImageUrl: String) = Props(new MyWebSocketActor(out, channelId, userId, userName, profileImageUrl))
   }
 
-  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String) extends Actor {
+  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String, profileImageUrl: String) extends Actor {
 
 
     val myRoom = roomMap.get(channelId) match {
@@ -77,7 +80,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           MessageRepository.insert(Message(messageId, message, channelId, userId, updatedAt))
 
           val formattedUpdatedAt = updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))
-          val result = Map("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName)
+          val result = Map("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName, "profileImageUrl" -> profileImageUrl)
 
           myRoom.actorSet.foreach { out =>
             out ! Json.toJson(result)
