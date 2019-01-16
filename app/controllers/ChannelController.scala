@@ -54,7 +54,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val description = form.purpose
             val isPublic = form.isPublic
             println("form.members : " + form.members)
-            val members = (token.getUserId :: form.members).mkString(",")
+            val members = (token.getUserId :: form.members).mkString(",") // 自分自身を追加
             println("members : " + members)
             //val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
             val createdBy = token.getUserId
@@ -132,6 +132,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, (String, String)], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
+    val user = userFindById(token.getUserId)
     val channels = channelFindAll().filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
     val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || ch.members.split(",").map(_.toLong).contains(bookmark.userId) }
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
