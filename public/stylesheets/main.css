@@ -27,32 +27,9 @@ body {
 
 .main-container {
     display: flex;
+    flex-flow: column;
 }
 
-.left-sidebar {
-    flex: 0 0 220px;
-    position: fixed;
-    left: 0;
-    width: 220px;
-    height: 100%;
-    padding-left: 16px;
-    overflow-y: auto;
-}
-
-.right-sidebar {
-    flex: 0 0 220px;
-    position: fixed;
-    right: 0;
-    width: 220px;
-    height: 100%;
-    padding-right: 16px;
-    overflow-y: auto;
-}
-
-.center {
-    flex: 1 1 auto;
-    margin: 0 220px;
-}
 
 .message-form {
     padding: 16px 220px 16px 236px;
@@ -74,9 +51,8 @@ hr::before {
     padding: 0 16px;
 }
 
-.balloon {
-    padding: 16px;
-    border-radius: 8px;
+.message-area {
+    word-break : break-all;
 }
 
 
@@ -95,3 +71,38 @@ hr::before {
     top: -12px;
 }
 */
+
+@media only screen and (min-width: 768px) {
+
+    .main-container {
+        flex-flow: row;
+    }
+
+    .left-sidebar {
+        flex: 0 0 220px;
+        position: fixed;
+        left: 0;
+        width: 220px;
+        height: 100%;
+        padding-left: 16px;
+        overflow-y: auto;
+    }
+
+    .right-sidebar {
+        flex: 0 0 220px;
+        position: fixed;
+        right: 0;
+        width: 220px;
+        height: 100%;
+        padding-right: 16px;
+        overflow-y: auto;
+    }
+
+    .center {
+        flex: 1 1 auto;
+        margin: 0 220px;
+    }
+
+
+
+}

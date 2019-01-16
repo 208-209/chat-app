@@ -2,6 +2,16 @@ package object models {
 
   import scalikejdbc._
 
+  def userUpsert(user: User): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into users (userId, userName, profileImageUrl)
+       values (${user.userId}, ${user.userName}, ${user.profileImageUrl})
+       on conflict (userId)
+       do update set userName = ${user.userName}, profileImageUrl = ${user.profileImageUrl}
+    """.update().apply()
+  }
+
+
   def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
        select *
@@ -117,15 +127,15 @@ package object models {
        from users
        order by userName
     """.map { rs =>
-      User(rs.long("userId"), rs.string("userName"))
+      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
     }.list().apply()
   }
 
-  def userMap(): Map[Long, String] = DB readOnly { implicit session =>
+  def userMap(): Map[Long, (String, String)] = DB readOnly { implicit session =>
     sql"""
           SELECT *
           FROM users
-       """.map { rs => rs.long("userId") -> rs.string("userName")
+       """.map { rs => rs.long("userId") -> (rs.string("userName"), rs.string("profileImageUrl"))
     }.list().apply().toMap
 
   }

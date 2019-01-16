@@ -2,7 +2,7 @@ package models
 
 import scalikejdbc._
 
-case class User(userId: Long, userName: String)
+case class User(userId: Long, userName: String, profileImageUrl: String)
 
 object User extends SQLSyntaxSupport[User] {
   override val tableName = "users"
@@ -10,13 +10,11 @@ object User extends SQLSyntaxSupport[User] {
   val u = User.syntax("u")
 
   def apply(u: ResultName[User])(implicit rs: WrappedResultSet): User = {
-    new User(userId = rs.long(u.userId), userName = rs.string(u.userName))
+    new User(userId = rs.long(u.userId), userName = rs.string(u.userName), profileImageUrl = rs.string(u.profileImageUrl))
   }
 
-  def apply(accessToken: twitter4j.auth.AccessToken): User = {
-    val userId = accessToken.getUserId
-    val userName = accessToken.getScreenName
-    User(userId, userName)
+  def apply(accessToken: (twitter4j.auth.AccessToken, String)): User = {
+    User(accessToken._1.getUserId, accessToken._1.getScreenName, accessToken._2)
   }
 
 }

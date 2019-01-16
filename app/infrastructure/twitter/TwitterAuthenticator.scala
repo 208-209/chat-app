@@ -55,7 +55,7 @@ class TwitterAuthenticator @Inject() (
     try {
       val token = cache.get[Twitter](cacheKeyTwitter(sessionId)).get.getOAuthAccessToken(verifier)
       // twitterのプロフィール画像を取得
-      val profileImageUrl = cache.get[Twitter](cacheKeyTwitter(sessionId)).get.verifyCredentials().getBiggerProfileImageURLHttps
+      val profileImageUrl = cache.get[Twitter](cacheKeyTwitter(sessionId)).get.verifyCredentials().getProfileImageURLHttps
       (token, profileImageUrl)
     } catch {
       case NonFatal(e) =>

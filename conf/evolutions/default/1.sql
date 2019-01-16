@@ -1,7 +1,8 @@
 # --- !Ups
 create table users (
                      userId bigint not null primary key ,
-                     userName varchar(15) not null
+                     userName varchar(15) not null ,
+                     profileImageUrl varchar(225) not null
 );
 
 create table channels (

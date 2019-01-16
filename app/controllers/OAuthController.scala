@@ -41,7 +41,7 @@ class OAuthController @Inject()(
 
           println(accessToken._2)
           // User情報をデータベースに登録
-          UserRepository.upsert(User(accessToken._1))
+          userUpsert(User(accessToken))
           Redirect(documentRootUrl + routes.ChannelController.read("general").url)
         case None => BadRequest(s"Could not get OAuth verifier. SessionId: ${request.sessionId}")
       }

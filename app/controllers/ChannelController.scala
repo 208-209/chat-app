@@ -127,7 +127,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
   }
 
-  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, String], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Seq[Channel], Seq[User], Map[Long, (String, String)], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
 
     val channels = channelFindAll().filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
     val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || ch.members.split(",").map(_.toLong).contains(bookmark.userId) }

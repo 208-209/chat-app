@@ -1,4 +1,4 @@
-@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Long, String], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(accessToken: Option[twitter4j.auth.AccessToken])(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(channel: (Channel, User), channels: Seq[Channel], users: Seq[User], userMap: Map[Long, (String, String)], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 @import java.time.format.DateTimeFormatter
@@ -74,17 +74,17 @@
                 <!-- message-area -->
             <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
-                <div id="@message._1.messageId">
-
+                <div id="@message._1.messageId" >
                     <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
-                    @if(token.getUserId == message._1.createdBy) {
-                        <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
-
-                    }
-                    <strong>@message._2.userName</strong>
-
-                    <div class="balloon">@{message._1.message}</div>
-
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block rounded-circle">
+                        </div>
+                        <div class="col-sm-10">
+                            <strong>@message._2.userName</strong>
+                            <p class="message-area">@message._1.message</p>
+                        </div>
+                    </div>
                 </div>
             }
             </div>
