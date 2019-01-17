@@ -103,11 +103,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bootstrap__WEBPACK_IMPORTED_MODULE_1__);
- // node_modules/.bin/webpack --config conf/webpack.config.js
 
 
-var global = Function('return this;')();
-global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
+
 
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-toggle="tooltip"]').tooltip();
@@ -17479,20 +17477,25 @@ var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var webSocketUrl = $messages.data('url');
 
 if (webSocketUrl) {
+  var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#meg');
+  var $sendBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button');
   var connection = new WebSocket(webSocketUrl);
-  var $sendBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#message-send-button");
   $sendBtn.prop("disabled", true);
 
   connection.onopen = function () {
-    $sendBtn.prop("disabled", false); // メッセージの送信
+    $sendBtn.prop("disabled", false); // ボタンのクリックでメッセージの送信
 
     $sendBtn.click(function () {
-      var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#meg");
       var text = $meg.val();
       $meg.val('');
       connection.send(JSON.stringify({
         message: text
       }));
+    }); // Enterでメッセージの送信
+
+    $meg.keypress(function (event) {
+      var keycode = event.keyCode ? event.keyCode : event.which;
+      if (keycode === 13) $sendBtn.click();
     }); // メッセージの削除
 
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('.message-del-button').each(function (i, e) {

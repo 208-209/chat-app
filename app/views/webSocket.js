@@ -5,24 +5,27 @@ import $ from 'jquery';
 const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
 
-
-
 if (webSocketUrl) {
-
+    const $meg = $('#meg');
+    const $sendBtn = $('#message-send-button');
     const connection = new WebSocket(webSocketUrl);
-    const $sendBtn = $("#message-send-button");
 
     $sendBtn.prop("disabled", true);
 
     connection.onopen = () => {
         $sendBtn.prop("disabled", false);
 
-        // メッセージの送信
+        // ボタンのクリックでメッセージの送信
         $sendBtn.click(() => {
-            const $meg = $("#meg");
             const text = $meg.val();
             $meg.val('');
             connection.send(JSON.stringify({ message: text }))
+        });
+
+        // Enterでメッセージの送信
+        $meg.keypress(event => {
+            const keycode = event.keyCode ? event.keyCode : event.which;
+            if (keycode === 13) $sendBtn.click()
         });
 
         // メッセージの削除
