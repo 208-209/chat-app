@@ -17510,10 +17510,6 @@ if (webSocketUrl) {
     $sendBtn.prop("disabled", true);
   };
 
-  connection.onerror = function (error) {
-    console.log('WebSocket Error ', error);
-  };
-
   connection.onmessage = function (event) {
     var result = JSON.parse(event.data); // ログインメンバー情報
 
@@ -17526,40 +17522,7 @@ if (webSocketUrl) {
 
 
     if (result.message) {
-      var messageId = result.messageId;
-      var message = result.message;
-      var updatedAt = result.updatedAt;
-      var userName = result.userName;
-      var profileImageUrl = result.profileImageUrl;
-      console.log(profileImageUrl);
-      var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
-        class: 'message-hr',
-        'data-date': updatedAt
-      });
-      var col2div = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2');
-      var col10div = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10');
-      var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
-        src: profileImageUrl,
-        alt: 'profile-image',
-        class: 'rounded mx-auto d-block'
-      });
-      /*
-      const iEle = $('<i>').attr({
-          class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-          'data-message-id': messageId,
-          'data-placement': 'bottom',
-          'title': 'このメッセージを削除する場合は、再読込してください'
-      });
-      */
-
-      var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
-      var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
-      var imgArea = col2div.append(imgEle);
-      var messageArea = col10div.append(strongEle, messageEle);
-      var divElement = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(imgArea, messageArea);
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
-        id: messageId
-      }).append(hrEle, divElement).appendTo($messages);
+      $messages.append(createMessage(result));
       window.scrollTo({
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"
@@ -17571,6 +17534,49 @@ if (webSocketUrl) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(result.deleteId)).remove();
     }
   };
+
+  connection.onerror = function (error) {
+    console.log('WebSocket Error ', error);
+  };
+}
+/**
+ *
+ * @param result
+ * @returns {*|jQuery|*|*|*|*}
+ */
+
+
+function createMessage(result) {
+  var messageId = result.messageId;
+  var message = result.message;
+  var updatedAt = result.updatedAt;
+  var userName = result.userName;
+  var profileImageUrl = result.profileImageUrl;
+  var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
+    class: 'message-hr',
+    'data-date': updatedAt
+  });
+  var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
+    src: profileImageUrl,
+    alt: 'profile-image',
+    class: 'rounded mx-auto d-block'
+  });
+  var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
+  var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
+  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(imgEle);
+  var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(strongEle, messageEle);
+  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
+  return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+    id: messageId
+  }).append(hrEle, messageAreaDiv);
+  /*
+  const iEle = $('<i>').attr({
+      class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+      'data-message-id': messageId,
+      'data-placement': 'bottom',
+      'title': 'このメッセージを削除する場合は、再読込してください'
+  });
+  */
 }
 
 /***/ })

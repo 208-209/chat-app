@@ -1,5 +1,7 @@
-@(user: Option[User])
+@(reqUser: Option[User])
 
-@main("chat-app")(user) {
-  <h1>Welcome to chat-app!</h1>
+@main("chat-app")(reqUser) {
+  <main class="index-container">
+    <h1>Welcome to chat-app!</h1>
+  </main>
 }

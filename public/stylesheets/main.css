@@ -15,9 +15,18 @@
     display: none;
 }
 
+.members {
+    opacity: 0.4;
+}
+
 .isLogin {
     color: blueviolet;
     font-weight: bold;
+    opacity: 1;
+}
+
+.index-container {
+    padding-top: 4.5rem;
 }
 
 
@@ -82,39 +91,48 @@ hr::before {
 }
 */
 
+.center {
+    padding-top: 4.5rem;
+}
+
+.right-sidebar {
+    padding-bottom: 4.5rem;
+}
+
+
+
 @media only screen and (min-width: 768px) {
 
     .main-container {
         flex-flow: row;
     }
 
+    .center {
+        padding: 4.5rem 0;
+        flex: 1 1 auto;
+        margin: 0 240px;
+    }
+
     .left-sidebar {
-        padding-top:4.5rem;
+        padding: 4.5rem 1rem;
         flex: 0 0 220px;
         position: fixed;
         left: 0;
-        width: 220px;
+        width: 240px;
         height: 100%;
-        padding-left: 16px;
         overflow-y: auto;
     }
 
     .right-sidebar {
-        padding-top:4.5rem;
-        flex: 0 0 220px;
+        padding: 4.5rem 1rem;
+        flex: 0 0 240px;
         position: fixed;
         right: 0;
-        width: 220px;
+        width: 240px;
         height: 100%;
-        padding-right: 16px;
         overflow-y: auto;
     }
 
-    .center {
-        padding: 4.5rem 0;
-        flex: 1 1 auto;
-        margin: 0 220px;
-    }
 
 
 

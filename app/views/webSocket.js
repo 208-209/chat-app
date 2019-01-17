@@ -6,6 +6,7 @@ const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
 
 
+
 if (webSocketUrl) {
 
     const connection = new WebSocket(webSocketUrl);
@@ -40,10 +41,6 @@ if (webSocketUrl) {
     };
 
 
-    connection.onerror = function(error) {
-        console.log('WebSocket Error ', error);
-    };
-
     connection.onmessage = event => {
         const result = JSON.parse(event.data);
 
@@ -57,49 +54,11 @@ if (webSocketUrl) {
 
         // メッセージ
         if (result.message) {
-            const messageId = result.messageId;
-            const message = result.message;
-            const updatedAt = result.updatedAt;
-            const userName = result.userName;
-            const profileImageUrl = result.profileImageUrl;
-
-            console.log(profileImageUrl);
-
-            const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
-            const col2div = $('<div>').addClass('col-sm-2');
-            const col10div = $('<div>').addClass('col-sm-10');
-
-
-
-
-            const imgEle = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
-
-            /*
-            const iEle = $('<i>').attr({
-                class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-                'data-message-id': messageId,
-                'data-placement': 'bottom',
-                'title': 'このメッセージを削除する場合は、再読込してください'
-            });
-            */
-            const strongEle = $('<strong>').text(userName);
-            const messageEle = $('<p>').addClass('message-area').text(message);
-
-
-            const imgArea = col2div.append(imgEle);
-
-            const messageArea =col10div.append(strongEle, messageEle);
-
-
-            const divElement = $('<div>').addClass('row').append(imgArea, messageArea);
-
-            $('<div>').attr({ id: messageId }).append(hrEle, divElement).appendTo($messages);
-
+            $messages.append(createMessage(result));
             window.scrollTo({
                 top: $(document).height(),
                 behavior: "smooth"
             });
-
         }
 
         // 削除
@@ -108,6 +67,44 @@ if (webSocketUrl) {
         }
     };
 
+    connection.onerror = function(error) {
+        console.log('WebSocket Error ', error);
+    };
+
 }
+
+/**
+ *
+ * @param result
+ * @returns {*|jQuery|*|*|*|*}
+ */
+function createMessage(result) {
+    const messageId = result.messageId;
+    const message = result.message;
+    const updatedAt = result.updatedAt;
+    const userName = result.userName;
+    const profileImageUrl = result.profileImageUrl;
+
+    const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+    const imgEle = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
+    const strongEle = $('<strong>').text(userName);
+    const messageEle = $('<p>').addClass('message-area').text(message);
+
+    const profileImageDiv = $('<div>').addClass('col-sm-2').append(imgEle);
+    const messageDiv = $('<div>').addClass('col-sm-10').append(strongEle, messageEle);
+    const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);
+
+    return $('<div>').attr({ id: messageId }).append(hrEle, messageAreaDiv);
+
+    /*
+    const iEle = $('<i>').attr({
+        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+        'data-message-id': messageId,
+        'data-placement': 'bottom',
+        'title': 'このメッセージを削除する場合は、再読込してください'
+    });
+    */
+}
+
 
 
