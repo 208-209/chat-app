@@ -7,10 +7,8 @@ $(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });
 
-
 $('.entry-form').click(() => {
     const check = $('#entryRadioBtn [name=isPublic]:checked').val();
-    console.log(check);
 
     if(check === 'true') {
         $('#entryCheckBox').hide();
@@ -19,10 +17,8 @@ $('.entry-form').click(() => {
     }
 });
 
-
 $('.edit-form').click(() => {
     const check = $('#editRadioBtn [name=isPublic]:checked').val();
-    console.log(check);
 
     if(check === 'true') {
         $('#editCheckBox').hide();
