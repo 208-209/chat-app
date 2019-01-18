@@ -10,11 +10,8 @@ import akka.stream.Materializer
 import twitter4j.auth.AccessToken
 import models._
 import java.net.URL
-import java.time.{ZoneId, ZoneOffset}
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-
-import org.joda.time.DateTimeZone
-
 import scala.concurrent.Future
 
 class WaitingRoom() {
@@ -83,8 +80,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
           MessageRepository.insert(Message(messageId, message, channelId, userId, updatedAt))
 
-          val format = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))
-          val formattedUpdatedAt = updatedAt.format(format)
+          val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))
+          val formattedUpdatedAt = updatedAt.format(formatter)
           val result = Map("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName, "profileImageUrl" -> profileImageUrl)
 
           myRoom.actorSet.foreach { out =>

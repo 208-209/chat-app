@@ -1,8 +1,11 @@
 @(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(reqUser: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
+@import java.time.ZoneId
 @import java.time.format.DateTimeFormatter
 
+@messageFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))}
+@channelFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日").withZone(ZoneId.of("Asia/Tokyo"))}
 
 @main(channel._1.channelName)(reqUser) {
 
@@ -15,7 +18,7 @@
             <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
                 <div id="@message._1.messageId" >
-                    <hr class="message-hr" data-date="@message._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))">
+                    <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
                     @if(reqUser.userId == message._1.createdBy) {
                         <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
                     }
@@ -123,7 +126,7 @@
                     </li>
                     <li class="list-group-item">
                         <p class="card-title"><strong>更新日</strong></p>
-                        <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm"))</p>
+                        <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(channelFormatter)</p>
                     </li>
 
                 </ul>
