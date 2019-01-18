@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/chat-app -Dhttp.port=${PORT} -Dplay.http.secret.key=${APPLICATION_SECRET}
+web: target/universal/stage/bin/chat-app -Dhttp.port=${PORT} -Dplay.http.secret.key=${APPLICATION_SECRET} -Dplay.server.http.idleTimeout=180s
