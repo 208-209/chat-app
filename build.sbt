@@ -26,6 +26,7 @@ libraryDependencies += "org.postgresql" % "postgresql" % "9.4-1201-jdbc41"
 
 // timeout https://github.com/playframework/playframework/issues/8286
 PlayKeys.devSettings += "play.server.http.idleTimeout" -> "10m"
+PlayKeys.devSettings += "play.server.https.idleTimeout" -> "10m"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
