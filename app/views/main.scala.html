@@ -28,7 +28,8 @@
                     @user.map { user =>
                         <li>
                             <img src="@user.profileImageUrl" alt="" class="rounded nav-profile-image">
-                            <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">@{user.userName} をログアウト</a>
+                            <span class="navbar-text">@{user.userName}</span>
+                            <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">ログアウト</a>
                         </li>
                     }.getOrElse {
                         <li>
