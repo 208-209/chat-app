@@ -1,3 +1,7 @@
+.channel-name {
+    color: #e9ecef;
+}
+
 .fa-plus-square, .fa-star, .fa-edit, .fa-trash-alt {
     cursor: pointer;
 }
@@ -6,11 +10,7 @@
     color: #62c462;
 }
 
-.far.fa-star {
-    color: #e9ecef;
-}
-
-.fas.fa-star {
+.fa-star {
     color: #f89406;
 }
 
@@ -32,6 +32,7 @@
 }
 
 .isLogin {
+    color: #5bc0de;
     font-weight: bold;
     opacity: 1;
 }
