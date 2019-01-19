@@ -112,7 +112,6 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
 });
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.entry-form').click(function () {
   var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryRadioBtn [name=isPublic]:checked').val();
-  console.log(check);
 
   if (check === 'true') {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryCheckBox').hide();
@@ -122,7 +121,6 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.entry-form').click(function () {
 });
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.edit-form').click(function () {
   var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editRadioBtn [name=isPublic]:checked').val();
-  console.log(check);
 
   if (check === 'true') {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('#editCheckBox').hide();
@@ -17475,6 +17473,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var webSocketUrl = $messages.data('url');
+var timerId;
 
 if (webSocketUrl) {
   var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#meg');
@@ -17506,11 +17505,14 @@ if (webSocketUrl) {
           deleteId: deleteId
         }));
       });
-    });
+    }); // ダミーデータの送信
+
+    sendDummyData(connection);
   };
 
   connection.onclose = function () {
     $sendBtn.prop("disabled", true);
+    clearTimeout(timerId);
   };
 
   connection.onmessage = function (event) {
@@ -17580,6 +17582,22 @@ function createMessage(result) {
       'title': 'このメッセージを削除する場合は、再読込してください'
   });
   */
+}
+/**
+ *
+ * @param connection
+ */
+
+
+function sendDummyData(connection) {
+  timerId = setTimeout(function () {
+    var date = new Date();
+    console.log(date);
+    connection.send(JSON.stringify({
+      dummy: date
+    }));
+    sendDummyData(connection);
+  }, 45000);
 }
 
 /***/ })

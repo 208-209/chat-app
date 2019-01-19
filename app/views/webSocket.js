@@ -4,11 +4,14 @@ import $ from 'jquery';
 
 const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
+let timerId;
 
 if (webSocketUrl) {
     const $meg = $('#meg');
     const $sendBtn = $('#message-send-button');
     const connection = new WebSocket(webSocketUrl);
+
+
 
     $sendBtn.prop("disabled", true);
 
@@ -37,10 +40,14 @@ if (webSocketUrl) {
            });
         });
 
+        // ダミーデータの送信
+        sendDummyData(connection)
+
     };
 
     connection.onclose = () => {
         $sendBtn.prop("disabled", true);
+        clearTimeout(timerId);
     };
 
 
@@ -108,6 +115,22 @@ function createMessage(result) {
     });
     */
 }
+
+/**
+ * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
+ * 45秒間隔でダミーデータを送信し、接続を維持するための関数（不本意）
+ * @param connection
+ */
+function sendDummyData(connection) {
+    timerId = setTimeout(() => {
+        const date = new Date();
+        console.log(date);
+
+        connection.send(JSON.stringify({ dummy: date }));
+        sendDummyData(connection)
+    }, 45000)
+}
+
 
 
 
