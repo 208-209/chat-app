@@ -107,9 +107,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('[data-toggle="tooltip"]').tooltip();
-});
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.entry-form').click(function () {
   var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryRadioBtn [name=isPublic]:checked').val();
 
@@ -17574,18 +17571,10 @@ function createMessage(result) {
   return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
   }).append(hrEle, messageAreaDiv);
-  /*
-  const iEle = $('<i>').attr({
-      class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-      'data-message-id': messageId,
-      'data-placement': 'bottom',
-      'title': 'このメッセージを削除する場合は、再読込してください'
-  });
-  */
 }
 /**
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
- * 45秒間隔でダミーデータを送信し、接続を維持するための関数（不本意）
+ * 45秒間隔でダミーデータを送信し、接続を維持する（不本意）
  * @param connection
  */
 

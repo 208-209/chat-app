@@ -20,7 +20,7 @@
                 <div id="@message._1.messageId" >
                     <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
                     @if(user.userId == message._1.createdBy) {
-                        <i class="fas fa-trash-alt deleteBtn float-right message-del-button" data-message-id="@message._1.messageId" data-placement="bottom" title="このメッセージを削除します"></i>
+                        <i class="fas fa-trash-alt float-right message-del-button" data-message-id="@message._1.messageId" title="このメッセージを削除します"></i>
                     }
                     <div class="row">
                         <div class="col-sm-2">
@@ -43,7 +43,7 @@
             @* チャンネル *@
             <div class="card">
                 <div class="card-header">
-                    <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
+                    <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" title="新たにチャンネルを作成します"></i>
                     <span>Bookmarks</span>
                 </div>
                 <ul class="list-group list-group-flush" id="bookmark">
@@ -77,9 +77,9 @@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}" title="ブックマークに登録"></i>
                             } else {
-                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}" title="ブックマークを削除"></i>
                             }
                             @if(ch.isPublic) {
                                 <i class="fas fa-lock-open">&nbsp;</i>
@@ -106,7 +106,7 @@
             <div class="card">
                 <div class="card-header">
                     @if(user.userId == channel._1.createdBy && channel._1.channelId != "general") {
-                        <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
+                        <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" title="このチャンネルを編集します"></i>
                     }
                     @if(channel._1.isPublic) {
                         <i class="fas fa-lock-open">&nbsp;</i>

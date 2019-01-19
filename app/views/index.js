@@ -3,10 +3,6 @@
 import $ from 'jquery';
 import bootstrap from 'bootstrap';
 
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
 $('.entry-form').click(() => {
     const check = $('#entryRadioBtn [name=isPublic]:checked').val();
 

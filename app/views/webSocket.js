@@ -106,14 +106,6 @@ function createMessage(result) {
 
     return $('<div>').attr({ id: messageId }).append(hrEle, messageAreaDiv);
 
-    /*
-    const iEle = $('<i>').attr({
-        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-        'data-message-id': messageId,
-        'data-placement': 'bottom',
-        'title': 'このメッセージを削除する場合は、再読込してください'
-    });
-    */
 }
 
 /**
