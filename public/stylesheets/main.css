@@ -3,24 +3,24 @@
 }
 
 .fa-plus-square, .fa-edit {
-    color: darkblue;
+    color: #62c462;
 }
 
 .far.fa-star {
-    color: gray;
+    color: #e9ecef;
 }
 
 .fas.fa-star {
-    color: darkorange;
+    color: #f89406;
 }
 
 .fa-lock-open, .fa-lock{
-    color: gray;
+    color: #7A8288;
     vertical-align: auto;
 }
 
 .fa-trash-alt {
-    color: darkred;
+    color: #ee5f5b;
 }
 
 #entryCheckBox {
@@ -62,7 +62,7 @@ hr::before {
     display: inline-block;
     position: relative;
     top: -12px;
-    background-color: #ffffff;
+    background-color: #272B30;
     padding: 0 16px;
 }
 

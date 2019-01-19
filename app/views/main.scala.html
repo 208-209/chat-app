@@ -9,14 +9,14 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
     </head>
     <body>
 
         <div class="container-fluid">
 
-            <nav class="navbar navbar-dark bg-dark fixed-top">
+            <nav class="navbar navbar-dark bg-primary fixed-top">
 
                 <ul class="navbar-nav mr-auto">
                     <li>
@@ -29,11 +29,11 @@
                         <li>
                             <img src="@user.profileImageUrl" alt="" class="rounded nav-profile-image">
                             <span class="navbar-text">@{user.userName}</span>
-                            <a href="@routes.OAuthController.logout" class="btn btn-outline-success" role="button">ログアウト</a>
+                            <a href="@routes.OAuthController.logout" class="btn btn-outline-warning" role="button">ログアウト</a>
                         </li>
                     }.getOrElse {
                         <li>
-                            <a href="@routes.OAuthController.login" class="btn btn-outline-success" role="button">Twitter でログイン</a>
+                            <a href="@routes.OAuthController.login" class="btn btn-outline-warning" role="button">Twitter でログイン</a>
                         </li>
                     }
                 </ul>
