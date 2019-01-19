@@ -17584,7 +17584,8 @@ function createMessage(result) {
   */
 }
 /**
- *
+ * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
+ * 45秒間隔でダミーデータを送信し、接続を維持するための関数（不本意）
  * @param connection
  */
 
