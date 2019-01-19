@@ -1,14 +1,26 @@
-.fa-plus-square, .fa-heart, .fa-edit:hover, .fa-trash-alt {
+.fa-plus-square, .fa-star, .fa-edit, .fa-trash-alt {
     cursor: pointer;
 }
 
-.fa-heart {
-    color: hotpink;
+.fa-plus-square, .fa-edit {
+    color: darkblue;
 }
 
-
-.fa-flag, .fa-key {
+.far.fa-star {
     color: gray;
+}
+
+.fas.fa-star {
+    color: darkorange;
+}
+
+.fa-lock-open, .fa-lock{
+    color: gray;
+    vertical-align: auto;
+}
+
+.fa-trash-alt {
+    color: darkred;
 }
 
 #entryCheckBox {
@@ -20,7 +32,6 @@
 }
 
 .isLogin {
-    color: blueviolet;
     font-weight: bold;
     opacity: 1;
 }
@@ -34,7 +45,6 @@
     display: flex;
     flex-flow: column;
 }
-
 
 .message-form {
     padding: 16px 0;
@@ -74,23 +84,6 @@ hr::before {
     vertical-align: center;
 }
 
-
-/*
-hr {
-    margin-top: 48px;
-    border: none;
-    border-top: 3px dashed pink;
-    text-align: center;
-}
-
-hr::before {
-    content: attr(data-date)"";
-    display: inline-block;
-    position: relative;
-    top: -12px;
-}
-*/
-
 .center {
     padding-top: 4.5rem;
 }
@@ -115,7 +108,7 @@ hr::before {
 
     .left-sidebar {
         padding: 4.5rem 1rem;
-        flex: 0 0 220px;
+        flex: 0 0 240px;
         position: fixed;
         left: 0;
         width: 240px;
@@ -132,8 +125,5 @@ hr::before {
         height: 100%;
         overflow-y: auto;
     }
-
-
-
 
 }

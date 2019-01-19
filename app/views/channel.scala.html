@@ -11,10 +11,10 @@
 
     @reqUser.map { reqUser =>
 
-        <!-- Center -->
+        @* Center *@
         <main class="center">
             <h5 class="text-center">@{channel._1.channelName}</h5>
-                <!-- message-area -->
+            @* message-area *@
             <div id="messages" data-url="@webSocketUrl">
             @for(message <- messages) {
                 <div id="@message._1.messageId" >
@@ -38,9 +38,9 @@
         </main>
 
 
-        <!-- Left -->
+        @* Left *@
         <aside class="left-sidebar">
-                <!-- チャンネル -->
+            @* チャンネル *@
             <div class="card">
                 <div class="card-header">
                     <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" data-toggle="tooltip" data-placement="bottom" title="チャンネルを作成します"></i>
@@ -67,7 +67,7 @@
                 </ul>
             </div>
 
-                <!-- チャンネル一覧 -->
+            @* チャンネル一覧 *@
             <div class="card">
                 <div class="card-header">
                     <span>チャンネル一覧</span>
@@ -77,14 +77,14 @@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@reqUser.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@reqUser.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
                             } else {
-                                <i class="far fa-heart float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@reqUser.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
+                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@reqUser.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}"></i>
                             }
                             @if(ch.isPublic) {
-                                <i class="fas fa-flag"></i>
+                                <i class="fas fa-lock-open">&nbsp;</i>
                             } else {
-                                <i class="fas fa-key"></i>
+                                <i class="fas fa-lock">&nbsp;</i>
                             }
                             @if(ch.channelId == channel._1.channelId) {
                                 @{ch.channelName}
@@ -99,19 +99,19 @@
 
         </aside>
 
-        <!-- Right -->
+        @* Right *@
         <aside class="right-sidebar">
 
-                <!-- チャンネル詳細 -->
+            @* チャンネル詳細 *@
             <div class="card">
                 <div class="card-header">
                     @if(reqUser.userId == channel._1.createdBy && channel._1.channelId != "general") {
                         <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" data-toggle="tooltip" data-placement="bottom" title="このチャンネルを編集します"></i>
                     }
                     @if(channel._1.isPublic) {
-                        <i class="fas fa-flag"></i>
+                        <i class="fas fa-lock-open">&nbsp;</i>
                     } else {
-                        <i class="fas fa-key"></i>
+                        <i class="fas fa-lock">&nbsp;</i>
                     }
                     <span id="channel-channelName">@channel._1.channelName</span>
                 </div>
@@ -132,7 +132,7 @@
                 </ul>
             </div>
 
-                <!-- メンバー -->
+            @* メンバー *@
             <div class="card">
                 <div class="card-header">
                     メンバー
@@ -144,25 +144,12 @@
                             @u.userName
                         </li>
                     }
-
-
-                @*
-                @if(channel._1.isPublic) {
-                    @for(user <- users) {
-                        <li id="@user.userId" class="members list-group-item">@user.userName</li>
-                    }
-                } else {
-                    @for(user <- channel._1.members.split(",").map(_.toLong)) {
-                        <li id="@user" class="members list-group-item">@userMap.getOrElse(user, ("", ""))._1</li>
-                    }
-                }
-                    *@
                 </ul>
             </div>
         </aside>
 
 
-        <!-- message-form -->
+        @* message-form *@
         <div class="fixed-bottom message-form form-row">
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
@@ -175,7 +162,7 @@
 
         </div>
 
-        <!-- Entry Modal -->
+        @* Entry Modal *@
         <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -217,7 +204,7 @@
                             }
                         </div>
 
-                        <!-- CheckBox -->
+                        @* CheckBox *@
                         <div class="form-group " id="entryCheckBox">
                             <p>招待するユーザー</p>
 
@@ -242,7 +229,7 @@
         </div>
 
 
-    <!-- Edit Modal -->
+    @* Edit Modal *@
     @if(reqUser.userId == channel._1.createdBy && channel._1.channelId != "general") {
         <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -259,9 +246,6 @@
 
                         @form(routes.ChannelController.update(channel._1.channelId)) {
                             @CSRF.formField
-
-
-
                             @if(channel._1.isPublic) {
                                 <div class="form-group" id="editRadioBtn">
                                     <div class="form-check-inline edit-form">

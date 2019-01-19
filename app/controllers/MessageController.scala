@@ -102,8 +102,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           }
         }
 
-        (msg \ "dummy").asOpt[String].foreach(println)
-
     }
 
     override def preStart(): Unit = {

@@ -17592,10 +17592,8 @@ function createMessage(result) {
 
 function sendDummyData(connection) {
   timerId = setTimeout(function () {
-    var date = new Date();
-    console.log(date);
     connection.send(JSON.stringify({
-      dummy: date
+      dummy: new Date()
     }));
     sendDummyData(connection);
   }, 45000);

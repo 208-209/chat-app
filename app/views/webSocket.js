@@ -118,15 +118,12 @@ function createMessage(result) {
 
 /**
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
- * 45秒間隔でダミーデータを送信し、接続を維持するための関数（不本意）
+ * 45秒間隔でダミーデータを送信し、接続を維持する（不本意）
  * @param connection
  */
 function sendDummyData(connection) {
     timerId = setTimeout(() => {
-        const date = new Date();
-        console.log(date);
-
-        connection.send(JSON.stringify({ dummy: date }));
+        connection.send(JSON.stringify({ dummy: new Date()}));
         sendDummyData(connection)
     }, 45000)
 }
