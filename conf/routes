@@ -1,25 +1,22 @@
 # home page
-GET     /                           controllers.HomeController.index
+GET     /                                             controllers.HomeController.index
 
-GET     /channels/:channelId        controllers.ChannelController.read(channelId: String)
-POST    /channels                   controllers.ChannelController.create(channelId: String)
+# Channnel
+GET     /channels/:channelId                          controllers.ChannelController.read(channelId: String)
+POST    /channels/:channelId                          controllers.ChannelController.create(channelId: String)
+POST    /channels/:channelId/update                   controllers.ChannelController.update(channelId: String)
+POST    /channels/:channelId/delete                   controllers.ChannelController.delete(channelId: String)
 
-# WebSocket
-GET     /channels/:channelId/users/:userId/message     controllers.MessageController.socket(channelId: String, userId: Long)
+# Message
+GET     /channels/:channelId/users/:userId/message    controllers.MessageController.socket(channelId: String, userId: Long)
 
-# AJAX
-POST    /channels/:channelId/users/:userId/bookmark          controllers.BookmarkController.ajax(channelId: String, userId: Long)
-
-POST    /channels/:channelId/update                 controllers.ChannelController.update(channelId: String)
-
-# delete
-POST    /channels/:channelId/delete           controllers.ChannelController.delete(channelId: String)
-
+# Bookmark
+POST    /channels/:channelId/users/:userId/bookmark   controllers.BookmarkController.ajax(channelId: String, userId: Long)
 
 # Twitter Login
-GET     /login                      controllers.OAuthController.login
-GET     /logout                     controllers.OAuthController.logout
-GET     /oauth_callback             controllers.OAuthController.oauthCallback(oauth_verifier: Option[String])
+GET     /login                                        controllers.OAuthController.login
+GET     /logout                                       controllers.OAuthController.logout
+GET     /oauth_callback                               controllers.OAuthController.oauthCallback(oauth_verifier: Option[String])
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                                 controllers.Assets.versioned(path="/public", file: Asset)
