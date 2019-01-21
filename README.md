@@ -27,7 +27,7 @@ https://play-chat-app.herokuapp.com/
 - user 1 ___ 0...* channel
 - user 1 ___ 0...* message
 - user 1 ___ 0...* bookmark
-### Channel(channels)
+### Channel (channels)
 | 属性名 | 形式 | 内容 |
 | :-- | :-- | :-- |
 | channelId | String(UUID) | チャンネルID (PK) |

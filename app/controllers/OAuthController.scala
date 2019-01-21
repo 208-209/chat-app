@@ -24,9 +24,6 @@ class OAuthController @Inject()(
     try {
       val callbackUrl = documentRootUrl + routes.OAuthController.oauthCallback(None).url
       val authenticationUrl = twitterAuthenticator.startAuthentication(request.sessionId, callbackUrl)
-
-
-
       Redirect(authenticationUrl)
     } catch {
       case e: TwitterException => BadRequest(e.message)
@@ -38,8 +35,6 @@ class OAuthController @Inject()(
       verifierOpt.map(twitterAuthenticator.getAccessToken(request.sessionId, _)) match {
         case Some(accessToken) =>
           cache.set(request.sessionId, accessToken._1, 30.minutes)
-
-          println(accessToken._2)
           // User情報をデータベースに登録
           userUpsert(User(accessToken))
           Redirect(documentRootUrl + routes.ChannelController.read("general").url)

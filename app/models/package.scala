@@ -21,6 +21,16 @@ package object models {
     }.single().apply()
   }
 
+  def userFindAll(): Seq[User] = DB readOnly { implicit session =>
+    sql"""
+       select *
+       from users
+       order by userName
+    """.map { rs =>
+      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
+    }.list().apply()
+  }
+
 
   def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
@@ -98,6 +108,15 @@ package object models {
     """.update().apply()
   }
 
+  def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
+    sql"""
+          SELECT *
+          FROM bookmarks
+          WHERE userId = $userId
+       """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
+    }.list().apply().toMap
+
+  }
 
 
   def bookmarkAndChannelFindAll(userId: Long): Seq[(Bookmark, Channel)] = DB readOnly { implicit  session =>
@@ -112,15 +131,6 @@ package object models {
   }
 
 
-  def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
-    sql"""
-          SELECT *
-          FROM bookmarks
-          WHERE userId = $userId
-       """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
-    }.list().apply().toMap
-
-  }
 
   def bookmarkUpsert(bookmark: Bookmark): Unit = DB localTx { implicit session =>
     sql"""
@@ -131,26 +141,7 @@ package object models {
     """.update().apply()
   }
 
-  def userFindAll(): Seq[User] = DB readOnly { implicit session =>
-    sql"""
-       select *
-       from users
-       order by userName
-    """.map { rs =>
-      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
-    }.list().apply()
-  }
 
-  /*
-  def userMap(): Map[Long, (String, String)] = DB readOnly { implicit session =>
-    sql"""
-          SELECT *
-          FROM users
-       """.map { rs => rs.long("userId") -> (rs.string("userName"), rs.string("profileImageUrl"))
-    }.list().apply().toMap
-
-  }
-  */
 
   def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
     val (m, u) = (Message.syntax("m"), User.syntax("u"))
@@ -179,15 +170,19 @@ package object models {
     }.single().apply()
   }
 
+  def messageInsert(msg: Message): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into messages (messageId, message, channelId, createdBy, updatedAt)
+       values (${msg.messageId}, ${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
+    """.update().apply()
+  }
+
+
   def messageDelete(messageId: String): Unit = DB localTx { implicit session =>
     sql"""
        delete from messages
        where messageId = $messageId
     """.update().apply()
   }
-
-
-
-
 
 }

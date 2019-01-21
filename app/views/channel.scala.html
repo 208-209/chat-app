@@ -4,10 +4,11 @@
 @import java.time.ZoneId
 @import java.time.format.DateTimeFormatter
 
+@ADMIN_TWITTER_ID = @{"937000074978107392".toLong}
 @messageFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))}
 @channelFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日").withZone(ZoneId.of("Asia/Tokyo"))}
 
-@main(channel._1.channelName)(user) {
+@main(channel._1.channelName + " - Chat app")(user) {
 
     @user.map { user =>
 
