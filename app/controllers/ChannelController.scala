@@ -6,6 +6,9 @@ import play.api.data.Forms._
 import play.api.i18n.I18nSupport
 import play.api.cache.SyncCacheApi
 import play.api.mvc._
+
+import scala.concurrent.duration._
+
 import models._
 
 case class ChannelForm(isPublic: Boolean, channelName: String, purpose: String, members: List[Long])
@@ -31,7 +34,11 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             Ok(views.html.channel(channelForm, bundleData._8)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
           case _ => NotFound("指定されたチャンネルは見つかりません")
         }
-      case None => Redirect(routes.OAuthController.login())
+      case None =>
+        // ログインできなかった際のリダイレクト機能
+        val from = request.uri.split("/").last
+        if(!from.isEmpty) cache.set("loginFrom", from, 10.minutes)
+        Redirect(routes.OAuthController.login())
     }
   }
 

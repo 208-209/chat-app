@@ -37,7 +37,15 @@ class OAuthController @Inject()(
           cache.set(request.sessionId, accessToken._1, 30.minutes)
           // User情報をデータベースに登録
           userUpsert(User(accessToken))
-          Redirect(documentRootUrl + routes.ChannelController.read("general").url)
+
+          // オープンリダイレクタ脆弱性対策
+          val from = cache.get[String]("loginFrom") match {
+            case Some(loginFrom) if !loginFrom.contains("http://") && !loginFrom.contains("https://") =>
+              cache.remove("loginFrom")
+              loginFrom
+            case _ => "general"
+          }
+          Redirect(documentRootUrl + routes.ChannelController.read(from).url)
         case None => BadRequest(s"Could not get OAuth verifier. SessionId: ${request.sessionId}")
       }
     } catch {
