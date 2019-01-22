@@ -25,7 +25,7 @@ package object models {
     sql"""
        select *
        from users
-       order by userName
+       order by userName asc
     """.map { rs =>
       User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
     }.list().apply()
@@ -62,6 +62,13 @@ package object models {
     }.single().apply()
   }
 
+  def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+    """.update().apply()
+  }
+
   def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
        insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
@@ -87,7 +94,7 @@ package object models {
     sql"""
        select *
        from channels
-       order by updatedAt asc
+       order by updatedAt desc
     """.map { rs =>
       Channel(
         rs.string("channelId"),
@@ -101,12 +108,6 @@ package object models {
     }.list().apply()
   }
 
-  def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
-    sql"""
-       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
-    """.update().apply()
-  }
 
   def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
     sql"""
@@ -126,7 +127,7 @@ package object models {
        from ${Bookmark.as(b)}
        inner join ${Channel.as(c)} on ${b.channelId} = ${c.channelId}
        where userId = $userId and isBookmark = true
-       order by updatedAt
+       order by updatedAt desc
     """.map { implicit rs => (Bookmark(b.resultName), Channel(c.resultName))}.list().apply()
   }
 
@@ -150,7 +151,7 @@ package object models {
        from ${Message.as(m)}
        inner join ${User.as(u)} on ${m.createdBy} = ${u.userId}
        where channelId = $channelId
-       order by updatedAt ASC
+       order by updatedAt asc
     """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
   }
 

@@ -22,7 +22,7 @@ https://play-chat-app.herokuapp.com/
 | 属性名 | 形式 | 内容 |
 | :-- | :-- | :-- |
 | userId | Long | TwitterのユーザーID (PK) |
-| userName | String | Twitter のユーザー名 |
+| userName | String | Twitter のユーザー名(INDEX) |
 | profileImageUrl | String | Twitterのプロフィール画像のURL  |
 - user 1 ___ 0...* channel
 - user 1 ___ 0...* message
@@ -36,7 +36,7 @@ https://play-chat-app.herokuapp.com/
 | isPublic | Boolean | パブリックチャンネル: ture, プライベートチャンネル: false |
 | members | String | プライベートチャンネルにアクセスできるユーザーのIDを , で結合した文字列 |
 | createdBy | Long | 作成者のユーザーID(INDEX)(FK) |
-| updatedAt | OffsetDateTime | 更新日時 |
+| updatedAt | OffsetDateTime | 更新日時(INDEX) |
 - channel 1 ___ 0...* message
 - channel 1 ___ 0...* bookmark
 ### Message (messages)
@@ -46,7 +46,7 @@ https://play-chat-app.herokuapp.com/
 | message | String | メッセージ |
 | channelId | String(UUID) | チャンネルID(INDEX) |
 | createdBy | Long | 投稿者のユーザーID(INDEX)(FK) |
-| updatedAt | OffsetDateTime | 更新日時 |
+| updatedAt | OffsetDateTime | 更新日時(INDEX) |
 ### Bookmark（bookmarks）
 | 属性名 | 形式 | 内容 |
 | :-- | :-- | :-- |
