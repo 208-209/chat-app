@@ -32,6 +32,22 @@ package object models {
   }
 
 
+  def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+    """.update().apply()
+  }
+
+  def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
+    sql"""
+       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+       on conflict (channelId)
+       do update set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
+    """.update().apply()
+  }
+
   def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
        select *
@@ -62,34 +78,6 @@ package object models {
     }.single().apply()
   }
 
-  def channelInsert(channel: Channel): Unit = DB localTx { implicit session =>
-    sql"""
-       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
-    """.update().apply()
-  }
-
-  def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
-    sql"""
-       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
-       on conflict (channelId)
-       do update set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
-    """.update().apply()
-  }
-
-  def channelAndMessageDelete(channelId: String): Unit = DB localTx { implicit session =>
-    sql"""
-       delete from messages
-       where channelId = $channelId
-    """.update().apply()
-
-    sql"""
-       delete from channels
-       where channelId = $channelId
-    """.update().apply()
-  }
-
   def channelFindAll(): Seq[Channel] = DB readOnly { implicit session =>
     sql"""
        select *
@@ -108,17 +96,38 @@ package object models {
     }.list().apply()
   }
 
+  def channelAndMessageDelete(channelId: String): Unit = DB localTx { implicit session =>
+    sql"""
+       delete from messages
+       where channelId = $channelId
+    """.update().apply()
+
+    sql"""
+       delete from channels
+       where channelId = $channelId
+    """.update().apply()
+  }
+
 
   def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
     sql"""
-          SELECT *
-          FROM bookmarks
-          WHERE userId = $userId
-       """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
+       SELECT *
+       FROM bookmarks
+       WHERE userId = $userId
+    """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
     }.list().apply().toMap
 
   }
 
+
+  def bookmarkUpsert(bookmark: Bookmark): Unit = DB localTx { implicit session =>
+    sql"""
+       INSERT INTO bookmarks (channelId, userId, isBookmark)
+       VALUES (${bookmark.channelId}, ${bookmark.userId}, ${bookmark.isBookmark})
+       ON CONFLICT (channelId, userId)
+       DO UPDATE SET isBookmark = ${bookmark.isBookmark}
+    """.update().apply()
+  }
 
   def bookmarkAndChannelFindAll(userId: Long): Seq[(Bookmark, Channel)] = DB readOnly { implicit  session =>
     val (b, c) = (Bookmark.syntax("b"), Channel.syntax("c"))
@@ -132,28 +141,13 @@ package object models {
   }
 
 
-
-  def bookmarkUpsert(bookmark: Bookmark): Unit = DB localTx { implicit session =>
+  def messageInsert(msg: Message): Unit = DB localTx { implicit session =>
     sql"""
-       INSERT INTO bookmarks (channelId, userId, isBookmark)
-       VALUES (${bookmark.channelId}, ${bookmark.userId}, ${bookmark.isBookmark})
-       ON CONFLICT (channelId, userId)
-       DO UPDATE SET isBookmark = ${bookmark.isBookmark}
+       insert into messages (messageId, message, channelId, createdBy, updatedAt)
+       values (${msg.messageId}, ${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
     """.update().apply()
   }
 
-
-
-  def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
-    val (m, u) = (Message.syntax("m"), User.syntax("u"))
-    sql"""
-       select ${m.result.*}, ${u.result.*}
-       from ${Message.as(m)}
-       inner join ${User.as(u)} on ${m.createdBy} = ${u.userId}
-       where channelId = $channelId
-       order by updatedAt asc
-    """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
-  }
 
   def messageFindById(messageId: String): Option[Message] = DB readOnly { implicit session =>
     sql"""
@@ -171,13 +165,16 @@ package object models {
     }.single().apply()
   }
 
-  def messageInsert(msg: Message): Unit = DB localTx { implicit session =>
+  def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
+    val (m, u) = (Message.syntax("m"), User.syntax("u"))
     sql"""
-       insert into messages (messageId, message, channelId, createdBy, updatedAt)
-       values (${msg.messageId}, ${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
-    """.update().apply()
+       select ${m.result.*}, ${u.result.*}
+       from ${Message.as(m)}
+       inner join ${User.as(u)} on ${m.createdBy} = ${u.userId}
+       where channelId = $channelId
+       order by updatedAt asc
+    """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
   }
-
 
   def messageDelete(messageId: String): Unit = DB localTx { implicit session =>
     sql"""
