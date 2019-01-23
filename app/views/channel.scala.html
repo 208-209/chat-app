@@ -1,8 +1,8 @@
 @(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
-@import java.time.ZoneId
 @import java.time.format.DateTimeFormatter
+@import java.time.ZoneId
 
 @ADMIN_TWITTER_ID = @{"937000074978107392".toLong}
 @messageFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))}
@@ -275,7 +275,7 @@
                             <div class="form-group">
                                 <label for="edit-channelName">名前</label>
                                 <input type="text" class="form-control" id="edit-channelName" name="channelName" value="@editForm("channelName").value">
-                                @for(error <- channelForm("channelName").errors) {
+                                @for(error <- editForm("channelName").errors) {
                                     <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
                                 }
                             </div>
@@ -283,7 +283,7 @@
                             <div class="form-group">
                                 <label for="edit-purpose">目的</label>
                                 <textarea class="form-control" id="edit-purpose" rows="3" name="purpose">@editForm("purpose").value</textarea>
-                                @for(error <- channelForm("purpose").errors) {
+                                @for(error <- editForm("purpose").errors) {
                                     <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
                                 }
                             </div>

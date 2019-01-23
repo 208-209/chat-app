@@ -29,24 +29,22 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isEnter(token, channel) =>
+          case Some(channel) if isReadable(token, channel) =>
             val bundleData =  bundle(token, channel)
             Ok(views.html.channel(channelForm, bundleData._8)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
           case _ => NotFound("指定されたチャンネルは見つかりません")
         }
       case None =>
         // ログインできなかった際のリダイレクト機能
-        val from = request.uri.split("/").last
+        val from = request.uri.split("/channels/").last
         if(!from.isEmpty) cache.set("loginFrom", from, 10.minutes)
         Redirect(routes.OAuthController.login())
     }
   }
 
   def create(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
-
     request.accessToken match {
       case Some(token) =>
-
         channelForm.bindFromRequest.fold(
           error => { channelAndUserFindOne(channelId) match {
               case Some(channel) =>
@@ -60,15 +58,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val channelName = form.channelName
             val description = form.purpose
             val isPublic = form.isPublic
-            println("form.members : " + form.members)
-            val members = (token.getUserId :: form.members).mkString(",") // 自分自身を追加
-            println("members : " + members)
-            //val members = if(form.members.isEmpty) token.getUserId.toString else form.members.mkString(",")
+            val members = (token.getUserId :: form.members).mkString(",") // チャンネル製作者は必ず入るようにする
             val createdBy = token.getUserId
             val updatedAt = java.time.OffsetDateTime.now()
-
             channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
-
             Redirect(routes.ChannelController.read(channelId))
           }
         )
@@ -87,7 +80,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val bundleData = bundle(token, channel)
 
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(error, bundleData._8)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
+              error => BadRequest(views.html.channel(channelForm, error)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
               form => {
                 val editChannel = Channel(
                   channelId = channel._1.channelId,
@@ -128,9 +121,6 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     }
   }
 
-  private def isEnter(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(token.getUserId)
-  }
 
 
   private def isMineChannel(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
