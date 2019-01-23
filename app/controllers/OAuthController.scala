@@ -38,7 +38,7 @@ class OAuthController @Inject()(
           // User情報をデータベースに登録
           userUpsert(User(accessToken))
 
-          // ログインできなかった際のリダイレクト機能
+          // オープンリダイレクタ脆弱性対策でUUIDであるか判定
           val from = cache.get[String]("loginFrom") match {
             case Some(loginFrom) if loginFrom.matches("""[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}""") =>
               cache.remove("loginFrom")

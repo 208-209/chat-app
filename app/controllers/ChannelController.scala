@@ -25,6 +25,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
 
+
   def read(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
     request.accessToken match {
       case Some(token) =>
@@ -37,11 +38,12 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case None =>
         // ログインできなかった際のリダイレクト機能
         val from = request.uri.split("/channels/").last
-        if(from.matches("""[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"""))
+        if(from.matches("""[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}""")) // UUID
           cache.set("loginFrom", from, 10.minutes)
         Redirect(routes.OAuthController.login())
     }
   }
+
 
   def create(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
     request.accessToken match {
@@ -69,6 +71,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case None => Redirect(routes.OAuthController.login())
     }
   }
+
 
   def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 
@@ -100,10 +103,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
           case _ => NotFound("指定されたチャンネルがない、または、編集する権限がありません")
         }
-
       case None => Redirect(routes.OAuthController.login())
     }
   }
+
 
   def delete(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
 

@@ -33,7 +33,7 @@ $('.bookmark-toggle-button').each((i, e) => {
                 // ブックマークエリアに要素の追加と削除
                 if(jsonData.bookmark === 'true') {
                     const anchor = $('<a>').attr({ href: `/channels/${channelId}` }).text(channelName);
-                    $('<li>').attr({ id: channelId, class: 'list-group-item' }).append(anchor).appendTo('#bookmark');
+                    $('<li>').attr({ id: channelId, class: 'list-group-item ellipsis' }).append(anchor).appendTo('#bookmark');
                 } else {
                     $(`#${channelId}`).remove()
                 }

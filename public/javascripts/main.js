@@ -17406,7 +17406,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
           }).text(channelName);
           jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li>').attr({
             id: channelId,
-            class: 'list-group-item'
+            class: 'list-group-item ellipsis'
           }).append(anchor).appendTo('#bookmark');
         } else {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(channelId)).remove();
@@ -17520,7 +17520,7 @@ if (webSocketUrl) {
       result.members.split(',').map(function (member) {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(member)).addClass('isLogin');
       });
-    } // メッセージ
+    } // メッセージの表示
 
 
     if (result.message) {
@@ -17529,7 +17529,7 @@ if (webSocketUrl) {
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"
       });
-    } // 削除
+    } // メッセージの削除
 
 
     if (result.deleteId) {
@@ -17542,9 +17542,9 @@ if (webSocketUrl) {
   };
 }
 /**
- *
+ * メッセージのHTML要素を作成
  * @param result
- * @returns {*|jQuery|*|*|*|*}
+ * @returns メッセージのHTML要素
  */
 
 
@@ -17573,8 +17573,9 @@ function createMessage(result) {
   }).append(hrEle, messageAreaDiv);
 }
 /**
+ * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
- * 45秒間隔でダミーデータを送信し、接続を維持する（不本意）
+ * ダミーデータを送信し、接続を維持する（不本意）
  * @param connection
  */
 
