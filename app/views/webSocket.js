@@ -20,7 +20,7 @@ if (webSocketUrl) {
 
         // ボタンのクリックでメッセージの送信
         $sendBtn.click(() => {
-            const text = $meg.val();
+            const text = $meg.val().slice(0, 255);
             $meg.val('');
             connection.send(JSON.stringify({ message: text }))
         });
@@ -109,8 +109,9 @@ function createMessage(result) {
 }
 
 /**
+ * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
- * 45秒間隔でダミーデータを送信し、接続を維持する（不本意）
+ * ダミーデータを送信し、接続を維持する（不本意）
  * @param connection
  */
 function sendDummyData(connection) {

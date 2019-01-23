@@ -58,7 +58,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val channelName = form.channelName
             val description = form.purpose
             val isPublic = form.isPublic
-            val members = (token.getUserId :: form.members).mkString(",") // チャンネル製作者は必ず入るようにする
+            val members = (token.getUserId :: form.members).mkString(",") // チャンネル作成者は必ずメンバーになる
             val createdBy = token.getUserId
             val updatedAt = java.time.OffsetDateTime.now()
             channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
