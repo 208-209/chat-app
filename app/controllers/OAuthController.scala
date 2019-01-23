@@ -38,9 +38,9 @@ class OAuthController @Inject()(
           // User情報をデータベースに登録
           userUpsert(User(accessToken))
 
-          // オープンリダイレクタ脆弱性対策
+          // ログインできなかった際のリダイレクト機能
           val from = cache.get[String]("loginFrom") match {
-            case Some(loginFrom) if !loginFrom.contains("http://") && !loginFrom.contains("https://") =>
+            case Some(loginFrom) if loginFrom.matches("""[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}""") =>
               cache.remove("loginFrom")
               loginFrom
             case _ => "general"

@@ -49,20 +49,19 @@
                 </div>
                 <ul class="list-group list-group-flush" id="bookmark">
                     <li class="list-group-item">
-                    @if(channel._1.channelId == "general") {
-                        general
-                    } else {
-                        <a href="@routes.ChannelController.read("general")">general</a>
-                    }
+                        @if(channel._1.channelId == "general") {
+                            general
+                        } else {
+                            <a href="@routes.ChannelController.read("general")">general</a>
+                        }
                     </li>
-
                     @for(bookmark <- bookmarks) {
                         <li class="list-group-item" id="@bookmark._1.channelId">
-                        @if(bookmark._1.channelId == channel._1.channelId) {
-                            @{bookmark._2.channelName}
-                        } else {
-                            <a href="@routes.ChannelController.read(bookmark._1.channelId)">@{bookmark._2.channelName}</a>
-                        }
+                            @if(bookmark._1.channelId == channel._1.channelId) {
+                                @{bookmark._2.channelName}
+                            } else {
+                                <a href="@routes.ChannelController.read(bookmark._1.channelId)">@{bookmark._2.channelName}</a>
+                            }
                         </li>
                     }
                 </ul>
@@ -94,11 +93,10 @@
                             }
                         </li>
                     }
-
                 </ul>
             </div>
-
         </aside>
+
 
         @* Right *@
         <aside class="right-sidebar">
@@ -139,7 +137,7 @@
                 <ul class="list-group list-group-flush">
                     @for(_user <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(_user.userId)) {
                         <li id="@_user.userId" class="members list-group-item">
-                            <img src="@_user.profileImageUrl" alt="" class="rounded members-profile-image">
+                            <img src="@_user.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
                             @_user.userName
                         </li>
                     }
@@ -153,13 +151,12 @@
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
                 <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" autocomplete="off" spellcheck="false" class="form-control" autofocus>
-
             </div>
             <div class="col-sm-3">
-                <button id="message-send-button" class="btn btn-info" data-userName="@{user.userName}" data-profileImageUrl="@{user.profileImageUrl}">送信</button>
+                <button id="message-send-button" class="btn btn-info">送信</button>
             </div>
-
         </div>
+
 
         @* Entry Modal *@
         <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

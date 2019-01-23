@@ -11,8 +11,6 @@ if (webSocketUrl) {
     const $sendBtn = $('#message-send-button');
     const connection = new WebSocket(webSocketUrl);
 
-
-
     $sendBtn.prop("disabled", true);
 
     connection.onopen = () => {
@@ -42,8 +40,8 @@ if (webSocketUrl) {
 
         // ダミーデータの送信
         sendDummyData(connection)
-
     };
+
 
     connection.onclose = () => {
         $sendBtn.prop("disabled", true);
@@ -62,7 +60,7 @@ if (webSocketUrl) {
             });
         }
 
-        // メッセージ
+        // メッセージの表示
         if (result.message) {
             $messages.append(createMessage(result));
             window.scrollTo({
@@ -71,7 +69,7 @@ if (webSocketUrl) {
             });
         }
 
-        // 削除
+        // メッセージの削除
         if (result.deleteId) {
             $(`#${result.deleteId}`).remove()
         }
@@ -84,9 +82,9 @@ if (webSocketUrl) {
 }
 
 /**
- *
+ * メッセージのHTML要素を作成
  * @param result
- * @returns {*|jQuery|*|*|*|*}
+ * @returns メッセージのHTML要素
  */
 function createMessage(result) {
     const messageId = result.messageId;
@@ -105,7 +103,6 @@ function createMessage(result) {
     const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);
 
     return $('<div>').attr({ id: messageId }).append(hrEle, messageAreaDiv);
-
 }
 
 /**

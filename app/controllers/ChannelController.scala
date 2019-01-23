@@ -37,7 +37,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
       case None =>
         // ログインできなかった際のリダイレクト機能
         val from = request.uri.split("/channels/").last
-        if(!from.isEmpty) cache.set("loginFrom", from, 10.minutes)
+        if(from.matches("""[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"""))
+          cache.set("loginFrom", from, 10.minutes)
         Redirect(routes.OAuthController.login())
     }
   }
