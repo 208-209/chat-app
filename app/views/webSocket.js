@@ -50,6 +50,7 @@ if (webSocketUrl) {
 
 
     connection.onmessage = event => {
+        console.log(event.message);
         const result = JSON.parse(event.data);
 
         // ログインメンバー情報

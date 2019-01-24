@@ -15,7 +15,6 @@ $('.bookmark-toggle-button').each((i, e) => {
             type: "POST",
             url: `/channels/${channelId}/users/${userId}/bookmark`,
             data: { "bookmark": bookmark },
-            dataType: "json",
             beforeSend: function(xhr) {
                 xhr.setRequestHeader("Csrf-Token", CSRF_TOKEN);
             },
