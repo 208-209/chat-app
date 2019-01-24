@@ -76,9 +76,9 @@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}" title="ブックマークを削除"></i>
+                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="true" title="ブックマークを削除"></i>
                             } else {
-                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-channel-name="@ch.channelName" data-user-id="@user.userId" data-bookmark="@{bookmarkMap.getOrElse(ch.channelId, false)}" title="ブックマークに登録"></i>
+                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="false" title="ブックマークに登録"></i>
                             }
                             @if(ch.isPublic) {
                                 <i class="fas fa-lock-open">&nbsp;</i>

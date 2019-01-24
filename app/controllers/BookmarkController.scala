@@ -4,6 +4,8 @@ import javax.inject._
 import play.api.cache.SyncCacheApi
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.api.libs.json.Json
+
 import models._
 
 @Singleton
@@ -17,7 +19,7 @@ class BookmarkController @Inject()(val cache: SyncCacheApi, cc: ControllerCompon
           case Some(channel) if userId == accessToken.getUserId =>
             val isBookmark = !request.body.asFormUrlEncoded.get("bookmark").head.toBoolean
             bookmarkUpsert(Bookmark(channelId, userId, isBookmark))
-            val result = s"""{"bookmark": "$isBookmark"}"""
+            val result = Json.obj("bookmark" -> isBookmark, "channelName" -> channel._1.channelName)
             Ok(result)
           case _ => NotFound("指定されたチャンネルは見つかりません。")
         }
