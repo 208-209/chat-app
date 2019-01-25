@@ -17372,8 +17372,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
  // AJAXによるBookmarkの更新
 
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(function (i, e) {
@@ -17393,8 +17391,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
         xhr.setRequestHeader("Csrf-Token", CSRF_TOKEN);
       },
       success: function success(data) {
-        console.log(_typeof(data)); // アイコンを変化
-
+        // アイコンを変化
         button.data('bookmark', data.bookmark);
         button.removeClass('fas', 'far');
         var className = data.bookmark ? 'fas' : 'far';

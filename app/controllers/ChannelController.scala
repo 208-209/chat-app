@@ -125,18 +125,63 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     }
   }
 
+  /**
+    * チャンネルページの観覧の許可
+    * パブリックチャンネル => 全員可
+    * プライベートチャンネル => Channelのmembersに含まれるかどうか
+    *
+    * @param token
+    * @param channel
+    * @return
+    */
+  private def isReadable(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
+    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(token.getUserId)
+  }
 
-
+  /**
+    * チャンネルの作成者とリクエストユーザーが一致するか
+    * generalチャンネルの編集と削除はできない
+    *
+    * @param token
+    * @param channel
+    * @return
+    */
   private def isMineChannel(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
     channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
   }
 
-  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  /**
+    * このuserIdがプライベートチャンネルにアクセスできるメンバーの一員であるか
+    *
+    * @param channel
+    * @param user
+    * @return
+    */
+  private def isMember(channel: Channel, userId: Long): Boolean = {
+    channel.members.split(",").map(_.toLong).contains(userId)
+  }
 
+
+  /**
+    * 各チャンネルに渡す情報をまとめた関数
+    *
+    * @param token
+    * @param channel
+    * @param request
+    * @return リクエストユーザーの情報
+    *         データベースに登録してあるユーザー
+    *         リクエストユーザーがアクセスできるチャンネル
+    *         リクエストユーザーがブックマーク(isBookmark == true)しているチャンネル
+    *         リクエストユーザーのブックマークマップ（key: channelId, value: isBookmark）
+    *         チャンネルのメッセージ
+    *         メッセージを送るWebSocketのurl
+    *         チャンネル情報が入った編集用のフォーム
+    */
+  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
     val user = userFindById(token.getUserId)
     val users = userFindAll()
-    val channels = channelFindAll().filter(channel => channel.isPublic || channel.members.split(",").map(_.toLong).contains(token.getUserId))
-    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || ch.members.split(",").map(_.toLong).contains(bookmark.userId) }
+    val channels = channelFindAll().filter { ch => ch.isPublic || isMember(ch, token.getUserId) }
+    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || isMember(ch, bookmark.userId) }
     val bookmarkMap = ChannelIdAndBookmarkMap(token.getUserId)
     val messages = messageFindAll(channel._1.channelId)
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
@@ -148,6 +193,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
     (user, users, channels, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)
   }
+
 
 
 }

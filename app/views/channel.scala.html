@@ -1,6 +1,7 @@
 @(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
+
 @import java.time.format.DateTimeFormatter
 @import java.time.ZoneId
 
@@ -40,13 +41,14 @@
 
         @* Left *@
         <aside class="left-sidebar">
-            @* チャンネル *@
+            @* ブックマーク *@
             <div class="card">
                 <div class="card-header">
                     <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" title="新たにチャンネルを作成します"></i>
                     <span>Bookmarks</span>
                 </div>
                 <ul class="list-group list-group-flush" id="bookmark">
+                    @* generalチャンネルは常に表示する *@
                     <li class="list-group-item">
                         @if(channel._1.channelId == "general") {
                             general
@@ -72,7 +74,7 @@
                     <span>Channels</span>
                 </div>
                 <ul class="list-group list-group-flush">
-                    @* generalチャンネルは除外 *@
+                    @* generalチャンネルは表示しない *@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
@@ -200,7 +202,7 @@
 
                         <div class="form-group " id="entryCheckBox">
                             <p>招待するユーザー</p>
-
+                            @* 作成者は必ずメンバーになるので表示しない *@
                             @for(_user <- users if _user.userId != user.userId) {
                                 <div class="form-check-inline">
                                     <label class="form-check-label">
@@ -282,22 +284,18 @@
 
                                 <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
                                     <p>招待するユーザー</p>
+                                    @* 作成者は必ずメンバーになるので表示しない *@
                                     @for(_user <- users if _user.userId != user.userId) {
-                                        @if(channel._1.members.split(",").map(_.toLong).contains(_user.userId)) {
-
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
+                                        <div class="form-check-inline">
+                                            <label class="form-check-label">
+                                                @* membersに登録されているユーザー名にはchecked *@
+                                                @if(channel._1.members.split(",").map(_.toLong).contains(_user.userId)) {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId" checked>@_user.userName
-                                                </label>
-                                            </div>
-
-                                        } else {
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
+                                                } else {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName
-                                                </label>
-                                            </div>
-                                        }
+                                                }
+                                            </label>
+                                        </div>
                                     }
                                 </div>
 
