@@ -1,5 +1,34 @@
-.channel-name {
-    color: #e9ecef;
+/* ========== 共通 ========== */
+@media only screen and (min-width: 768px) {
+    .main-container {
+        flex-flow: row;
+    }
+
+    .center {
+        padding: 4.5rem 0;
+        flex: 1 1 auto;
+        margin: 0 240px;
+    }
+
+    .left-sidebar {
+        padding: 4.5rem 1rem;
+        flex: 0 0 240px;
+        position: fixed;
+        left: 0;
+        width: 240px;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .right-sidebar {
+        padding: 4.5rem 1rem;
+        flex: 0 0 240px;
+        position: fixed;
+        right: 0;
+        width: 240px;
+        height: 100%;
+        overflow-y: auto;
+    }
 }
 
 .fa-plus-square, .fa-star, .fa-edit, .fa-trash-alt {
@@ -10,13 +39,37 @@
     color: #62c462;
 }
 
-.fa-star {
-    color: #f89406;
-}
-
 .fa-lock-open, .fa-lock{
     color: #7A8288;
     vertical-align: auto;
+}
+
+
+/* ========== ナビバー ========== */
+.nav-profile-image {
+    max-width: 100%;
+    height: 28px;
+    vertical-align: center;
+    margin-right: 0.5rem;
+}
+
+.navbar-text {
+    margin-right: 16px;
+}
+
+
+/* ========== メイン ========== */
+.main-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.index-container {
+    padding-top: 4.5rem;
+}
+
+.center {
+    padding-top: 4.5rem;
 }
 
 .fa-trash-alt {
@@ -25,32 +78,6 @@
 
 #entryCheckBox {
     display: none;
-}
-
-.members {
-    opacity: 0.4;
-}
-
-.isLogin {
-    color: #5bc0de;
-    font-weight: bold;
-    opacity: 1;
-}
-
-.index-container {
-    padding-top: 4.5rem;
-}
-
-.ellipsis {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-
-.main-container {
-    display: flex;
-    flex-flow: column;
 }
 
 .message-form {
@@ -84,59 +111,30 @@ hr::before {
     vertical-align: top;
 }
 
-.nav-profile-image {
-    max-width: 100%;
-    height: 28px;
-    vertical-align: center;
-    margin-right: 0.5rem;
 
+/* ========== 左サイドバー ========== */
+.fa-star {
+    color: #f89406;
 }
 
-.navbar-text {
-    margin-right: 16px;
-
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.center {
-    padding-top: 4.5rem;
-}
 
+/* ========== 右サイドバー ========== */
 .right-sidebar {
     padding-bottom: 4.5rem;
 }
 
+.members {
+    opacity: 0.4;
+}
 
-
-@media only screen and (min-width: 768px) {
-
-    .main-container {
-        flex-flow: row;
-    }
-
-    .center {
-        padding: 4.5rem 0;
-        flex: 1 1 auto;
-        margin: 0 240px;
-    }
-
-    .left-sidebar {
-        padding: 4.5rem 1rem;
-        flex: 0 0 240px;
-        position: fixed;
-        left: 0;
-        width: 240px;
-        height: 100%;
-        overflow-y: auto;
-    }
-
-    .right-sidebar {
-        padding: 4.5rem 1rem;
-        flex: 0 0 240px;
-        position: fixed;
-        right: 0;
-        width: 240px;
-        height: 100%;
-        overflow-y: auto;
-    }
-
+.isLogin {
+    color: #5bc0de;
+    font-weight: bold;
+    opacity: 1;
 }

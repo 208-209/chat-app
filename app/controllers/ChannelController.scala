@@ -126,7 +126,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   }
 
   /**
-    * チャンネルページの観覧の許可
+    * チャンネルページの観覧ができるか
     * パブリックチャンネル => 全員可
     * プライベートチャンネル => Channelのmembersに含まれるかどうか
     *
