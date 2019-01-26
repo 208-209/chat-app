@@ -1,6 +1,6 @@
 {
   "name": "chat-app",
-  "description": "chat-app",
+  "description": "Chat app",
   "logo": "",
   "keywords": ["node"],
   "image": "heroku/nodejs"
