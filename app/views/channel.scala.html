@@ -263,7 +263,6 @@
                                             <label class="form-check-label" for="editPublicFalse">プライベート</label>
                                         </div>
                                     </div>
-
                                 }
 
                                 <div class="form-group">
@@ -304,6 +303,7 @@
                             }
 
                             @form(routes.ChannelController.delete(channel._1.channelId)) {
+                                @CSRF.formField
                                 <button class="btn btn-danger">チャンネルを削除する</button>
                             }
 

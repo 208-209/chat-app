@@ -74,33 +74,27 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
   def update(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
-
     request.accessToken match {
       case Some(token) =>
-
         channelAndUserFindOne(channelId) match {
           case Some(channel) if isMineChannel(token, channel) =>
-
-            val bundleData = bundle(token, channel)
-
             channelForm.bindFromRequest.fold(
-              error => BadRequest(views.html.channel(channelForm, error)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7)),
+              error => {
+                val bundleData = bundle(token, channel)
+                BadRequest(views.html.channel(channelForm, error)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
+              },
               form => {
-                val editChannel = Channel(
-                  channelId = channel._1.channelId,
+                val editedChannel = channel._1.copy(
                   channelName = form.channelName,
                   purpose = form.purpose,
                   isPublic = form.isPublic,
                   members = (token.getUserId :: form.members).mkString(","),
-                  createdBy = token.getUserId,
                   updatedAt = java.time.OffsetDateTime.now()
                 )
-
-                channelUpsert(editChannel)
+                channelUpdate(editedChannel)
                 Redirect(routes.ChannelController.read(channelId))
               }
             )
-
           case _ => NotFound("指定されたチャンネルがない、または、編集する権限がありません")
         }
       case None => Redirect(routes.OAuthController.login())

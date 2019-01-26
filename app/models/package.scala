@@ -39,14 +39,22 @@ package object models {
     """.update().apply()
   }
 
-  def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
+  def channelUpdate(channel: Channel): Unit = DB localTx { implicit session =>
     sql"""
-       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
-       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
-       on conflict (channelId)
-       do update set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
+       update channels
+       set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
     """.update().apply()
   }
+
+
+//  def channelUpsert(channel: Channel): Unit = DB localTx { implicit session =>
+//    sql"""
+//       insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
+//       values (${channel.channelId}, ${channel.channelName}, ${channel.purpose}, ${channel.isPublic}, ${channel.members}, ${channel.createdBy}, ${channel.updatedAt})
+//       on conflict (channelId)
+//       do update set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
+//    """.update().apply()
+//  }
 
   def channelFindById(channelId: String): Option[Channel] = DB readOnly { implicit session =>
     sql"""
