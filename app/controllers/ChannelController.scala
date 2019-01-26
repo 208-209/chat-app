@@ -103,18 +103,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
 
   def delete(channelId: String) = TwitterLoginAction { implicit request: TwitterLoginRequest[AnyContent] =>
-
     request.accessToken match {
       case Some(token) =>
         channelAndUserFindOne(channelId) match {
           case Some(channel) if isMineChannel(token, channel) =>
-
-            channelAndMessageDelete(channelId)
+            deleteChannelAggregate(channelId)
             Redirect(routes.ChannelController.read("general"))
-
           case _ => NotFound("指定されたチャンネルがない、または、削除する権限がありません")
         }
-
       case None => Redirect(routes.OAuthController.login())
     }
   }
@@ -176,7 +172,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     val users = userFindAll()
     val channels = channelFindAll().filter { ch => ch.isPublic || isMember(ch, token.getUserId) }
     val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || isMember(ch, bookmark.userId) }
-    val bookmarkMap = ChannelIdAndBookmarkMap(token.getUserId)
+    val bookmarkMap = createBookmarkMap(token.getUserId)
     val messages = messageFindAll(channel._1.channelId)
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
       case Some(_) => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL(secure = true)

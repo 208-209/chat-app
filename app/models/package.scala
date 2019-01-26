@@ -105,9 +105,14 @@ package object models {
     }.list().apply()
   }
 
-  def channelAndMessageDelete(channelId: String): Unit = DB localTx { implicit session =>
+  def deleteChannelAggregate(channelId: String): Unit = DB localTx { implicit session =>
     sql"""
        delete from messages
+       where channelId = $channelId
+    """.update().apply()
+
+    sql"""
+       delete from bookmarks
        where channelId = $channelId
     """.update().apply()
 
@@ -118,7 +123,7 @@ package object models {
   }
 
 
-  def ChannelIdAndBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
+  def createBookmarkMap(userId: Long): Map[String, Boolean] = DB readOnly { implicit session =>
     sql"""
        SELECT *
        FROM bookmarks
@@ -185,7 +190,7 @@ package object models {
     """.map { implicit rs => (Message(m.resultName), User(u.resultName))}.list().apply()
   }
 
-  def messageDelete(messageId: String): Unit = DB localTx { implicit session =>
+  def deleteMessage(messageId: String): Unit = DB localTx { implicit session =>
     sql"""
        delete from messages
        where messageId = $messageId

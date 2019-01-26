@@ -93,7 +93,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
         (msg \ "deleteId").asOpt[String].foreach { deleteId =>
 
           messageFindById(deleteId).foreach { case message if message.createdBy == userId =>
-            messageDelete(message.messageId)
+            deleteMessage(message.messageId)
             val result = Map("deleteId" -> deleteId)
 
             myRoom.actorSet.foreach { out =>
