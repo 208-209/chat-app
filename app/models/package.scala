@@ -43,6 +43,7 @@ package object models {
     sql"""
        update channels
        set channelName = ${channel.channelName}, purpose = ${channel.purpose}, isPublic = ${channel.isPublic}, members = ${channel.members}, updatedAt = ${channel.updatedAt}
+       where channelId = ${channel.channelId}
     """.update().apply()
   }
 
