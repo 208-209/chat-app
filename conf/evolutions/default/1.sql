@@ -44,7 +44,7 @@ create table bookmarks (
 create index isBookmark_bookmarks on bookmarks (isBookmark);
 
 insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
-values ('general', 'general', 'デフォルトのチャンネル', 'true', '937000074978107392', 937000074978107392, '2019-01-01T00:00:00.000+09:00');
+values ('general', 'general', 'デフォルトのチャンネル', 'true', '937000074978107392', 937000074978107392, '2019-01-25T00:00:00.000+09:00');
 
 # --- !Downs
 drop table users;
