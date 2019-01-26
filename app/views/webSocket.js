@@ -6,6 +6,7 @@ const $messages = $('#messages');
 const webSocketUrl = $messages.data('url');
 let timerId;
 
+// WebSocketによるメッセージの送信と削除
 if (webSocketUrl) {
     const $meg = $('#meg');
     const $sendBtn = $('#message-send-button');
@@ -33,8 +34,8 @@ if (webSocketUrl) {
         $('.message-del-button').each((i, e) => {
            const button = $(e);
            button.click(() => {
-               const deleteId = button.data('message-id');
-               connection.send(JSON.stringify({ deleteId: deleteId }))
+               const messageId = button.data('message-id');
+               connection.send(JSON.stringify({ delete: messageId }))
            });
         });
 
@@ -50,7 +51,6 @@ if (webSocketUrl) {
 
 
     connection.onmessage = event => {
-        console.log(event.message);
         const result = JSON.parse(event.data);
 
         // ログインメンバー情報
@@ -71,8 +71,8 @@ if (webSocketUrl) {
         }
 
         // メッセージの削除
-        if (result.deleteId) {
-            $(`#${result.deleteId}`).remove()
+        if (result.delete) {
+            $(`#${result.delete}`).remove()
         }
     };
 
@@ -84,6 +84,7 @@ if (webSocketUrl) {
 
 /**
  * メッセージのHTML要素を作成
+ *
  * @param result
  * @returns メッセージのHTML要素
  */
@@ -110,6 +111,7 @@ function createMessage(result) {
  * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する（不本意）
+ *
  * @param connection
  */
 function sendDummyData(connection) {

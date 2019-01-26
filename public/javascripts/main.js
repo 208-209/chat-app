@@ -17455,9 +17455,9 @@ if (webSocketUrl) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('.message-del-button').each(function (i, e) {
       var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
       button.click(function () {
-        var deleteId = button.data('message-id');
+        var messageId = button.data('message-id');
         connection.send(JSON.stringify({
-          deleteId: deleteId
+          delete: messageId
         }));
       });
     }); // ダミーデータの送信
@@ -17471,7 +17471,6 @@ if (webSocketUrl) {
   };
 
   connection.onmessage = function (event) {
-    console.log(event.message);
     var result = JSON.parse(event.data); // ログインメンバー情報
 
     if (result.members) {
@@ -17491,8 +17490,8 @@ if (webSocketUrl) {
     } // メッセージの削除
 
 
-    if (result.deleteId) {
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(result.deleteId)).remove();
+    if (result.delete) {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(result.delete)).remove();
     }
   };
 
