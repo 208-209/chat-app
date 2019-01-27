@@ -17428,7 +17428,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var webSocketUrl = $messages.data('url');
-var timerId;
+var timerId; // WebSocketによるメッセージの送信と削除
 
 if (webSocketUrl) {
   var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#meg');
@@ -17501,6 +17501,7 @@ if (webSocketUrl) {
 }
 /**
  * メッセージのHTML要素を作成
+ *
  * @param result
  * @returns メッセージのHTML要素
  */
@@ -17534,6 +17535,7 @@ function createMessage(result) {
  * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する（不本意）
+ *
  * @param connection
  */
 

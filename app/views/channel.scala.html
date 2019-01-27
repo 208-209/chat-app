@@ -2,17 +2,9 @@
 
 @import helper._
 
-@import java.time.format.DateTimeFormatter
-@import java.time.ZoneId
-
-@ADMIN_TWITTER_ID = @{"937000074978107392".toLong}
-@messageFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))}
-@channelFormatter = @{DateTimeFormatter.ofPattern("yyyy年MM月dd日").withZone(ZoneId.of("Asia/Tokyo"))}
-
 @main(channel._1.channelName + " - Chat app")(user) {
 
     @user.map { user =>
-
         @* Center *@
         <main class="center">
             @* message-area *@
@@ -20,7 +12,7 @@
                 @for(message <- messages) {
                     <div id="@message._1.messageId" >
                         <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
-                        @if(user.userId == message._1.createdBy) {
+                        @if(user.userId == message._1.createdBy || isAdmin(user.userId)) {
                             <i class="fas fa-trash-alt float-right message-del-button" data-message-id="@message._1.messageId" title="このメッセージを削除します"></i>
                         }
                         <div class="row">
@@ -29,6 +21,7 @@
                             </div>
                             <div class="col-sm-10">
                                 <strong>@message._2.userName</strong>
+                                @if(isAdmin(user.userId)) { <span>(@{message._1.createdBy})</span> }
                                 <p class="message-area">@message._1.message</p>
                             </div>
                         </div>

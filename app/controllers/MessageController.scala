@@ -12,8 +12,6 @@ import twitter4j.auth.AccessToken
 import models._
 
 import java.net.URL
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class WaitingRoom {
@@ -30,9 +28,9 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
 
-    // パスのチャンネルが存在する かつ パスのユーザーIDとリクエスト者のIDが一致する かつ 同一生成元ポリシー
+    // 同一生成元ポリシー && パスのチャンネルが存在する && パスのユーザーIDとリクエスト者のIDが一致
     Future.successful(accessToken match {
-      case Some(token) if channelFindById(channelId).isDefined && userId == token.getUserId && isSameOrigin(request) =>
+      case Some(token) if isSameOrigin(request) && channelFindById(channelId).isDefined && userId == token.getUserId =>
         val profileImageUrl =  userFindById(userId).map(_.profileImageUrl).getOrElse("")
         Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName, profileImageUrl)})
       case _ => Left(Forbidden)
@@ -82,8 +80,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
           messageInsert(Message(messageId, message, channelId, userId, updatedAt))
 
-          val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss").withZone(ZoneId.of("Asia/Tokyo"))
-          val formattedUpdatedAt = updatedAt.format(formatter)
+          val formattedUpdatedAt = updatedAt.format(messageFormatter)
           val result = Json.obj("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName, "profileImageUrl" -> profileImageUrl)
 
           myRoom.actorSet.foreach { out =>
@@ -93,7 +90,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
         // メッセージの削除
         (msg \ "delete").asOpt[String].foreach { messageId =>
-          messageFindById(messageId).foreach { case message if message.createdBy == userId =>
+          messageFindById(messageId).foreach { case message if message.createdBy == userId || isAdmin(userId) =>
             deleteMessage(message.messageId)
             val result = Json.obj("delete" -> messageId)
 
