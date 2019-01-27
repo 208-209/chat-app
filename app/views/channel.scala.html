@@ -128,7 +128,7 @@
             <div class="card">
                 <div class="card-header">Members</div>
                 <ul class="list-group list-group-flush">
-                    @for(_user <- users if channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(_user.userId)) {
+                    @for(_user <- users if channel._1.isPublic || isMember(channel._1, _user.userId)) {
                         <li id="@_user.userId" class="members list-group-item">
                             <img src="@_user.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
                             @_user.userName
@@ -281,7 +281,7 @@
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
                                                 @* membersに登録されているユーザー名にはchecked *@
-                                                @if(channel._1.members.split(",").map(_.toLong).contains(_user.userId)) {
+                                                @if(isMember(channel._1, _user.userId)) {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId" checked>@_user.userName
                                                 } else {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName

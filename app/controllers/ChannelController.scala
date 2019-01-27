@@ -140,17 +140,6 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
   }
 
-  /**
-    * このuserIdがプライベートチャンネルにアクセスできるメンバーの一員であるか
-    *
-    * @param channel
-    * @param user
-    * @return
-    */
-  private def isMember(channel: Channel, userId: Long): Boolean = {
-    channel.members.split(",").map(_.toLong).contains(userId)
-  }
-
 
   /**
     * 各チャンネルに渡す情報をまとめた関数
