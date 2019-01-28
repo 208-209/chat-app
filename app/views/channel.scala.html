@@ -69,11 +69,11 @@
                 <ul class="list-group list-group-flush">
                     @* generalチャンネルは表示しない *@
                     @for(ch <- channels if ch.channelId != "general") {
-                        <li class="list-group-item">
+                        <li class="list-group-item ellipsis">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="true" title="ブックマークを削除"></i>
+                                <i class="fas fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="true" title="ブックマークを削除">&nbsp;</i>
                             } else {
-                                <i class="far fa-star float-right bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="false" title="ブックマークに登録"></i>
+                                <i class="far fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="false" title="ブックマークに登録">&nbsp;</i>
                             }
                             @if(ch.isPublic) {
                                 <i class="fas fa-lock-open">&nbsp;</i>

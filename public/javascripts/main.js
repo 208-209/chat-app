@@ -17518,12 +17518,6 @@ function createMessage(result) {
     class: 'message-hr',
     'data-date': updatedAt
   });
-  var iEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
-    class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
-    'data-message-id': messageId,
-    'onclick': 'connection.send(JSON.stringify({ delete: messageId }))',
-    'title': 'このメッセージを削除する場合は、再読込してください'
-  });
   var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
     src: profileImageUrl,
     alt: 'profile-image',
@@ -17536,12 +17530,12 @@ function createMessage(result) {
   var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
   return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
-  }).append(hrEle, iEle, messageAreaDiv);
+  }).append(hrEle, messageAreaDiv);
 }
 /**
  * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
- * ダミーデータを送信し、接続を維持する（不本意）
+ * ダミーデータを送信し、接続を維持する
  *
  * @param connection
  */
