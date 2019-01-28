@@ -19,8 +19,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   val channelForm = Form(
     mapping(
       "isPublic" -> boolean,
-      "channelName" -> text(minLength = 3, maxLength = 30),
-      "purpose" -> text(minLength = 3, maxLength = 55),
+      "channelName" -> text(minLength = 3, maxLength = 32),
+      "purpose" -> text(minLength = 3, maxLength = 32),
       "members" -> list(longNumber)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )
@@ -77,7 +77,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMineChannel(token, channel) =>
+          case Some(channel) if isMineChannel(token.getUserId, channel._1) =>
             channelForm.bindFromRequest.fold(
               error => {
                 val bundleData = bundle(token, channel)
@@ -106,7 +106,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     request.accessToken match {
       case Some(token) =>
         channelAndUserFindOne(channelId) match {
-          case Some(channel) if isMineChannel(token, channel) =>
+          case Some(channel) if isMineChannel(token.getUserId, channel._1) =>
             deleteChannelAggregate(channelId)
             Redirect(routes.ChannelController.read("general"))
           case _ => NotFound("指定されたチャンネルがない、または、削除する権限がありません")
@@ -125,19 +125,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @return
     */
   private def isReadable(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.isPublic || channel._1.members.split(",").map(_.toLong).contains(token.getUserId)
-  }
-
-  /**
-    * チャンネルの作成者とリクエストユーザーが一致するか
-    * generalチャンネルの編集と削除はできない
-    *
-    * @param token
-    * @param channel
-    * @return
-    */
-  private def isMineChannel(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
-    channel._1.createdBy == token.getUserId && channel._1.channelId != "general"
+    channel._1.isPublic || isMember(token.getUserId, channel._1)
   }
 
 
@@ -159,10 +147,10 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
     val user = userFindById(token.getUserId)
     val users = userFindAll()
-    val channels = channelFindAll().filter { ch => ch.isPublic || isMember(ch, token.getUserId) }
-    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || isMember(ch, bookmark.userId) }
+    val channels = channelFindAll().filter { ch => ch.isPublic || isMember(token.getUserId, ch) }
+    val bookmarks = bookmarkAndChannelFindAll(token.getUserId).filter{ case (bookmark, ch) => ch.isPublic || isMember(bookmark.userId, ch) }
     val bookmarkMap = createBookmarkMap(token.getUserId)
-    val messages = messageFindAll(channel._1.channelId)
+    val messages = messageAndUserFindAll(channel._1.channelId)
     val webSocketUrl = sys.env.get("HEROKU_URL") match {
       case Some(_) => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL(secure = true)
       case None => routes.MessageController.socket(channel._1.channelId, token.getUserId).webSocketURL()
@@ -172,8 +160,6 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
     (user, users, channels, bookmarks, bookmarkMap, messages, webSocketUrl, editForm)
   }
-
-
 
 }
 

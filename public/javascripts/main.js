@@ -17379,6 +17379,7 @@ __webpack_require__.r(__webpack_exports__);
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(function (i, e) {
   var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
   button.click(function () {
+    var thisChannelId = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#this-channel').data('channel-id');
     var channelId = button.data('channel-id');
     var userId = button.data('user-id');
     var bookmark = button.data('bookmark');
@@ -17400,13 +17401,13 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
         button.addClass(className); // ブックマークエリアに要素の追加と削除
 
         if (data.bookmark) {
-          var anchor = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<a>').attr({
+          var tag = channelId === thisChannelId ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<span>') : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<a>').attr({
             href: "/channels/".concat(channelId)
-          }).text(data.channelName);
+          });
           jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li>').attr({
             id: channelId,
             class: 'list-group-item ellipsis'
-          }).append(anchor).appendTo('#bookmark');
+          }).append(tag.text(data.channelName)).appendTo('#bookmark');
         } else {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(channelId)).remove();
         }
@@ -17517,6 +17518,12 @@ function createMessage(result) {
     class: 'message-hr',
     'data-date': updatedAt
   });
+  var iEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
+    class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+    'data-message-id': messageId,
+    'onclick': 'connection.send(JSON.stringify({ delete: messageId }))',
+    'title': 'このメッセージを削除する場合は、再読込してください'
+  });
   var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
     src: profileImageUrl,
     alt: 'profile-image',
@@ -17529,7 +17536,7 @@ function createMessage(result) {
   var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
   return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
-  }).append(hrEle, messageAreaDiv);
+  }).append(hrEle, iEle, messageAreaDiv);
 }
 /**
  * 45秒間隔でダミーデータ（日付）を送信する

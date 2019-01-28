@@ -179,7 +179,7 @@ package object models {
     }.single().apply()
   }
 
-  def messageFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
+  def messageAndUserFindAll(channelId: String): Seq[(Message, User)] = DB readOnly { implicit session =>
     val (m, u) = (Message.syntax("m"), User.syntax("u"))
     sql"""
        select ${m.result.*}, ${u.result.*}

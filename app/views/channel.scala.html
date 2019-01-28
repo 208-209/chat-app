@@ -97,7 +97,7 @@
             @* チャンネル詳細 *@
             <div class="card">
                 <div class="card-header">
-                    @if(user.userId == channel._1.createdBy && channel._1.channelId != "general") {
+                    @if(isMineChannel(user.userId, channel._1)) {
                         <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" title="このチャンネルを編集します"></i>
                     }
                     @if(channel._1.isPublic) {
@@ -105,7 +105,7 @@
                     } else {
                         <i class="fas fa-lock">&nbsp;</i>
                     }
-                    <span id="channel-channelName">@channel._1.channelName</span>
+                    <span id="this-channel" data-channel-id="@channel._1.channelId">@channel._1.channelName</span>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
@@ -128,7 +128,7 @@
             <div class="card">
                 <div class="card-header">Members</div>
                 <ul class="list-group list-group-flush">
-                    @for(_user <- users if channel._1.isPublic || isMember(channel._1, _user.userId)) {
+                    @for(_user <- users if channel._1.isPublic || isMember(_user.userId, channel._1)) {
                         <li id="@_user.userId" class="members list-group-item">
                             <img src="@_user.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
                             @_user.userName
@@ -219,7 +219,7 @@
 
 
         @* Edit Modal *@
-        @if(user.userId == channel._1.createdBy && channel._1.channelId != "general") {
+        @if(isMineChannel(user.userId, channel._1)) {
             <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -281,7 +281,7 @@
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
                                                 @* membersに登録されているユーザー名にはchecked *@
-                                                @if(isMember(channel._1, _user.userId)) {
+                                                @if(isMember(_user.userId, channel._1)) {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId" checked>@_user.userName
                                                 } else {
                                                     <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName

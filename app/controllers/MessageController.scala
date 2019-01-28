@@ -73,6 +73,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     def receive = {
       case msg: JsValue =>
 
+        println(msg)
+
         // メッセージの投稿
         (msg \ "message").asOpt[String].foreach { message =>
           val messageId = java.util.UUID.randomUUID().toString

@@ -96,15 +96,29 @@ function createMessage(result) {
     const profileImageUrl = result.profileImageUrl;
 
     const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+
+    const iEle = $('<i>').attr({
+        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+        'data-message-id': messageId,
+        'onclick': 'connection.send(JSON.stringify({ delete: messageId }))',
+        'title': 'このメッセージを削除する場合は、再読込してください'
+    });
+
+
     const imgEle = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
     const strongEle = $('<strong>').text(userName);
     const messageEle = $('<p>').addClass('message-area').text(message);
+
+
+
+
+
 
     const profileImageDiv = $('<div>').addClass('col-sm-2').append(imgEle);
     const messageDiv = $('<div>').addClass('col-sm-10').append(strongEle, messageEle);
     const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);
 
-    return $('<div>').attr({ id: messageId }).append(hrEle, messageAreaDiv);
+    return $('<div>').attr({ id: messageId }).append(hrEle, iEle, messageAreaDiv);
 }
 
 /**

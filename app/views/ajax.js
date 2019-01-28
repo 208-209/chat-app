@@ -6,6 +6,7 @@ import $ from 'jquery';
 $('.bookmark-toggle-button').each((i, e) => {
     const button = $(e);
     button.click(() => {
+        const thisChannelId = $('#this-channel').data('channel-id');
         const channelId = button.data('channel-id');
         const userId = button.data('user-id');
         const bookmark = button.data('bookmark');
@@ -27,8 +28,8 @@ $('.bookmark-toggle-button').each((i, e) => {
 
                 // ブックマークエリアに要素の追加と削除
                 if(data.bookmark) {
-                    const anchor = $('<a>').attr({ href: `/channels/${channelId}` }).text(data.channelName);
-                    $('<li>').attr({ id: channelId, class: 'list-group-item ellipsis' }).append(anchor).appendTo('#bookmark');
+                    const tag = channelId === thisChannelId ? $('<span>') : $('<a>').attr({ href: `/channels/${channelId}` });
+                    $('<li>').attr({ id: channelId, class: 'list-group-item ellipsis' }).append(tag.text(data.channelName)).appendTo('#bookmark');
                 } else {
                     $(`#${channelId}`).remove()
                 }
@@ -36,3 +37,5 @@ $('.bookmark-toggle-button').each((i, e) => {
         });
     });
 });
+
+
