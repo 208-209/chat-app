@@ -259,7 +259,7 @@
                                 }
 
                                 <div class="form-group">
-                                    <label for="edit-channelName">名前</label>
+                                    <label for="edit-channelName">名前 (3~32文字)</label>
                                     <input type="text" class="form-control" id="edit-channelName" name="channelName" value="@editForm("channelName").value">
                                     @for(error <- editForm("channelName").errors) {
                                         <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>
@@ -267,7 +267,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="edit-purpose">目的</label>
+                                    <label for="edit-purpose">目的 (3~32文字)</label>
                                     <textarea class="form-control" id="edit-purpose" rows="3" name="purpose">@editForm("purpose").value</textarea>
                                     @for(error <- editForm("purpose").errors) {
                                         <small id="entry-channelName-help" class="form-text text-muted">@Messages(error.message)</small>

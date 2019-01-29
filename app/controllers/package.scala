@@ -1,7 +1,7 @@
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-import models.{Channel, User}
+import models._
 
 package object controllers {
 
@@ -11,15 +11,14 @@ package object controllers {
 
   /**
     * そのユーザーIDの者が管理人であるか
-    *
     * @param userId
     * @return
     */
   def isAdmin(userId: Long): Boolean = userId == ADMIN_TWITTER_ID
 
+
   /**
     * このユーザーIDがチャンネルにアクセスできるメンバーの一員であるか
-    *
     * @param userId
     * @param channel
     * @return
@@ -31,7 +30,6 @@ package object controllers {
   /**
     * このユーザーIDがチャンネルチャンネル作成者のものと一致するか
     * また、generalチャンネルの編集と削除はできない
-    *
     * @param usrId
     * @param channel
     * @return
@@ -39,6 +37,7 @@ package object controllers {
   def isMineChannel(usrId: Long, channel: Channel): Boolean = {
     channel.createdBy == usrId && channel.channelId != "general"
   }
+
 
 
 }

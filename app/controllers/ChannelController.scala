@@ -8,7 +8,6 @@ import play.api.cache.SyncCacheApi
 import play.api.mvc._
 
 import scala.concurrent.duration._
-
 import models._
 
 case class ChannelForm(isPublic: Boolean, channelName: String, purpose: String, members: List[Long])
@@ -65,6 +64,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             val createdBy = token.getUserId
             val updatedAt = java.time.OffsetDateTime.now()
             channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
+            println(
+              s"""
+                 |[チャンネルが作成されました]
+                 |userId: ${token.getUserId}, userName: ${token.getScreenName}
+                 |channelId: $channelId, channelName: $channelName
+                 |remoteAddress: ${request.remoteAddress}
+                 |userAgent: ${request.headers.get("user-agent")}
+              """.stripMargin)
             Redirect(routes.ChannelController.read(channelId))
           }
         )
@@ -92,6 +99,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                   updatedAt = java.time.OffsetDateTime.now()
                 )
                 channelUpdate(editedChannel)
+                println(
+                  s"""
+                     |[チャンネルが編集されました]
+                     |userId: ${token.getUserId}, userName: ${token.getScreenName}
+                     |channelId: ${channel._1.channelId}, channelName: ${form.channelName}
+                     |remoteAddress: ${request.remoteAddress}
+                     |userAgent: ${request.headers.get("user-agent")}
+                  """.stripMargin)
                 Redirect(routes.ChannelController.read(channelId))
               }
             )
@@ -108,6 +123,14 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
         channelAndUserFindOne(channelId) match {
           case Some(channel) if isMineChannel(token.getUserId, channel._1) =>
             deleteChannelAggregate(channelId)
+            println(
+              s"""
+                |[チャンネルが削除されました]
+                |userId: ${token.getUserId}, userName: ${token.getScreenName}
+                |channelId: ${channel._1.channelId}, channelName: ${channel._1.channelName}
+                |remoteAddress: ${request.remoteAddress}
+                |userAgent: ${request.headers.get("user-agent")}
+              """.stripMargin)
             Redirect(routes.ChannelController.read("general"))
           case _ => NotFound("指定されたチャンネルがない、または、削除する権限がありません")
         }
@@ -124,7 +147,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * @param channel
     * @return
     */
-  private def isReadable(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
+  private[this] def isReadable(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
     channel._1.isPublic || isMember(token.getUserId, channel._1)
   }
 
@@ -144,7 +167,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     *         メッセージを送るWebSocketのurl
     *         チャンネル情報が入った編集用のフォーム
     */
-  private def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
+  private[this] def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
     val user = userFindById(token.getUserId)
     val users = userFindAll()
     val channels = channelFindAll().filter { ch => ch.isPublic || isMember(token.getUserId, ch) }

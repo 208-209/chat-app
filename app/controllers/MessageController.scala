@@ -32,7 +32,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     Future.successful(accessToken match {
       case Some(token) if isSameOrigin(request) && channelFindById(channelId).isDefined && userId == token.getUserId =>
         val profileImageUrl =  userFindById(userId).map(_.profileImageUrl).getOrElse("")
-        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, channelId, userId, token.getScreenName, profileImageUrl)})
+        Right(ActorFlow.actorRef { out => MyWebSocketActor.props(out, request, channelId, userId, token.getScreenName, profileImageUrl)})
       case _ => Left(Forbidden)
     })
   }
@@ -44,7 +44,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     * @param request
     * @return
     */
-  private def isSameOrigin(request: RequestHeader): Boolean = {
+  private[this] def isSameOrigin(request: RequestHeader): Boolean = {
     request.headers.get("Origin") match {
       case Some(originValue) =>
         val url = new URL(originValue)
@@ -58,10 +58,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
   }
 
   object MyWebSocketActor {
-    def props(out: ActorRef, channelId: String, userId: Long, userName: String, profileImageUrl: String) = Props(new MyWebSocketActor(out, channelId, userId, userName, profileImageUrl))
+    def props(out: ActorRef, request: RequestHeader, channelId: String, userId: Long, userName: String, profileImageUrl: String) = Props(new MyWebSocketActor(out, request, channelId, userId, userName, profileImageUrl))
   }
 
-  class MyWebSocketActor(out: ActorRef, channelId: String, userId: Long, userName: String, profileImageUrl: String) extends Actor {
+  class MyWebSocketActor(out: ActorRef, request: RequestHeader, channelId: String, userId: Long, userName: String, profileImageUrl: String) extends Actor {
     val myRoom = roomMap.get(channelId) match {
       case Some(room) => room
       case None =>
@@ -86,6 +86,15 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           myRoom.actorSet.foreach { out =>
             out ! result
           }
+          println(
+            s"""
+               |[メッセージが投稿されました]
+               |userId: $userId, userName: $userName
+               |channelId: $channelId, messageId: $messageId
+               |message: $message
+               |remoteAddress: ${request.remoteAddress}
+               |userAgent: ${request.headers.get("user-agent")}
+            """.stripMargin)
         }
 
         // メッセージの削除
@@ -97,6 +106,15 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
             myRoom.actorSet.foreach { out =>
               out ! result
             }
+            println(
+              s"""
+                 |[メッセージが削除されました]
+                 |userId: $userId, userName: $userName
+                 |channelId: $channelId, messageId: $messageId
+                 |message: ${message.message}
+                 |remoteAddress: ${request.remoteAddress}
+                 |userAgent: ${request.headers.get("user-agent")}
+              """.stripMargin)
           }
         }
     }
