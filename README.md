@@ -3,9 +3,10 @@
 Twitterのログイン認証を利用したチャットアプリケーション
 https://play-chat-app.herokuapp.com/
 ## 要件定義
-- チャンネルを作れる
-- チャンネルを編集できる
-- チャンネルを削除できる
+- Twitterアカウントでログインして認証することができる
+- チャンネルが作れる
+- 招待制のプライベートチャンネルが作れる
+- チャンネルを編集・削除できる
 - チャンネルにメッセージを送れる
 - メッセージを削除できる
 - チャンネルに対してブックマークができる
@@ -33,7 +34,7 @@ https://play-chat-app.herokuapp.com/
 | channelId | String(UUID) | チャンネルID (PK) |
 | channelName | String | チャンネル名 |
 | purpose | String | チャンネルの目的 |
-| isPublic | Boolean | パブリックチャンネル: ture, プライベートチャンネル: false |
+| isPublic | Boolean | パブリックチャンネル: true, プライベートチャンネル: false |
 | members | String | プライベートチャンネルにアクセスできるユーザーのIDを , で結合した文字列 |
 | createdBy | Long | 作成者のユーザーID(INDEX)(FK) |
 | updatedAt | OffsetDateTime | 更新日時(INDEX) |
