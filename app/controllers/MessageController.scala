@@ -42,7 +42,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     * スキーム・ホスト・ポート
     *
     * @param request
-    * @return
+    * @return 真偽値
     */
   private[this] def isSameOrigin(request: RequestHeader): Boolean = {
     request.headers.get("Origin") match {

@@ -5,8 +5,6 @@ import play.api.cache.SyncCacheApi
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 
-import models._
-
 @Singleton
 class HomeController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents) extends TwitterLoginController(cc) with I18nSupport {
 

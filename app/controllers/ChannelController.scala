@@ -142,10 +142,9 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     * チャンネルページの観覧ができるか
     * パブリックチャンネル => 全員可
     * プライベートチャンネル => Channelのmembersに含まれるかどうか
-    *
-    * @param token
-    * @param channel
-    * @return
+    * @param token アクセストークン
+    * @param channel 観覧チャンネル
+    * @return 真偽値
     */
   private[this] def isReadable(token: twitter4j.auth.AccessToken, channel: (Channel, User)): Boolean = {
     channel._1.isPublic || isMember(token.getUserId, channel._1)
@@ -154,18 +153,17 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
 
   /**
     * 各チャンネルに渡す情報をまとめた関数
-    *
-    * @param token
-    * @param channel
+    * @param token アクセストークン
+    * @param channel 観覧チャンネル
     * @param request
-    * @return リクエストユーザーの情報
-    *         データベースに登録してあるユーザー
-    *         リクエストユーザーがアクセスできるチャンネル
-    *         リクエストユーザーがブックマーク(isBookmark == true)しているチャンネル
-    *         リクエストユーザーのブックマークマップ（key: channelId, value: isBookmark）
-    *         チャンネルのメッセージ
-    *         メッセージを送るWebSocketのurl
-    *         チャンネル情報が入った編集用のフォーム
+    * @return (リクエストユーザーの情報,
+    *         データベースに登録してあるユーザー,
+    *         リクエストユーザーがアクセスできるチャンネル,
+    *         リクエストユーザーがブックマーク(isBookmark == true)しているチャンネル,
+    *         リクエストユーザーのブックマークマップ（key: channelId, value: isBookmark）,
+    *         チャンネルのメッセージ,
+    *         メッセージを送るWebSocketのurl,
+    *         チャンネル情報が入った編集用のフォーム)
     */
   private[this] def bundle(token: twitter4j.auth.AccessToken, channel: (Channel, User))(implicit request: TwitterLoginRequest[AnyContent]): (Option[User], Seq[User], Seq[Channel], Seq[(Bookmark, Channel)], Map[String, Boolean], Seq[(Message, User)], String, Form[ChannelForm]) = {
     val user = userFindById(token.getUserId)

@@ -86,7 +86,6 @@ if (webSocketUrl) {
 
 /**
  * メッセージのHTML要素を作成
- *
  * @param result
  * @returns メッセージのHTML要素
  */
@@ -113,7 +112,6 @@ function createMessage(result) {
  * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する
- *
  * @param connection
  */
 function sendDummyData(connection) {
