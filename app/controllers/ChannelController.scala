@@ -18,8 +18,8 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   val channelForm = Form(
     mapping(
       "isPublic" -> boolean,
-      "channelName" -> text(minLength = 3, maxLength = 32),
-      "purpose" -> text(minLength = 3, maxLength = 32),
+      "channelName" -> nonEmptyText(maxLength = 16),
+      "purpose" -> nonEmptyText(maxLength = 32),
       "members" -> list(longNumber)
     )(ChannelForm.apply)(ChannelForm.unapply)
   )

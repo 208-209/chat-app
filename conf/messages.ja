@@ -1,2 +1,2 @@
-error.minLength = 短すぎます。
-error.maxLength = 長すぎます。
+error.required = このフィールドは必須です
+error.maxLength = 最大文字数は {0} です

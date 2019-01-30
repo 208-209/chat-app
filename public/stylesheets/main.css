@@ -111,6 +111,11 @@ hr::before {
     vertical-align: top;
 }
 
+.errorMessage {
+    color: #ee5f5b;
+    padding: 0.5rem;
+}
+
 
 /* ========== 左サイドバー ========== */
 .fa-star {

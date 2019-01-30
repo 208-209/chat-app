@@ -10,8 +10,8 @@ create index userName_users on users (userName);
 
 create table channels (
                         channelId varchar(36) not null ,
-                        channelName varchar(30) not null ,
-                        purpose varchar(55) not null ,
+                        channelName varchar(16) not null ,
+                        purpose varchar(32) not null ,
                         isPublic boolean not null,
                         members text not null ,
                         createdBy bigint not null ,
