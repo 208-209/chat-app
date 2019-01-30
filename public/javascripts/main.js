@@ -17443,9 +17443,12 @@ if (webSocketUrl) {
     $sendBtn.click(function () {
       var text = $meg.val().slice(0, 255);
       $meg.val('');
-      connection.send(JSON.stringify({
-        message: text
-      }));
+
+      if (text) {
+        connection.send(JSON.stringify({
+          message: text
+        }));
+      }
     }); // Enterでメッセージの送信
 
     $meg.keypress(function (event) {

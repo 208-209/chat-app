@@ -21,7 +21,9 @@ if (webSocketUrl) {
         $sendBtn.click(() => {
             const text = $meg.val().slice(0, 255);
             $meg.val('');
-            connection.send(JSON.stringify({ message: text }))
+            if (text) {
+                connection.send(JSON.stringify({ message: text }))
+            }
         });
 
         // Enterでメッセージの送信
