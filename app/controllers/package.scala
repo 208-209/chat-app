@@ -158,9 +158,7 @@ package object controllers {
        WHERE userId = $userId
     """.map { rs => rs.string("channelId") -> rs.boolean("isBookmark")
     }.list().apply().toMap
-
   }
-
 
   def bookmarkUpsert(bookmark: Bookmark): Unit = DB localTx { implicit session =>
     sql"""
@@ -182,14 +180,12 @@ package object controllers {
     """.map { implicit rs => (Bookmark(b.resultName), Channel(c.resultName))}.list().apply()
   }
 
-
   def messageInsert(msg: Message): Unit = DB localTx { implicit session =>
     sql"""
        insert into messages (messageId, message, channelId, createdBy, updatedAt)
        values (${msg.messageId}, ${msg.message}, ${msg.channelId}, ${msg.createdBy}, ${msg.updatedAt})
     """.update().apply()
   }
-
 
   def messageFindById(messageId: String): Option[Message] = DB readOnly { implicit session =>
     sql"""

@@ -15,14 +15,14 @@ import java.net.URL
 import scala.concurrent.Future
 
 class WaitingRoom {
-  var actorSet = Set[ActorRef]()
-  var userNameSet = Set[Long]()
+  var actorSet: Set[ActorRef] = Set.empty
+  var userNameSet: Set[Long] = Set.empty
 }
 
 @Singleton
 class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends TwitterLoginController(cc) {
 
-  var roomMap = Map[String, WaitingRoom]() // key: channelId, value: WaitingRoom
+  var roomMap: Map[String, WaitingRoom] = Map.empty // key: channelId, value: WaitingRoom
 
   def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
@@ -38,9 +38,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
   }
 
   /**
-    * コンテンツが同一の生成元から提供されているかを確認
-    * スキーム・ホスト・ポート
-    *
+    * コンテンツが同一の生成元から提供されているかを確認(スキーム・ホスト・ポート)
     * @param request
     * @return 真偽値
     */
@@ -88,7 +86,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           }
           println(
             s"""
-               |[メッセージが投稿されました]
+               |[メッセージが投稿されました]: ${java.time.OffsetDateTime.now()}
                |userId: $userId, userName: $userName
                |channelId: $channelId, messageId: $messageId
                |message: $message
@@ -108,7 +106,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
             }
             println(
               s"""
-                 |[メッセージが削除されました]
+                 |[メッセージが削除されました]: ${java.time.OffsetDateTime.now()}
                  |userId: $userId, userName: $userName
                  |channelId: $channelId, messageId: $messageId
                  |message: ${message.message}
