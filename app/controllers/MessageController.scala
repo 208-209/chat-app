@@ -120,9 +120,9 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     override def preStart(): Unit = {
       myRoom.actorSet = myRoom.actorSet + out
       myRoom.userNameSet = myRoom.userNameSet + userId
+      val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
 
       myRoom.actorSet.foreach { out =>
-        val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
         out ! result
       }
     }
@@ -130,9 +130,9 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     override def postStop(): Unit = {
       myRoom.actorSet = myRoom.actorSet - out
       myRoom.userNameSet = myRoom.userNameSet - userId
+      val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
 
       myRoom.actorSet.foreach { out =>
-        val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
         out ! result
       }
     }
