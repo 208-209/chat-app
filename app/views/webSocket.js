@@ -20,10 +20,10 @@ if (webSocketUrl) {
         // ボタンのクリックでメッセージの送信
         $sendBtn.click(() => {
             const text = $meg.val().slice(0, 255);
-            $meg.val('');
             if (text) {
                 connection.send(JSON.stringify({ message: text }))
             }
+            $meg.val('');
         });
 
         // Enterでメッセージの送信
