@@ -86,7 +86,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           }
           println(
             s"""
-               |[メッセージが投稿されました]: ${java.time.OffsetDateTime.now()}
+               |[メッセージが投稿されました]
                |userId: $userId, userName: $userName
                |channelId: $channelId, messageId: $messageId
                |message: $message
@@ -106,7 +106,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
             }
             println(
               s"""
-                 |[メッセージが削除されました]: ${java.time.OffsetDateTime.now()}
+                 |[メッセージが削除されました]
                  |userId: $userId, userName: $userName
                  |channelId: $channelId, messageId: $messageId
                  |message: ${message.message}

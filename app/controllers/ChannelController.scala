@@ -66,7 +66,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             channelInsert(Channel(channelId, channelName, description, isPublic, members, createdBy, updatedAt))
             println(
               s"""
-                 |[チャンネルが作成されました]: ${java.time.OffsetDateTime.now()}
+                 |[チャンネルが作成されました]
                  |userId: ${token.getUserId}, userName: ${token.getScreenName}
                  |channelId: $channelId, channelName: $channelName
                  |remoteAddress: ${request.remoteAddress}
@@ -101,7 +101,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                 channelUpdate(editedChannel)
                 println(
                   s"""
-                     |[チャンネルが編集されました]: ${java.time.OffsetDateTime.now()}
+                     |[チャンネルが編集されました]
                      |userId: ${token.getUserId}, userName: ${token.getScreenName}
                      |channelId: ${channel._1.channelId}, channelName: ${form.channelName}
                      |remoteAddress: ${request.remoteAddress}
@@ -125,7 +125,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
             deleteChannelAggregate(channelId)
             println(
               s"""
-                |[チャンネルが削除されました]: ${java.time.OffsetDateTime.now()}
+                |[チャンネルが削除されました]
                 |userId: ${token.getUserId}, userName: ${token.getScreenName}
                 |channelId: ${channel._1.channelId}, channelName: ${channel._1.channelName}
                 |remoteAddress: ${request.remoteAddress}
