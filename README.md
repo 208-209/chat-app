@@ -5,13 +5,14 @@ https://play-chat-app.herokuapp.com/
 ## 要件定義
 - Twitterアカウントでログインして認証することができる
 - チャンネルが作れる
-- 招待制のプライベートチャンネルが作れる
+- プライベートチャンネルを作って、ユーザーを招待できる
 - チャンネルを編集・削除できる
-- チャンネルにメッセージを送れる
+- チャンネルにメッセージを投稿てきる
 - メッセージを削除できる
-- ログインユーザーが表示される
+- チャンネルにログインユーザーが表示される
 - チャンネルをブックマークできる
 - ブックマークを編集できる
+- ユーザーがアカウントを解除できる
 ## 用語定義
 | 用語 | 英語表記 | 意味 |
 | :-- | :-- | :-- |
@@ -26,7 +27,7 @@ https://play-chat-app.herokuapp.com/
 | userId | Long | TwitterのユーザーID (PK) |
 | userName | String | Twitter のユーザー名(INDEX) |
 | profileImageUrl | String | Twitterのプロフィール画像のURL |
-| deleted | Boolean | 論理削除フラグ |
+| deleted | Boolean | 論理削除フラグ(INDEX) |
 - user 1 ___ 0...* channel
 - user 1 ___ 0...* message
 - user 1 ___ 0...* bookmark
@@ -70,6 +71,7 @@ https://play-chat-app.herokuapp.com/
 | /channels/:channelId | POST | チャンネルの新規作成 | フォーム |
 | /channels/:channelId/update | POST | チャンネルの編集 | フォーム |
 | /channels/:channelId/delete | POST | チャンネルの削除 | フォーム |
+| /users/:userId/delete | POST | アカウントの解除 | フォーム |
 | /channels/:channelId/users/:userId/message | GET | メッセージの送信と削除 | WebSocket |
 | /channels/:channelId/users/:userId/bookmark | POST | ブックマークの登録と編集 | AJAX |
 ## モジュール設計
@@ -80,6 +82,7 @@ https://play-chat-app.herokuapp.com/
 | ChannelController | チャンネルに関する処理 |
 | MessageController | メッセージに関する処理 |
 | BookmarkController | ブックマークに関する処理 |
+| UserController | ユーザーに関する処理 |
 | OAuthController | ログインに関する処理 |
 ### データモデル一覧
 | ファイル名 | 責務 |
