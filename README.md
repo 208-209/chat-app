@@ -25,7 +25,8 @@ https://play-chat-app.herokuapp.com/
 | :-- | :-- | :-- |
 | userId | Long | TwitterのユーザーID (PK) |
 | userName | String | Twitter のユーザー名(INDEX) |
-| profileImageUrl | String | Twitterのプロフィール画像のURL  |
+| profileImageUrl | String | Twitterのプロフィール画像のURL |
+| deleted | Boolean | 論理削除フラグ |
 - user 1 ___ 0...* channel
 - user 1 ___ 0...* message
 - user 1 ___ 0...* bookmark
