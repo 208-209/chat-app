@@ -9,11 +9,21 @@ class ChannelControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
 
   "GET /general" should {
 
-    "Twitterの認証なしにチャンネルにアクセスすると、Twitter認証のページにリダイレクトされる" in {
+    "ログインなしにチャンネルにアクセスすると、Twitter認証のページにリダイレクトされる" in {
       val controller = inject[ChannelController]
       val home = controller.read("general").apply(FakeRequest(GET, "/general"))
 
       status(home) mustBe 303
+    }
+
+    "ログイン時はユーザー名が表示される" in {
+      val controller = inject[ChannelController]
+      val home = controller.read("general").apply(FakeRequest(GET, "/general"))
+
+      status(home) mustBe OK
+      contentType(home) mustBe Some("text/html")
+      contentAsString(home) must include ("")
+
     }
   }
 }

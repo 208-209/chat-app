@@ -14,15 +14,15 @@ import models._
 import java.net.URL
 import scala.concurrent.Future
 
-class WaitingRoom {
+class Room {
   var actorSet: Set[ActorRef] = Set.empty
-  var userNameSet: Set[Long] = Set.empty
+  var userSet: Set[Long] = Set.empty
 }
 
 @Singleton
 class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer) extends TwitterLoginController(cc) {
 
-  var roomMap: Map[String, WaitingRoom] = Map.empty // key: channelId, value: WaitingRoom
+  var roomMap: Map[String, Room] = Map.empty // key: channelId, value: Room
 
   def socket(channelId: String, userId: Long) = WebSocket.acceptOrResult[JsValue, JsValue] { request =>
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
@@ -63,7 +63,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     val myRoom = roomMap.get(channelId) match {
       case Some(room) => room
       case None =>
-        val room = new WaitingRoom()
+        val room = new Room()
         roomMap = roomMap + (channelId -> room)
         room
     }
@@ -119,8 +119,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     override def preStart(): Unit = {
       myRoom.actorSet = myRoom.actorSet + out
-      myRoom.userNameSet = myRoom.userNameSet + userId
-      val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
+      myRoom.userSet = myRoom.userSet + userId
+      val result = Json.obj("members" -> myRoom.userSet.mkString(","))
 
       myRoom.actorSet.foreach { out =>
         out ! result
@@ -129,8 +129,8 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
 
     override def postStop(): Unit = {
       myRoom.actorSet = myRoom.actorSet - out
-      myRoom.userNameSet = myRoom.userNameSet - userId
-      val result = Json.obj("members" -> myRoom.userNameSet.mkString(","))
+      myRoom.userSet = myRoom.userSet - userId
+      val result = Json.obj("members" -> myRoom.userSet.mkString(","))
 
       myRoom.actorSet.foreach { out =>
         out ! result

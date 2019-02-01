@@ -106,8 +106,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var global = Function('return this;')();
-global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
 
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.entry-form').click(function () {
   var check = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#entryRadioBtn [name=isPublic]:checked').val();
@@ -17442,13 +17440,14 @@ if (webSocketUrl) {
 
     $sendBtn.click(function () {
       var text = $meg.val().slice(0, 255);
-      $meg.val('');
 
       if (text) {
         connection.send(JSON.stringify({
           message: text
         }));
       }
+
+      $meg.val('');
     }); // Enterでメッセージの送信
 
     $meg.keypress(function (event) {
@@ -17505,7 +17504,6 @@ if (webSocketUrl) {
 }
 /**
  * メッセージのHTML要素を作成
- *
  * @param result
  * @returns メッセージのHTML要素
  */
@@ -17539,7 +17537,6 @@ function createMessage(result) {
  * 45秒間隔でダミーデータ（日付）を送信する
  * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する
- *
  * @param connection
  */
 
