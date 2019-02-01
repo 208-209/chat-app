@@ -42,10 +42,10 @@ package object controllers {
 
   def userUpsert(user: User): Unit = DB localTx { implicit session =>
     sql"""
-       insert into users (userId, userName, profileImageUrl)
-       values (${user.userId}, ${user.userName}, ${user.profileImageUrl})
+       insert into users (userId, userName, profileImageUrl, deleted)
+       values (${user.userId}, ${user.userName}, ${user.profileImageUrl}, false)
        on conflict (userId)
-       do update set userName = ${user.userName}, profileImageUrl = ${user.profileImageUrl}
+       do update set userName = ${user.userName}, profileImageUrl = ${user.profileImageUrl}, deleted = false
     """.update().apply()
   }
 
@@ -55,7 +55,7 @@ package object controllers {
        from users
        where userId = $userId
     """.map { rs =>
-      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
+      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"), rs.boolean("deleted"))
     }.single().apply()
   }
 
@@ -63,10 +63,24 @@ package object controllers {
     sql"""
        select *
        from users
+       where deleted = false
        order by userName asc
     """.map { rs =>
-      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"))
+      User(rs.long("userId"), rs.string("userName"), rs.string("profileImageUrl"), rs.boolean("deleted"))
     }.list().apply()
+  }
+
+  def deleteUser(user: User): Unit = DB localTx { implicit session =>
+    sql"""
+       delete from bookmarks
+       where userId = ${user.userId}
+    """.update().apply()
+
+    sql"""
+       update users
+       set deleted = true
+       where userId = ${user.userId}
+    """.update().apply()
   }
 
 

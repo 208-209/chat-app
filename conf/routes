@@ -13,6 +13,9 @@ GET     /channels/:channelId/users/:userId/message    controllers.MessageControl
 # Bookmark
 POST    /channels/:channelId/users/:userId/bookmark   controllers.BookmarkController.ajax(channelId: String, userId: Long)
 
+# User
+POST    /users/:userId/delete                         controllers.UserController.delete(userId: Long)
+
 # Twitter Login
 GET     /login                                        controllers.OAuthController.login
 GET     /logout                                       controllers.OAuthController.logout

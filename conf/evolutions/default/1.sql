@@ -3,9 +3,11 @@ create table users (
                      userId bigint not null ,
                      userName varchar(15) not null ,
                      profileImageUrl varchar(225) not null,
+                     deleted boolean not null ,
                      primary key (userId)
 );
 create index userName_users on users (userName);
+create index deleted_users on users (deleted);
 
 
 create table channels (
@@ -46,8 +48,8 @@ create index isBookmark_bookmarks on bookmarks (isBookmark);
 insert into channels (channelId, channelName, purpose, isPublic, members, createdBy, updatedAt)
 values ('general', 'general', 'デフォルトのチャンネル', true, '945597672450166784', 945597672450166784, '2019-01-25T00:00:00.000+09:00');
 
-insert into users (userId, userName, profileImageUrl)
-values (945597672450166784, '208_209_bot', 'https://pbs.twimg.com/profile_images/1086588467423850496/oP_97e5P_normal.jpg');
+insert into users (userId, userName, profileImageUrl, deleted)
+values (945597672450166784, '208_209_bot', 'https://pbs.twimg.com/profile_images/1086588467423850496/oP_97e5P_normal.jpg', false);
 
 # --- !Downs
 drop table users;
