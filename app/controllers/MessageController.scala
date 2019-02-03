@@ -79,7 +79,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           messageInsert(Message(messageId, message, channelId, userId, updatedAt))
 
           val formattedUpdatedAt = updatedAt.format(messageFormatter)
-          val result = Json.obj("messageId" -> messageId, "message" -> message, "updatedAt" -> formattedUpdatedAt, "userName" -> userName, "profileImageUrl" -> profileImageUrl)
+          val result = Json.obj("messageId" -> messageId, "message" -> message, "createdBy" -> userId.toString, "userName" -> userName, "profileImageUrl" -> profileImageUrl, "updatedAt" -> formattedUpdatedAt)
 
           myRoom.actorSet.foreach { out =>
             out ! result

@@ -10,6 +10,7 @@ let timerId;
 if (webSocketUrl) {
     const $meg = $('#meg');
     const $sendBtn = $('#message-send-button');
+    const userId = $sendBtn.data('user-id');
     const connection = new WebSocket(webSocketUrl);
 
     $sendBtn.prop("disabled", true);
@@ -34,11 +35,11 @@ if (webSocketUrl) {
 
         // メッセージの削除
         $('.message-del-button').each((i, e) => {
-           const button = $(e);
-           button.click(() => {
-               const messageId = button.data('message-id');
-               connection.send(JSON.stringify({ delete: messageId }))
-           });
+            const button = $(e);
+            button.click(() => {
+                const messageId = button.data('message-id');
+                connection.send(JSON.stringify({ delete: messageId }))
+            });
         });
 
         // ダミーデータの送信
@@ -65,7 +66,7 @@ if (webSocketUrl) {
 
         // メッセージの表示
         if (result.message) {
-            $messages.append(createMessage(result));
+            $messages.append(createMessage(result, connection, userId));
             window.scrollTo({
                 top: $(document).height(),
                 behavior: "smooth"
@@ -81,7 +82,6 @@ if (webSocketUrl) {
     connection.onerror = function(error) {
         console.log('WebSocket Error ', error);
     };
-
 }
 
 /**
@@ -89,23 +89,33 @@ if (webSocketUrl) {
  * @param result
  * @returns メッセージのHTML要素
  */
-function createMessage(result) {
+function createMessage(result, connection, userId) {
     const messageId = result.messageId;
     const message = result.message;
-    const updatedAt = result.updatedAt;
+    const createdBy = result.createdBy;
     const userName = result.userName;
     const profileImageUrl = result.profileImageUrl;
+    const updatedAt = result.updatedAt;
 
-    const hrEle = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
-    const imgEle = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
-    const strongEle = $('<strong>').text(userName);
+    const horizontalRule = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+    const trashBtn = $('<i>').attr({
+        id: messageId,
+        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+        'data-message-id': messageId,
+        'title': 'このメッセージを削除します'
+    }).click(() => {
+        connection.send(JSON.stringify({ delete: messageId }))
+    });
+    const profileImage = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
+    const userNameEle = $('<strong>').text(userName);
     const messageEle = $('<p>').addClass('message-area').text(message);
 
-    const profileImageDiv = $('<div>').addClass('col-sm-2').append(imgEle);
-    const messageDiv = $('<div>').addClass('col-sm-10').append(strongEle, messageEle);
+    const profileImageDiv = $('<div>').addClass('col-sm-2').append(profileImage);
+    const messageDiv = $('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
     const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);
 
-    return $('<div>').attr({ id: messageId }).append(hrEle, messageAreaDiv);
+    // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
+    return userId === createdBy ? $('<div>').attr({ id: messageId }).append(horizontalRule, trashBtn, messageAreaDiv) : $('<div>').attr({ id: messageId }).append(horizontalRule, messageAreaDiv);
 }
 
 /**
@@ -120,7 +130,3 @@ function sendDummyData(connection) {
         sendDummyData(connection)
     }, 45000)
 }
-
-
-
-

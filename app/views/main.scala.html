@@ -26,11 +26,11 @@
                 </ul>
 
                 <ul class="navbar-nav">
-                    @user.map { _user =>
+                    @user.map { u =>
                         <li>
                             <a href="#" id="userLink" data-toggle="modal" data-target="#userModal">
-                                <img src="@_user.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
-                                <span class="navbar-text">@{_user.userName}</span>
+                                <img src="@u.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
+                                <span class="navbar-text">@{u.userName}</span>
                             </a>
                             <a href="@routes.OAuthController.logout" class="btn btn-outline-warning" role="button">ログアウト</a>
                         </li>
@@ -55,7 +55,7 @@
 </html>
 
 
-@user.map { _user =>
+@user.map { u =>
     @* User Modal *@
     <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -73,7 +73,7 @@
                         <li>ブックマークの情報は失われます</li>
                     </ul>
 
-                    @helper.form(routes.UserController.delete(_user.userId)) {
+                    @helper.form(routes.UserController.delete(u.userId)) {
                         @helper.CSRF.formField
                         <button class="btn btn-outline-danger btn-block">アカウントを解除する</button>
                     }

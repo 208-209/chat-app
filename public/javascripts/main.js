@@ -17432,7 +17432,9 @@ var timerId; // WebSocketによるメッセージの送信と削除
 if (webSocketUrl) {
   var $meg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#meg');
   var $sendBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button');
+  var userId = $sendBtn.data('user-id');
   var connection = new WebSocket(webSocketUrl);
+  console.log("userId" + userId);
   $sendBtn.prop("disabled", true);
 
   connection.onopen = function () {
@@ -17485,7 +17487,7 @@ if (webSocketUrl) {
 
 
     if (result.message) {
-      $messages.append(createMessage(result));
+      $messages.append(createMessage(result, connection, userId));
       window.scrollTo({
         top: jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).height(),
         behavior: "smooth"
@@ -17509,29 +17511,43 @@ if (webSocketUrl) {
  */
 
 
-function createMessage(result) {
+function createMessage(result, connection, userId) {
   var messageId = result.messageId;
   var message = result.message;
-  var updatedAt = result.updatedAt;
+  var createdBy = result.createdBy;
   var userName = result.userName;
   var profileImageUrl = result.profileImageUrl;
-  var hrEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
+  var updatedAt = result.updatedAt;
+  var horizontalRule = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
     class: 'message-hr',
     'data-date': updatedAt
   });
-  var imgEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
+  var trashBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
+    id: messageId,
+    class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+    'data-message-id': messageId,
+    'title': 'このメッセージを削除します'
+  }).click(function () {
+    connection.send(JSON.stringify({
+      delete: messageId
+    }));
+  });
+  var profileImage = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
     src: profileImageUrl,
     alt: 'profile-image',
     class: 'rounded mx-auto d-block'
   });
-  var strongEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
+  var userNameEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
   var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
-  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(imgEle);
-  var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(strongEle, messageEle);
-  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
-  return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage);
+  var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンが表示される
+
+  return userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
-  }).append(hrEle, messageAreaDiv);
+  }).append(horizontalRule, trashBtn, messageAreaDiv) : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+    id: messageId
+  }).append(horizontalRule, messageAreaDiv);
 }
 /**
  * 45秒間隔でダミーデータ（日付）を送信する
