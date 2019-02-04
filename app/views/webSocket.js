@@ -59,7 +59,7 @@ if (webSocketUrl) {
         // ログインメンバー情報
         if (result.members) {
             $('.members').removeClass('isLogin');
-            result.members.split(',').map(member => {
+            result.members.forEach(member => {
                 $(`#${member}`).addClass('isLogin')
             });
         }
@@ -85,9 +85,11 @@ if (webSocketUrl) {
 }
 
 /**
- * メッセージのHTML要素を作成
- * @param result
- * @returns メッセージのHTML要素
+ * クライアント側から表示するメッセージのHTMLを作成する
+ * @param result サーバーから送られてきたメッセージデータのJSON
+ * @param connection WebSocket
+ * @param userId アクセスユーザーのID
+ * @returns {*} メッセージのHTML
  */
 function createMessage(result, connection, userId) {
     const messageId = result.messageId;

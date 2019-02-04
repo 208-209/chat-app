@@ -17434,7 +17434,6 @@ if (webSocketUrl) {
   var $sendBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button');
   var userId = $sendBtn.data('user-id');
   var connection = new WebSocket(webSocketUrl);
-  console.log("userId" + userId);
   $sendBtn.prop("disabled", true);
 
   connection.onopen = function () {
@@ -17480,7 +17479,7 @@ if (webSocketUrl) {
 
     if (result.members) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('.members').removeClass('isLogin');
-      result.members.split(',').map(function (member) {
+      result.members.forEach(function (member) {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(member)).addClass('isLogin');
       });
     } // メッセージの表示
@@ -17505,9 +17504,11 @@ if (webSocketUrl) {
   };
 }
 /**
- * メッセージのHTML要素を作成
- * @param result
- * @returns メッセージのHTML要素
+ * クライアント側から表示するメッセージのHTMLを作成する
+ * @param result サーバーから送られてきたメッセージデータのJSON
+ * @param connection WebSocket
+ * @param userId アクセスユーザーのID
+ * @returns {*} メッセージのHTML
  */
 
 
@@ -17541,7 +17542,7 @@ function createMessage(result, connection, userId) {
   var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
   var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage);
   var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
-  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンが表示される
+  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
 
   return userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
