@@ -17,7 +17,7 @@ class UserController @Inject()(val cache: SyncCacheApi, cc: ControllerComponents
           case Some(user) if user.userId == token.getUserId =>
             deleteUser(user)
             Redirect(routes.OAuthController.logout())
-          case _ => NotFound("指定されたユーザーは存在しない、または、削除する権限がありません")
+          case _ => NotFound("指定されたユーザーは存在しない、または、アカウントを解除する権限がありません")
         }
       case None =>Redirect(routes.OAuthController.login())
     }

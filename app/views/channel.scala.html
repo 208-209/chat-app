@@ -1,10 +1,11 @@
-@(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(channelForm: Form[ChannelForm], editForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User], channels: Seq[Channel], bookmarks: Seq[(Bookmark, Channel)], bookmarkMap: Map[String, Boolean], messages: Seq[(Message, User)], webSocketUrl: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider, flash: Flash)
 
 @import helper._
 
 @main(channel._1.channelName + " - Chat app")(user) {
 
     @user.map { user =>
+
         @* Center *@
         <main class="center">
             @* message-area *@
@@ -29,6 +30,35 @@
 
                 }
             </div>
+
+            @* Flash scope *@
+            @flash.get("createSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            @flash.get("updateSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            @flash.get("deleteSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
         </main>
 
 
@@ -178,7 +208,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="entry-channelName">名前 (3~16文字)</label>
+                            <label for="entry-channelName">名前 (16文字以内)</label>
                             <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前">
                             @for(error <- channelForm("channelName").errors) {
                                 <p class="errorMessage">@Messages(error.message, 16)</p>
@@ -186,7 +216,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="entry-purpose">目的 (3〜32文字)</label>
+                            <label for="entry-purpose">目的 (32文字以内)</label>
                             <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの目的"></textarea>
                             @for(error <- channelForm("purpose").errors) {
                                 <p class="errorMessage">@Messages(error.message, 32)</p>
@@ -259,7 +289,7 @@
                                 }
 
                                 <div class="form-group">
-                                    <label for="edit-channelName">名前 (3~16文字)</label>
+                                    <label for="edit-channelName">名前 (16文字以内)</label>
                                     <input type="text" class="form-control" id="edit-channelName" name="channelName" value="@editForm("channelName").value">
                                     @for(error <- editForm("channelName").errors) {
                                         <p class="errorMessage">@Messages(error.message, 16)</p>
@@ -267,7 +297,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="edit-purpose">目的 (3~32文字)</label>
+                                    <label for="edit-purpose">目的 (32文字以内)</label>
                                     <textarea class="form-control" id="edit-purpose" rows="3" name="purpose">@editForm("purpose").value</textarea>
                                     @for(error <- editForm("purpose").errors) {
                                         <p class="errorMessage">@Messages(error.message, 32)</p>

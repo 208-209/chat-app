@@ -72,7 +72,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                  |remoteAddress: ${request.remoteAddress}
                  |userAgent: ${request.headers.get("user-agent")}
               """.stripMargin)
-            Redirect(routes.ChannelController.read(channelId))
+            Redirect(routes.ChannelController.read(channelId)).flashing("createSuccess" -> s"$channelName が作成されました")
           }
         )
       case None => Redirect(routes.OAuthController.login())
@@ -107,7 +107,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                      |remoteAddress: ${request.remoteAddress}
                      |userAgent: ${request.headers.get("user-agent")}
                   """.stripMargin)
-                Redirect(routes.ChannelController.read(channelId))
+                Redirect(routes.ChannelController.read(channelId)).flashing("updateSuccess" -> s"${form.channelName} を編集しました")
               }
             )
           case _ => NotFound("指定されたチャンネルがない、または、編集する権限がありません")
@@ -131,7 +131,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
                 |remoteAddress: ${request.remoteAddress}
                 |userAgent: ${request.headers.get("user-agent")}
               """.stripMargin)
-            Redirect(routes.ChannelController.read("general"))
+            Redirect(routes.ChannelController.read("general")).flashing("deleteSuccess" -> s"${channel._1.channelName} を削除しました")
           case _ => NotFound("指定されたチャンネルがない、または、削除する権限がありません")
         }
       case None => Redirect(routes.OAuthController.login())
