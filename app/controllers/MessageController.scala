@@ -37,23 +37,6 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     })
   }
 
-  /**
-    * コンテンツが同一の生成元から提供されているかを確認(スキーム・ホスト・ポート)
-    * @param request
-    * @return 真偽値
-    */
-  private[this] def isSameOrigin(request: RequestHeader): Boolean = {
-    request.headers.get("Origin") match {
-      case Some(originValue) =>
-        val url = new URL(originValue)
-        sys.env.get("HEROKU_URL") match {
-          case Some(_) if url.toString == "https://play-chat-app.herokuapp.com" => true
-          case None if url.toString == "http://localhost:9000" => true
-          case _ => false
-        }
-      case _ => false
-    }
-  }
 
   object MyWebSocketActor {
     def props(out: ActorRef, request: RequestHeader, channelId: String, userId: Long, userName: String, profileImageUrl: String) = Props(new MyWebSocketActor(out, request, channelId, userId, userName, profileImageUrl))
@@ -120,21 +103,49 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     override def preStart(): Unit = {
       myRoom.actorSet = myRoom.actorSet + out
       myRoom.userSet = myRoom.userSet + userId
-      val result = Json.obj("members" -> myRoom.userSet.map(_.toString))
 
-      myRoom.actorSet.foreach { out =>
-        out ! result
-      }
+      sendLoginUser(roomMap)
     }
 
     override def postStop(): Unit = {
       myRoom.actorSet = myRoom.actorSet - out
       myRoom.userSet = myRoom.userSet - userId
-      val result = Json.obj("members" -> myRoom.userSet.map(_.toString))
 
-      myRoom.actorSet.foreach { out =>
-        out ! result
-      }
+      sendLoginUser(roomMap)
     }
   }
+
+  /**
+    * コンテンツが同一の生成元から提供されているかを確認(スキーム・ホスト・ポート)
+    * @param request
+    * @return 真偽値
+    */
+  private[this] def isSameOrigin(request: RequestHeader): Boolean = {
+    request.headers.get("Origin") match {
+      case Some(originValue) =>
+        val url = new URL(originValue)
+        sys.env.get("HEROKU_URL") match {
+          case Some(_) if url.toString == "https://play-chat-app.herokuapp.com" => true
+          case None if url.toString == "http://localhost:9000" => true
+          case _ => false
+        }
+      case _ => false
+    }
+  }
+
+  /**
+    * ログインユーザーのuserIdを送信する
+    * いずれかのチャンネルにアクセスしていれば、すべてのチャンネルに表示される
+    * @param roomMap key: channelId, value: Room
+    */
+  private[this] def sendLoginUser(roomMap: Map[String, Room]): Unit = {
+    val allActorSet = roomMap.flatMap { case (k, v) => v.actorSet }.toSet
+    val allLoginUser = roomMap.flatMap { case (k, v) => v.userSet }.toSet
+    val result = Json.obj("members" -> allLoginUser.map(_.toString))
+
+    allActorSet.foreach { out =>
+      out ! result
+    }
+  }
+
 }

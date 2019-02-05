@@ -28,7 +28,7 @@
                 <ul class="navbar-nav">
                     @user.map { u =>
                         <li>
-                            <a href="#" id="userLink" data-toggle="modal" data-target="#userModal">
+                            <a href="#" id="userLink" data-toggle="modal" data-target="#userModal" title="アカウントの解除">
                                 <img src="@u.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
                                 <span class="navbar-text">@{u.userName}</span>
                             </a>

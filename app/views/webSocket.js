@@ -23,8 +23,8 @@ if (webSocketUrl) {
             const text = $meg.val().slice(0, 255);
             if (text) {
                 connection.send(JSON.stringify({ message: text }))
+                $meg.val('');
             }
-            $meg.val('');
         });
 
         // Enterでメッセージの送信
