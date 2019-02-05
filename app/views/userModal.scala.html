@@ -1,0 +1,35 @@
+@(user: Option[User])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@user.map { user =>
+
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">アカウントの解除</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>アカウントを解除しますか？</h5>
+                    <ul>
+                        <li>アカウントを解除しても、作成したチャンネルやメッセージは削除されません</li>
+                        <li>ブックマークの情報は失われます</li>
+                    </ul>
+
+                    @form(routes.UserController.delete(user.userId)) {
+                        @CSRF.formField
+                        <button class="btn btn-outline-danger btn-block">アカウントを解除する</button>
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

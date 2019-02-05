@@ -1,0 +1,70 @@
+@(channelForm: Form[ChannelForm])(user: Option[User], channel: (Channel, User), users: Seq[User])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@user.map { user =>
+
+    <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">チャンネルの新規作成</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    @form(routes.ChannelController.create(channel._1.channelId)) {
+                        @CSRF.formField
+                        <div class="form-group" id="entryRadioBtn">
+                            <div class="form-check-inline entry-form">
+                                <input class="form-check-input" type="radio" name="isPublic" id="entryPublicTrue" value="true" checked>
+                                <label class="form-check-label" for="entryPublicTrue">パブリック</label>
+                            </div>
+                            <div class="form-check-inline entry-form">
+                                <input class="form-check-input" type="radio" name="isPublic" id="entryPublicFalse" value="false">
+                                <label class="form-check-label" for="entryPublicFalse">プライベート</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="entry-channelName">名前 (16文字以内)</label>
+                            <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前">
+                            @for(error <- channelForm("channelName").errors) {
+                                <p class="errorMessage">@Messages(error.message, 16)</p>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label for="entry-purpose">目的 (32文字以内)</label>
+                            <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの目的"></textarea>
+                            @for(error <- channelForm("purpose").errors) {
+                                <p class="errorMessage">@Messages(error.message, 32)</p>
+                            }
+                        </div>
+
+                        <div class="form-group " id="entryCheckBox">
+                            <p>招待するユーザー</p>
+                            @* 作成者は必ずメンバーになるので表示しない *@
+                            @for(_user <- users if _user.userId != user.userId) {
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <input type="submit" class="btn btn-info float-right" value="チャンネルをつくる">
+                        }
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -51,6 +51,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           error => { channelAndUserFindOne(channelId) match {
               case Some(channel) =>
                 val bundleData = bundle(token, channel)
+                println(error.errors)
                 BadRequest(views.html.channel(error, bundleData._8)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
               case None => NotFound("指定されたチャンネルは見つかりません")
             }
