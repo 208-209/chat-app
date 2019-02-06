@@ -111,6 +111,7 @@ hr::before {
 
 .message-area {
     word-break : break-all;
+    padding-top: 0.5rem;
 }
 
 .members-profile-image {

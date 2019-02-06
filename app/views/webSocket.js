@@ -99,7 +99,8 @@ function createMessage(result, connection, userId) {
     const profileImageUrl = result.profileImageUrl;
     const updatedAt = result.updatedAt;
 
-    const horizontalRule = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
+    const profileImage = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
+    const userNameEle = $('<strong>').text(userName);
     const trashBtn = $('<i>').attr({
         id: messageId,
         class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
@@ -108,16 +109,16 @@ function createMessage(result, connection, userId) {
     }).click(() => {
         connection.send(JSON.stringify({ delete: messageId }))
     });
-    const profileImage = $('<img>').attr({src: profileImageUrl, alt: 'profile-image', class: 'rounded mx-auto d-block'});
-    const userNameEle = $('<strong>').text(userName);
     const messageEle = $('<p>').addClass('message-area').text(message);
 
     const profileImageDiv = $('<div>').addClass('col-sm-2').append(profileImage);
-    const messageDiv = $('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+    // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
+    const messageDiv = userId === createdBy ? $('<div>').addClass('col-sm-10').append(userNameEle, trashBtn, messageEle) : $('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+
+    const horizontalRule = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
     const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);
 
-    // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
-    return userId === createdBy ? $('<div>').attr({ id: messageId }).append(horizontalRule, trashBtn, messageAreaDiv) : $('<div>').attr({ id: messageId }).append(horizontalRule, messageAreaDiv);
+    return $('<div>').attr({ id: messageId }).append(horizontalRule, messageAreaDiv);
 }
 
 /**

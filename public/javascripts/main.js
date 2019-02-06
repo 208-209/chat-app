@@ -17522,6 +17522,12 @@ function createMessage(result, connection, userId) {
     class: 'message-hr',
     'data-date': updatedAt
   });
+  var profileImage = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
+    src: profileImageUrl,
+    alt: 'profile-image',
+    class: 'rounded mx-auto d-block'
+  });
+  var userNameEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
   var trashBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
     id: messageId,
     class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
@@ -17532,20 +17538,12 @@ function createMessage(result, connection, userId) {
       delete: messageId
     }));
   });
-  var profileImage = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
-    src: profileImageUrl,
-    alt: 'profile-image',
-    class: 'rounded mx-auto d-block'
-  });
-  var userNameEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
   var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
-  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage);
-  var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
-  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
+  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
 
-  return userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
-    id: messageId
-  }).append(horizontalRule, trashBtn, messageAreaDiv) : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
+  var messageDiv = userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, trashBtn, messageEle) : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+  var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
+  return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
   }).append(horizontalRule, messageAreaDiv);
 }
