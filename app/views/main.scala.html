@@ -19,27 +19,18 @@
         <div class="container-fluid">
 
             <nav class="navbar navbar-dark bg-primary fixed-top">
-                <ul class="navbar-nav mr-auto">
-                    <li>
-                        <a class="navbar-brand" href="@routes.ChannelController.read("general")">Chat app</a>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav">
+                <a class="navbar-brand" href="@routes.ChannelController.read("general")">Chat app</a>
+                <div>
                     @user.map { _user =>
-                        <li>
-                            <a href="#" id="userLink" data-toggle="modal" data-target="#userModal" title="アカウントの解除">
-                                <img src="@_user.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
-                                <span class="navbar-text">@{_user.userName}</span>
-                            </a>
-                            <a href="@routes.OAuthController.logout" class="btn btn-outline-warning" role="button">ログアウト</a>
-                        </li>
+                      <a href="#" id="userLink" data-toggle="modal" data-target="#userModal" title="アカウントの解除">
+                          <img src="@_user.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
+                          <span class="navbar-text">@{_user.userName}</span>
+                      </a>
+                      <a href="@routes.OAuthController.logout" class="btn btn-outline-warning" role="button">ログアウト</a>
                     }.getOrElse {
-                        <li>
-                            <a href="@routes.OAuthController.login" class="btn btn-outline-warning" role="button">Twitter でログイン</a>
-                        </li>
+                        <a href="@routes.OAuthController.login" class="btn btn-outline-warning" role="button">Twitter でログイン</a>
                     }
-                </ul>
+                </div>
             </nav>
 
             <div class="main-container">
