@@ -2,7 +2,7 @@
 
 @import helper._
 
-@user.map { user =>
+@user.map { _user =>
 
     <div class="modal fade" id="entryForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -48,10 +48,10 @@
                         <div class="form-group " id="entryCheckBox">
                             <p>招待するユーザー</p>
                             @* 作成者は必ずメンバーになるので表示しない *@
-                            @for(_user <- users if _user.userId != user.userId) {
+                            @for(u <- users if u.userId != _user.userId) {
                                 <div class="form-check-inline">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName
+                                        <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId">@u.userName
                                     </label>
                                 </div>
                             }

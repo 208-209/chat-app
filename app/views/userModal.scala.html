@@ -2,7 +2,7 @@
 
 @import helper._
 
-@user.map { user =>
+@user.map { _user =>
 
     <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -20,7 +20,7 @@
                         <li>ブックマークの情報は失われます</li>
                     </ul>
 
-                    @form(routes.UserController.delete(user.userId)) {
+                    @form(routes.UserController.delete(_user.userId)) {
                         @CSRF.formField
                         <button class="btn btn-outline-danger btn-block">アカウントを解除する</button>
                     }

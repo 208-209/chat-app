@@ -7,7 +7,7 @@
     @entryModal(channelForm)(user, channel, users)
     @editModal(editForm)(user, channel, users)
 
-    @user.map { user =>
+    @user.map { _user =>
 
         @* Center *@
         <main class="center">
@@ -16,7 +16,7 @@
                 @for(message <- messages) {
                     <div id="@message._1.messageId" >
                         <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
-                        @if(user.userId == message._1.createdBy || isAdmin(user.userId)) {
+                        @if(_user.userId == message._1.createdBy || isAdmin(_user.userId)) {
                             <i class="fas fa-trash-alt float-right message-del-button" data-message-id="@message._1.messageId" title="このメッセージを削除します"></i>
                         }
                         <div class="row">
@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-sm-10">
                                 <strong>@message._2.userName</strong>
-                                @if(isAdmin(user.userId)) { <span>(@{message._1.createdBy})</span> }
+                                @if(isAdmin(_user.userId)) { <span>(@{message._1.createdBy})</span> }
                                 <p class="message-area">@message._1.message</p>
                             </div>
                         </div>
@@ -104,9 +104,9 @@
                     @for(ch <- channels if ch.channelId != "general") {
                         <li class="list-group-item ellipsis">
                             @if(bookmarkMap.getOrElse(ch.channelId, false)) {
-                                <i class="fas fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="true" title="ブックマークを削除">&nbsp;</i>
+                                <i class="fas fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@_user.userId" data-bookmark="true" title="ブックマークを削除">&nbsp;</i>
                             } else {
-                                <i class="far fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@user.userId" data-bookmark="false" title="ブックマークに登録">&nbsp;</i>
+                                <i class="far fa-star bookmark-toggle-button" data-channel-id="@ch.channelId" data-user-id="@_user.userId" data-bookmark="false" title="ブックマークに登録">&nbsp;</i>
                             }
                             @if(ch.isPublic) {
                                 <i class="fas fa-lock-open">&nbsp;</i>
@@ -130,7 +130,7 @@
             @* チャンネル詳細 *@
             <div class="card">
                 <div class="card-header">
-                    @if(isMineChannel(user.userId, channel._1)) {
+                    @if(isMineChannel(_user.userId, channel._1)) {
                         <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" title="このチャンネルを編集します"></i>
                     }
                     @if(channel._1.isPublic) {
@@ -161,10 +161,10 @@
             <div class="card">
                 <div class="card-header">Members</div>
                 <ul class="list-group list-group-flush">
-                    @for(_user <- users if channel._1.isPublic || isMember(_user.userId, channel._1)) {
-                        <li id="@_user.userId" class="members list-group-item">
-                            <img src="@_user.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
-                            @_user.userName
+                    @for(u <- users if channel._1.isPublic || isMember(u.userId, channel._1)) {
+                        <li id="@u.userId" class="members list-group-item">
+                            <img src="@u.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
+                            @u.userName
                         </li>
                     }
                 </ul>
@@ -179,7 +179,7 @@
                 <input type="text" id="meg" placeholder="@channel._1.channelName へメッセージ" autocomplete="off" spellcheck="false" class="form-control" autofocus>
             </div>
             <div class="col-sm-3">
-                <button id="message-send-button" class="btn btn-info" data-user-id="@user.userId">送信</button>
+                <button id="message-send-button" class="btn btn-info" data-user-id="@_user.userId">送信</button>
             </div>
         </div>
 

@@ -2,9 +2,9 @@
 
 @import helper._
 
-@user.map { user =>
+@user.map { _user =>
 
-    @if(isMineChannel(user.userId, channel._1)) {
+    @if(isMineChannel(_user.userId, channel._1)) {
         <div class="modal fade" id="editForm-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -62,14 +62,14 @@
                             <div class="form-group" id="editCheckBox" @if(channel._1.isPublic) { style="display: none" }>
                                 <p>招待するユーザー</p>
                                 @* 作成者は必ずメンバーになるので表示しない *@
-                                @for(_user <- users if _user.userId != user.userId) {
+                                @for(u <- users if u.userId != _user.userId) {
                                     <div class="form-check-inline">
                                         <label class="form-check-label">
                                             @* membersに登録されているユーザー名にはchecked *@
-                                            @if(isMember(_user.userId, channel._1)) {
-                                                <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId" checked>@_user.userName
+                                            @if(isMember(u.userId, channel._1)) {
+                                                <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId" checked>@u.userName
                                             } else {
-                                                <input class="form-check-input" type="checkbox" name="members[]" value="@_user.userId">@_user.userName
+                                                <input class="form-check-input" type="checkbox" name="members[]" value="@u.userId">@u.userName
                                                 }
                                         </label>
                                     </div>
