@@ -43,6 +43,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
   }
 
   class MyWebSocketActor(out: ActorRef, request: RequestHeader, channelId: String, userId: Long, userName: String, profileImageUrl: String) extends Actor {
+
     val myRoom = roomMap.get(channelId) match {
       case Some(room) => room
       case None =>
@@ -60,13 +61,10 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
           val updatedAt = java.time.OffsetDateTime.now()
 
           messageInsert(Message(messageId, message, channelId, userId, updatedAt))
-
           val formattedUpdatedAt = updatedAt.format(messageFormatter)
           val result = Json.obj("messageId" -> messageId, "message" -> message, "createdBy" -> userId.toString, "userName" -> userName, "profileImageUrl" -> profileImageUrl, "updatedAt" -> formattedUpdatedAt)
 
-          myRoom.actorSet.foreach { out =>
-            out ! result
-          }
+          myRoom.actorSet.foreach { out => out ! result }
           println(
             s"""
                |[メッセージが投稿されました]
@@ -84,9 +82,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
             deleteMessage(message.messageId)
             val result = Json.obj("delete" -> messageId)
 
-            myRoom.actorSet.foreach { out =>
-              out ! result
-            }
+            myRoom.actorSet.foreach { out => out ! result }
             println(
               s"""
                  |[メッセージが削除されました]
@@ -139,13 +135,11 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     * @param roomMap key: channelId, value: Room
     */
   private[this] def sendLoginUser(roomMap: Map[String, Room]): Unit = {
-    val allActorSet = roomMap.flatMap { case (k, v) => v.actorSet }.toSet
+    val allActor = roomMap.flatMap { case (k, v) => v.actorSet }.toSet
     val allLoginUser = roomMap.flatMap { case (k, v) => v.userSet }.toSet
     val result = Json.obj("members" -> allLoginUser.map(_.toString))
 
-    allActorSet.foreach { out =>
-      out ! result
-    }
+    allActor.foreach { out => out ! result }
   }
 
 }
