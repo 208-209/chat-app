@@ -30,18 +30,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="entry-channelName">名前 (16文字以内)</label>
+                            <label for="entry-channelName">名前 (32文字以内)</label>
                             <input type="text" class="form-control" id="entry-channelName" name="channelName" placeholder="チャンネルの名前">
                             @for(error <- channelForm("channelName").errors) {
-                                <p class="errorMessage">@Messages(error.message, 16)</p>
+                                <p class="errorMessage">@Messages(error.message, 32)</p>
                             }
                         </div>
 
                         <div class="form-group">
-                            <label for="entry-purpose">目的 (32文字以内)</label>
+                            <label for="entry-purpose">目的 (64文字以内)</label>
                             <textarea class="form-control" id="entry-purpose" rows="3" name="purpose" placeholder="チャンネルの目的"></textarea>
                             @for(error <- channelForm("purpose").errors) {
-                                <p class="errorMessage">@Messages(error.message, 32)</p>
+                                <p class="errorMessage">@Messages(error.message, 64)</p>
                             }
                         </div>
 

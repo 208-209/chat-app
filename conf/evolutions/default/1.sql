@@ -12,8 +12,8 @@ create index deleted_users on users (deleted);
 
 create table channels (
                         channelId varchar(36) not null ,
-                        channelName varchar(16) not null ,
-                        purpose varchar(32) not null ,
+                        channelName varchar(32) not null ,
+                        purpose varchar(64) not null ,
                         isPublic boolean not null,
                         members text not null ,
                         createdBy bigint not null ,
@@ -26,7 +26,7 @@ create index updatedAt_channels on channels (updatedAt);
 
 create table messages (
                         messageId varchar(36) not null  ,
-                        message varchar(225) not null ,
+                        message varchar(128) not null ,
                         channelId varchar(36) not null ,
                         createdBy bigint not null ,
                         updatedAt timestamp not null ,

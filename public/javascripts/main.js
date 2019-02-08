@@ -17440,7 +17440,7 @@ if (webSocketUrl) {
     $sendBtn.prop("disabled", false); // ボタンのクリックでメッセージの送信
 
     $sendBtn.click(function () {
-      var text = $meg.val().slice(0, 225);
+      var text = $meg.val().slice(0, 128);
 
       if (text) {
         connection.send(JSON.stringify({
@@ -17518,10 +17518,6 @@ function createMessage(result, connection, userId) {
   var userName = result.userName;
   var profileImageUrl = result.profileImageUrl;
   var updatedAt = result.updatedAt;
-  var horizontalRule = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
-    class: 'message-hr',
-    'data-date': updatedAt
-  });
   var profileImage = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({
     src: profileImageUrl,
     alt: 'profile-image',
@@ -17542,6 +17538,10 @@ function createMessage(result, connection, userId) {
   var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
 
   var messageDiv = userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, trashBtn, messageEle) : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+  var horizontalRule = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
+    class: 'message-hr',
+    'data-date': updatedAt
+  });
   var messageAreaDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('row').append(profileImageDiv, messageDiv);
   return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({
     id: messageId
