@@ -11,7 +11,7 @@ class ChannelControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
 
     "ログイン認証なしにチャンネルにアクセスすると、Twitter認証のページにリダイレクトされる" in {
       val controller = inject[ChannelController]
-      val home = controller.read("general").apply(FakeRequest(GET, "/general"))
+      val home = controller.read("general")(FakeRequest(GET, "/general"))
 
       status(home) mustBe 303
     }

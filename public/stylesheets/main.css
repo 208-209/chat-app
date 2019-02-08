@@ -7,25 +7,25 @@
     .center {
         padding: 4.5rem 0;
         flex: 1 1 auto;
-        margin: 0 240px;
+        margin: 0 280px;
     }
 
     .left-sidebar {
         padding: 4.5rem 1rem;
-        flex: 0 0 240px;
+        flex: 0 0 280px;
         position: fixed;
         left: 0;
-        width: 240px;
+        width: 280px;
         height: 100%;
         overflow-y: auto;
     }
 
     .right-sidebar {
         padding: 4.5rem 1rem;
-        flex: 0 0 240px;
+        flex: 0 0 280px;
         position: fixed;
         right: 0;
-        width: 240px;
+        width: 280px;
         height: 100%;
         overflow-y: auto;
     }

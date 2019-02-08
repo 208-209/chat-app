@@ -11,7 +11,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
     "タイトルが表示される" in {
       val controller = inject[HomeController]
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val home = controller.index()(FakeRequest(GET, "/"))
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
@@ -21,7 +21,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
     "ログインのためのリンクが含まれる" in {
       val controller = inject[HomeController]
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val home = controller.index()(FakeRequest(GET, "/"))
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
