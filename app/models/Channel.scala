@@ -1,7 +1,7 @@
 package models
 
-import java.time.OffsetDateTime
 import scalikejdbc._
+import java.time.OffsetDateTime
 
 case class Channel(channelId: String, channelName: String, purpose: String, isPublic: Boolean, members: String, createdBy: Long, updatedAt: OffsetDateTime)
 

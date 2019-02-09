@@ -1,17 +1,16 @@
 # Chat app
 
-Twitterのログイン認証を利用したチャットアプリケーション
+Twitterの外部認証を利用したチャットアプリケーション
 https://play-chat-app.herokuapp.com/
 ## 要件定義
-- Twitterアカウントでログインして認証することができる
-- チャンネルが作れる
-- プライベートチャンネルを作って、ユーザーを招待できる
+- Twitterアカウントで認証することができる
+- チャンネルを作成できる
+- プライベートチャンネルを作成し、ユーザーを招待できる
 - チャンネルを編集・削除できる
 - チャンネルにメッセージを投稿できる
 - メッセージを削除できる
 - チャンネルにログインユーザーが表示される
-- チャンネルをブックマークできる
-- ブックマークを編集できる
+- ブックマークが利用できる
 - ユーザーがアカウントを解除できる
 ## 用語定義
 | 用語 | 英語表記 | 意味 |
@@ -24,9 +23,9 @@ https://play-chat-app.herokuapp.com/
 ### User (users)
 | 属性名 | 形式 | 内容 |
 | :-- | :-- | :-- |
-| userId | Long | TwitterのユーザーID (PK) |
+| userId | Long | Twitter のユーザーID (PK) |
 | userName | String | Twitter のユーザー名(INDEX) |
-| profileImageUrl | String | Twitterのプロフィール画像のURL |
+| profileImageUrl | String | Twitter のプロフィール画像のURL |
 | deleted | Boolean | 論理削除フラグ(INDEX) |
 - user 1 ___ 0...* channel
 - user 1 ___ 0...* message
