@@ -10,15 +10,16 @@ package object controllers {
   val channelFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日").withZone(ZoneId.of("Asia/Tokyo"))
 
   /**
-    * そのユーザーIDの者が管理人であるか
+    * ユーザーIDの者が管理人である
     * @param userId ユーザーID
     * @return 真偽値
     */
-  def isAdmin(userId: Long): Boolean = userId == ADMIN_TWITTER_ID
-
+  def isAdmin(userId: Long): Boolean = {
+    userId == ADMIN_TWITTER_ID
+  }
 
   /**
-    * このユーザーIDがチャンネルにアクセスできるメンバーの一員であるか
+    * ユーザーIDがチャンネルにアクセスできるメンバーの一員である
     * @param userId ユーザーID
     * @param channel チャンネル
     * @return 真偽値
@@ -28,7 +29,7 @@ package object controllers {
   }
 
   /**
-    * このユーザーIDがチャンネルチャンネル作成者のものと一致するか
+    * ユーザーIDがチャンネルチャンネル作成者のものと一致する
     * また、generalチャンネルの編集と削除はできない
     * @param usrId ユーザーID
     * @param channel 編集・削除するチャンネル
@@ -37,6 +38,5 @@ package object controllers {
   def isMineChannel(usrId: Long, channel: Channel): Boolean = {
     channel.createdBy == usrId && channel.channelId != "general"
   }
-
 
 }

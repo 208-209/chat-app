@@ -2,7 +2,7 @@
 create table users (
                      userId bigint not null ,
                      userName varchar(15) not null ,
-                     profileImageUrl varchar(225) not null,
+                     profileImageUrl varchar(225) not null ,
                      deleted boolean not null ,
                      primary key (userId)
 );
@@ -14,7 +14,7 @@ create table channels (
                         channelId varchar(36) not null ,
                         channelName varchar(32) not null ,
                         purpose varchar(64) not null ,
-                        isPublic boolean not null,
+                        isPublic boolean not null ,
                         members text not null ,
                         createdBy bigint not null ,
                         updatedAt timestamp not null ,

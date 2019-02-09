@@ -9,7 +9,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">@{channel._1.channelName}の編集</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">@{channel._1.channelName}を編集する</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true" class="crossBtn">&times;</span>
                         </button>
@@ -77,7 +77,6 @@
                             </div>
 
                             <input type="submit" class="btn btn-success float-right" value="チャンネルを編集する">
-
                         }
 
                         @form(routes.ChannelController.delete(channel._1.channelId)) {

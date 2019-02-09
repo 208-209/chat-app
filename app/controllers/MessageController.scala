@@ -28,7 +28,7 @@ class MessageController @Inject() (val cache: SyncCacheApi, cc: ControllerCompon
     val sessionIdOpt = request.cookies.get(sessionIdName).map(_.value)
     val accessToken = sessionIdOpt.flatMap(cache.get[AccessToken])
 
-    // 同一生成元ポリシー && パスのチャンネルが存在する && パスのユーザーIDとリクエスト者のIDが一致
+    // 同一生成元ポリシー && パスのチャンネルが存在する && パスのユーザーIDとリクエストユーザーのIDが一致
     Future.successful(accessToken match {
       case Some(token) if isSameOrigin(request) && channelFindById(channelId).isDefined && userId == token.getUserId =>
         val profileImageUrl =  userFindById(userId).map(_.profileImageUrl).getOrElse("")

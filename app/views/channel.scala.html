@@ -71,7 +71,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="far fa-plus-square float-right" data-toggle="modal" data-target="#entryForm-modal" title="新たにチャンネルを作成します"></i>
-                    <span>Bookmarks</span>
+                    <span>ブックマーク</span>
                 </div>
                 <ul class="list-group list-group-flush" id="bookmark">
                     @* generalチャンネルは常に表示する *@
@@ -97,7 +97,7 @@
             @* チャンネル一覧 *@
             <div class="card">
                 <div class="card-header">
-                    <span>Channels</span>
+                    <span>チャンネル一覧</span>
                 </div>
                 <ul class="list-group list-group-flush">
                     @* generalチャンネルは表示しない *@
@@ -159,7 +159,7 @@
 
             @* メンバー *@
             <div class="card">
-                <div class="card-header">Members</div>
+                <div class="card-header">メンバー</div>
                 <ul class="list-group list-group-flush">
                     @for(u <- users if channel._1.isPublic || isMember(u.userId, channel._1)) {
                         <li id="@u.userId" class="members list-group-item">

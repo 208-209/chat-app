@@ -10,7 +10,12 @@ object User extends SQLSyntaxSupport[User] {
   val u = User.syntax("u")
 
   def apply(u: ResultName[User])(implicit rs: WrappedResultSet): User = {
-    new User(userId = rs.long(u.userId), userName = rs.string(u.userName), profileImageUrl = rs.string(u.profileImageUrl), deleted = rs.boolean(u.deleted))
+    new User(
+      userId = rs.long(u.userId),
+      userName = rs.string(u.userName),
+      profileImageUrl = rs.string(u.profileImageUrl),
+      deleted = rs.boolean(u.deleted)
+    )
   }
 
   def apply(accessToken: (twitter4j.auth.AccessToken, String)): User = {

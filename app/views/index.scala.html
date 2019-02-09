@@ -2,10 +2,15 @@
 
 @main("Chat app")(user) {
   <main class="index-container">
-    <div class="jumbotron my-3">
-      <h1>Chat app</h1>
-      <p class="lead">Chat app はTwitter認証を利用したチャットアプリケーションです</p>
+
+    <div class="jumbotron">
+      <h1 class="display-4">Chat app</h1>
+      <p class="lead">Chat app はTwitterの外部認証を利用したチャットアプリケーションです</p>
+      <hr class="my-4">
+      <p>ログインすることで、チャンネルへの参加やメッセージの投稿など利用することができます</p>
+      <a class="btn btn-warning btn-lg" href="@routes.OAuthController.login" role="button">Twitter でログイン</a>
     </div>
+
   </main>
 
 }

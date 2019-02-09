@@ -51,7 +51,6 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
           error => { channelAndUserFindOne(channelId) match {
               case Some(channel) =>
                 val bundleData = bundle(token, channel)
-                println(error.errors)
                 BadRequest(views.html.channel(error, bundleData._8)(bundleData._1, channel, bundleData._2, bundleData._3, bundleData._4, bundleData._5, bundleData._6, bundleData._7))
               case None => NotFound("指定されたチャンネルは見つかりません")
             }
@@ -140,7 +139,7 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
   }
 
   /**
-    * チャンネルページの観覧ができるか
+    * チャンネルページにアクセスできる
     * パブリックチャンネル => 全員可
     * プライベートチャンネル => Channelのmembersに含まれるかどうか
     * @param token アクセストークン
@@ -151,16 +150,15 @@ class ChannelController @Inject()(val cache: SyncCacheApi, cc: ControllerCompone
     channel._1.isPublic || isMember(token.getUserId, channel._1)
   }
 
-
   /**
     * 各チャンネルに表示する情報をまとめた関数
     * @param token アクセストークン
     * @param channel 観覧チャンネル
     * @param request
     * @return (リクエストユーザーの情報,
-    *         データベースに登録してあるユーザー,
+    *         データベースに登録済みのユーザー(deletedでない),
     *         リクエストユーザーがアクセスできるチャンネル,
-    *         リクエストユーザーがブックマーク(isBookmark == true)しているチャンネル,
+    *         リクエストユーザーがブックマークしているチャンネル,
     *         リクエストユーザーのブックマークマップ（key: channelId, value: isBookmark）,
     *         チャンネルのメッセージ,
     *         メッセージを送るWebSocketのurl,
