@@ -17497,10 +17497,6 @@ if (webSocketUrl) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(result.delete)).remove();
     }
   };
-
-  connection.onerror = function (error) {
-    console.log('WebSocket Error ', error);
-  };
 }
 /**
  * クライアント側から表示するメッセージのHTMLを作成する
@@ -17549,7 +17545,7 @@ function createMessage(result, connection, userId) {
 }
 /**
  * 45秒間隔でダミーデータ（日付）を送信する
- * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
+ * Herokuの仕様で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する
  * @param connection
  */

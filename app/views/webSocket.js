@@ -52,7 +52,6 @@ if (webSocketUrl) {
         clearTimeout(timerId);
     };
 
-
     connection.onmessage = event => {
         const result = JSON.parse(event.data);
 
@@ -79,9 +78,6 @@ if (webSocketUrl) {
         }
     };
 
-    connection.onerror = function(error) {
-        console.log('WebSocket Error ', error);
-    };
 }
 
 /**
@@ -123,7 +119,7 @@ function createMessage(result, connection, userId) {
 
 /**
  * 45秒間隔でダミーデータ（日付）を送信する
- * Herokuの設定で55秒間アイドルが続くと接続が閉じられるので、
+ * Herokuの仕様で55秒間アイドルが続くと接続が閉じられるので、
  * ダミーデータを送信し、接続を維持する
  * @param connection
  */
