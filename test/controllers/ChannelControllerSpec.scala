@@ -16,8 +16,5 @@ class ChannelControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       status(home) mustBe 303
     }
 
-//    "ログイン時はユーザー名が表示される" in {
-//
-//    }
   }
 }

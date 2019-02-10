@@ -17,18 +17,29 @@
         <div class="container-fluid">
 
             <nav class="navbar navbar-dark bg-primary fixed-top">
-                <a class="navbar-brand" href="@routes.ChannelController.read("general")">Chat app</a>
-                <div>
-                    @user.map { _user =>
-                      <a href="#" id="userLink" data-toggle="modal" data-target="#userModal" title="アカウントの解除">
-                          <img src="@_user.profileImageUrl" alt="profile-image" class="rounded nav-profile-image">
-                          <span class="navbar-text">@{_user.userName}</span>
-                      </a>
-                      <a href="@routes.OAuthController.logout" class="btn btn-outline-warning" role="button">ログアウト</a>
-                    }.getOrElse {
-                        <a href="@routes.OAuthController.login" class="btn btn-outline-warning" role="button">Twitter でログイン</a>
-                    }
-                </div>
+                <a class="navbar-brand" href="/">Chat app</a>
+                @user.map { _user =>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="@routes.ChannelController.read("general")">Home <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" id="userLink" class="nav-link" data-toggle="modal" data-target="#userModal">アカウントの解除</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@routes.OAuthController.logout">ログアウト</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                }.getOrElse {
+                    <a href="@routes.OAuthController.login" class="btn btn-outline-warning" role="button">Twitter でログイン</a>
+                }
             </nav>
 
             @userModal(user)
