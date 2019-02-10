@@ -17524,7 +17524,7 @@ function createMessage(result, connection, userId) {
   var userNameEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<strong>').text(userName);
   var trashBtn = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({
     id: messageId,
-    class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+    class: 'fas fa-trash-alt float-right message-del-button',
     'data-message-id': messageId,
     'title': 'このメッセージを削除します'
   }).click(function () {
@@ -17533,9 +17533,16 @@ function createMessage(result, connection, userId) {
     }));
   });
   var messageEle = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<p>').addClass('message-area').text(message);
-  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-2').append(profileImage); // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
+  var profileImageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-2').append(profileImage); // メッセージの投稿者とリクエストユーザーが同一の場合は、削除ボタンも表示させる
 
-  var messageDiv = userId === createdBy ? jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, trashBtn, messageEle) : jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+  var messageDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').addClass('col-10');
+
+  if (userId === createdBy) {
+    messageDiv.append(userNameEle, trashBtn, messageEle);
+  } else {
+    messageDiv.append(userNameEle, messageEle);
+  }
+
   var horizontalRule = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<hr>').attr({
     class: 'message-hr',
     'data-date': updatedAt

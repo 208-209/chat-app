@@ -99,7 +99,7 @@ function createMessage(result, connection, userId) {
     const userNameEle = $('<strong>').text(userName);
     const trashBtn = $('<i>').attr({
         id: messageId,
-        class: 'fas fa-trash-alt deleteBtn float-right message-del-button',
+        class: 'fas fa-trash-alt float-right message-del-button',
         'data-message-id': messageId,
         'title': 'このメッセージを削除します'
     }).click(() => {
@@ -107,9 +107,14 @@ function createMessage(result, connection, userId) {
     });
     const messageEle = $('<p>').addClass('message-area').text(message);
 
-    const profileImageDiv = $('<div>').addClass('col-sm-2').append(profileImage);
-    // アクセスユーザーとメッセージの作成者が同一ならば、削除ボタンも表示される
-    const messageDiv = userId === createdBy ? $('<div>').addClass('col-sm-10').append(userNameEle, trashBtn, messageEle) : $('<div>').addClass('col-sm-10').append(userNameEle, messageEle);
+    const profileImageDiv = $('<div>').addClass('col-2').append(profileImage);
+    // メッセージの投稿者とリクエストユーザーが同一の場合は、削除ボタンも表示させる
+    const messageDiv = $('<div>').addClass('col-10');
+    if (userId === createdBy) {
+        messageDiv.append(userNameEle, trashBtn, messageEle)
+    } else {
+        messageDiv.append(userNameEle, messageEle)
+    }
 
     const horizontalRule = $('<hr>').attr({ class: 'message-hr', 'data-date': updatedAt});
     const messageAreaDiv = $('<div>').addClass('row').append(profileImageDiv, messageDiv);

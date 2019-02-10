@@ -124,10 +124,10 @@
                 <div id="@message._1.messageId">
                     <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
                     <div class="row">
-                        <div class="col-sm-2 col-3">
+                        <div class="col-2">
                             <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block">
                         </div>
-                        <div class="col-sm-10 col-9">
+                        <div class="col-10">
                             <strong>@message._2.userName</strong>
                             @if(isAdmin(_user.userId)) { <span>(@{message._1.createdBy})</span> }
                             @if(_user.userId == message._1.createdBy || isAdmin(_user.userId)) {

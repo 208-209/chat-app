@@ -76,12 +76,12 @@
                                 }
                             </div>
 
-                            <input type="submit" class="btn btn-success float-right" value="チャンネルを編集する">
+                            <input type="submit" class="btn btn-success float-right" value="編集する">
                         }
 
                         @form(routes.ChannelController.delete(channel._1.channelId)) {
                             @CSRF.formField
-                            <button class="btn btn-danger">チャンネルを削除する</button>
+                            <button class="btn btn-danger">削除する</button>
                         }
 
                     </div>
