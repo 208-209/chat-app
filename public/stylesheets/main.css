@@ -31,6 +31,11 @@
     }
 }
 
+.main-container {
+    display: flex;
+    flex-flow: column;
+}
+
 .fa-plus-square, .fa-star, .fa-edit, .fa-trash-alt {
     cursor: pointer;
 }
@@ -49,17 +54,12 @@
 }
 
 /* ========== メイン ========== */
-.main-container {
-    display: flex;
-    flex-flow: column;
-}
-
 .index-container {
     padding-top: 4.5rem;
 }
 
 .center {
-    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
 }
 
 .fa-trash-alt {
@@ -122,7 +122,7 @@ hr::before {
 
 /* ========== 右サイドバー ========== */
 .right-sidebar {
-    padding-bottom: 4.5rem;
+    padding-top: 4.5rem;
 }
 
 .members {

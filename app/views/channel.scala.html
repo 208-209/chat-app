@@ -9,60 +9,51 @@
 
     @user.map { _user =>
 
-        @* Center *@
-        <main class="center">
-            @* message-area *@
-            <div id="messages" data-url="@webSocketUrl">
-                @for(message <- messages) {
-                    <div id="@message._1.messageId">
-                        <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block">
-                            </div>
-                            <div class="col-sm-10">
-                                <strong>@message._2.userName</strong>
-                                @if(isAdmin(_user.userId)) { <span>(@{message._1.createdBy})</span> }
-                                @if(_user.userId == message._1.createdBy || isAdmin(_user.userId)) {
-                                    <i class="fas fa-trash-alt float-right message-del-button" data-message-id="@message._1.messageId" title="このメッセージを削除します"></i>
-                                }
-                                <p class="message-area">@message._1.message</p>
-                            </div>
-                        </div>
-                    </div>
+        @* Right *@
+        <aside class="right-sidebar">
+            @* チャンネル詳細 *@
+            <div class="card">
+                <div class="card-header">
+                    @if(isMineChannel(_user.userId, channel._1)) {
+                        <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" title="このチャンネルを編集します"></i>
+                    }
+                    @if(channel._1.isPublic) {
+                        <i class="fas fa-lock-open">&nbsp;</i>
+                    } else {
+                        <i class="fas fa-lock">&nbsp;</i>
+                    }
+                <span id="this-channel" data-channel-id="@channel._1.channelId">@channel._1.channelName</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>製作者</strong></p>
+                        <p class="card-text">@channel._2.userName</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>目的</strong></p>
+                        <p id="channel-purpose" class="card-text">@channel._1.purpose</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="card-title"><strong>更新日</strong></p>
+                        <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(channelFormatter)</p>
+                    </li>
 
-                }
+                </ul>
             </div>
 
-            @* Flash scope *@
-            @flash.get("createSuccess").map { message =>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @message
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-
-            @flash.get("updateSuccess").map { message =>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @message
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-
-            @flash.get("deleteSuccess").map { message =>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @message
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-
-        </main>
+            @* メンバー *@
+            <div class="card">
+                <div class="card-header">メンバー</div>
+                <ul class="list-group list-group-flush">
+                @for(u <- users if channel._1.isPublic || isMember(u.userId, channel._1)) {
+                    <li id="@u.userId" class="members list-group-item">
+                        <img src="@u.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
+                        @u.userName
+                    </li>
+                }
+                </ul>
+            </div>
+        </aside>
 
 
         @* Left *@
@@ -125,51 +116,61 @@
         </aside>
 
 
-        @* Right *@
-        <aside class="right-sidebar">
-            @* チャンネル詳細 *@
-            <div class="card">
-                <div class="card-header">
-                    @if(isMineChannel(_user.userId, channel._1)) {
-                        <i id="editBtn" class="fas fa-edit float-right" data-toggle="modal" data-target="#editForm-modal" title="このチャンネルを編集します"></i>
-                    }
-                    @if(channel._1.isPublic) {
-                        <i class="fas fa-lock-open">&nbsp;</i>
-                    } else {
-                        <i class="fas fa-lock">&nbsp;</i>
-                    }
-                    <span id="this-channel" data-channel-id="@channel._1.channelId">@channel._1.channelName</span>
+        @* Center *@
+        <main class="center">
+            @* message-area *@
+            <div id="messages" data-url="@webSocketUrl">
+            @for(message <- messages) {
+                <div id="@message._1.messageId">
+                    <hr class="message-hr" data-date="@message._1.updatedAt.format(messageFormatter)">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="@message._2.profileImageUrl" alt="profile-image" class="rounded mx-auto d-block">
+                        </div>
+                        <div class="col-sm-10">
+                            <strong>@message._2.userName</strong>
+                            @if(isAdmin(_user.userId)) { <span>(@{message._1.createdBy})</span> }
+                            @if(_user.userId == message._1.createdBy || isAdmin(_user.userId)) {
+                                <i class="fas fa-trash-alt float-right message-del-button" data-message-id="@message._1.messageId" title="このメッセージを削除します"></i>
+                            }
+                            <p class="message-area">@message._1.message</p>
+                        </div>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <p class="card-title"><strong>製作者</strong></p>
-                        <p class="card-text">@channel._2.userName</p>
-                    </li>
-                    <li class="list-group-item">
-                        <p class="card-title"><strong>目的</strong></p>
-                        <p id="channel-purpose" class="card-text">@channel._1.purpose</p>
-                    </li>
-                    <li class="list-group-item">
-                        <p class="card-title"><strong>更新日</strong></p>
-                        <p id="channel-updatedAt" class="card-text">@channel._1.updatedAt.format(channelFormatter)</p>
-                    </li>
 
-                </ul>
+            }
             </div>
 
-            @* メンバー *@
-            <div class="card">
-                <div class="card-header">メンバー</div>
-                <ul class="list-group list-group-flush">
-                    @for(u <- users if channel._1.isPublic || isMember(u.userId, channel._1)) {
-                        <li id="@u.userId" class="members list-group-item">
-                            <img src="@u.profileImageUrl" alt="profile-image" class="rounded members-profile-image">
-                            @u.userName
-                        </li>
-                    }
-                </ul>
-            </div>
-        </aside>
+            @* Flash scope *@
+            @flash.get("createSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            @flash.get("updateSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            @flash.get("deleteSuccess").map { message =>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @message
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+        </main>
+
 
         @* message-form *@
         <div class="fixed-bottom message-form form-row">
