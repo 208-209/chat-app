@@ -28,8 +28,11 @@ $('.bookmark-toggle-button').each((i, e) => {
 
                 // ブックマークエリアに要素の追加と削除
                 if(data.bookmark) {
-                    const tag = channelId === thisChannelId ? $('<span>') : $('<a>').attr({ href: `/channels/${channelId}` });
-                    $('<li>').attr({ id: channelId, class: 'list-group-item ellipsis' }).append(tag.text(data.channelName)).appendTo('#bookmark');
+                    const tag = channelId === thisChannelId ? $('<span>') : $('<a>').attr({ href: `/channels/${channelId}`});
+                    $('<li>').attr({
+                        id: channelId,
+                        class: 'list-group-item ellipsis'
+                    }).append(tag.attr({ title: data.channelName }).text(data.channelName)).appendTo('#bookmark');
                 } else {
                     $(`#${channelId}`).remove()
                 }

@@ -17405,7 +17405,9 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.bookmark-toggle-button').each(fu
           jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li>').attr({
             id: channelId,
             class: 'list-group-item ellipsis'
-          }).append(tag.text(data.channelName)).appendTo('#bookmark');
+          }).append(tag.attr({
+            title: data.channelName
+          }).text(data.channelName)).appendTo('#bookmark');
         } else {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(channelId)).remove();
         }
